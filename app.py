@@ -1,6 +1,5 @@
 import flet as ft
 from flet import Icon
-from actions import create_tables
 from datatable import tblRegistro, tb, selectRegisters
 import sqlite3
 
@@ -16,8 +15,6 @@ def main(page: ft.Page):
     #     fit=ft.ImageFit.CONTAIN,
     # )
 
-    # placa=ft.TextField(label="Placa", border="underline")
-
     def showInputs(e):
         card.offset=ft.transform.Offset(0,0)
         placa.focus()
@@ -25,6 +22,33 @@ def main(page: ft.Page):
 
     def hideInputs(e):
         card.offset=ft.transform.Offset(2,0)
+        page.update()
+
+    def register(e):
+        if placa.value != "":
+            for i in placa.value:
+                if i not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                    open_dlg_modal(e)
+
+    def close_dlg(e):
+        dlg_modal.open = False
+        page.update()
+
+    dlg_modal = ft.AlertDialog(
+        modal=True,
+        icon=ft.Icon(name=ft.icons.INFO_SHARP, size=35),
+        title=ft.Text("Placa inválida"),
+        # content=ft.Text("Placa inválida"),
+        actions=[
+            ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        on_dismiss=lambda e: placa.focus(),
+    )
+
+    def open_dlg_modal(e):
+        page.dialog = dlg_modal
+        dlg_modal.open = True
         page.update()
 
     vehiculo=ft.RadioGroup(
@@ -37,7 +61,7 @@ def main(page: ft.Page):
     )
 
     vehiculo.value="Moto"
-    placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS")
+    placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", on_blur=register)
     total=ft.TextField(hint_text="Total a Pagar $0", border="none", text_size=90, width=page.width-50, text_align="right", read_only=True)
     # total.hint_text = "Total a Pagar $" + "9,999,999,999"
 

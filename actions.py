@@ -1,9 +1,13 @@
+import os
 import bcrypt
 import sqlite3
+from dotenv import load_dotenv
+
+load_dotenv()
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
-password=""
+password=os.getenv("psw")
 bytes=password.encode('utf-8')
 salt=bcrypt.gensalt()
 hash=bcrypt.hashpw(bytes, salt)
@@ -46,20 +50,31 @@ def create_tables():
         """)
     conn.commit()
 
+def develop_user():
+    try:
+        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
+        values=("Gareca", f"{hash}", "Gabriel Jaime Hoyos Garcés")
+
+        cursor=conn.cursor()
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
+
+def develop_access():
+    try:
+        programs=["Registro", "Cuadre", "Cierre", "Variables", "Administración"]
+
+        for x in programs:
+            sql=f"""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
+            values=("Gareca", f"{x}", 1)
+
+            cursor=conn.cursor()
+            cursor.execute(sql, values)
+            conn.commit()
+    except Exception as e:
+        print(e)
+
 create_tables()
-
-cursor=conn.cursor()
-
-cursor.execute(f"""INSERT INTO usuarios (usuario, clave, nombre) VALUES ("Gareca", "{hash}", "Gabriel Jaime Hoyos Garcés")""")
-conn.commit()
-
-cursor.execute("""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES ("Gareca", "Registro", 1)""")
-conn.commit()
-cursor.execute("""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES ("Gareca", "Cuadre", 1)""")
-conn.commit()
-cursor.execute("""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES ("Gareca", "Cierre", 1)""")
-conn.commit()
-cursor.execute("""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES ("Gareca", "Variables", 1)""")
-conn.commit()
-cursor.execute("""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES ("Gareca", "Administración", 1)""")
-conn.commit()
+develop_user()
+develop_access()
