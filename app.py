@@ -5,15 +5,8 @@ import sqlite3
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
-def main(page: ft.Page):
+def main(page:ft.Page):
     # page.scroll="auto"
-
-    # img = ft.Image(
-    #     src=f"img/parqueadero.jpeg",
-    #     width=300,
-    #     height=300,
-    #     fit=ft.ImageFit.CONTAIN,
-    # )
 
     def showInputs(e):
         card.offset=ft.transform.Offset(0,0)
@@ -27,18 +20,20 @@ def main(page: ft.Page):
     def register(e):
         if placa.value != "":
             for i in placa.value:
-                if i not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                     open_dlg_modal(e)
+                    return False
 
     def close_dlg(e):
         dlg_modal.open = False
         page.update()
 
     dlg_modal = ft.AlertDialog(
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_100),
         modal=True,
-        icon=ft.Icon(name=ft.icons.INFO_SHARP, size=35),
-        title=ft.Text("Placa inválida"),
-        # content=ft.Text("Placa inválida"),
+        icon=ft.Icon(name=ft.icons.ERROR_SHARP, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.RED_900), size=50),
+        title=ft.Text("Placa inválida", text_align="center"),
+        # content=ft.Text("La placa contiene caracteres no permitidos", text_align="center"),
         actions=[
             ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
         ],
@@ -66,6 +61,7 @@ def main(page: ft.Page):
     # total.hint_text = "Total a Pagar $" + "9,999,999,999"
 
     card=ft.Card(
+        margin=ft.margin.only(0, 50, 0, 0),
         offset=ft.transform.Offset(2,0),
         animate_offset=ft.animation.Animation(300, curve="easeIn"),
         elevation=30,
@@ -111,15 +107,18 @@ def main(page: ft.Page):
     container=ft.Container(
         ft.Column([
             ft.Container(
-                # ft.Text(
-                #     value="Registro",
-                #     size=30,
-                #     weight="w100",
-                #     text_align="left"
-                # ),
-            ),
-            ft.ElevatedButton("Registro", on_click=showInputs),
-            card
+                alignment=ft.alignment.center,
+                content=ft.Stack([
+                    ft.Image(
+                        src=f"img/fondo2.jpg",
+                        # width=300,
+                        # height=300,
+                        fit=ft.ImageFit.COVER
+                    ),
+                    ft.ElevatedButton("Registro", on_click=showInputs),
+                    card
+                ])
+            )
         ])
     )
 
@@ -133,8 +132,8 @@ def main(page: ft.Page):
     page.opacity=0.0
     page.title="Parqueadero"
     # page.window_maximized=True
-    # page.vertical_alignment="center"
-    # page.horizontal_alignment="center"
+    page.vertical_alignment="center"
+    page.horizontal_alignment="center"
     page.add(container)
     page.update()
 

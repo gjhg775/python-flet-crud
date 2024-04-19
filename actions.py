@@ -12,7 +12,7 @@ bytes=password.encode('utf-8')
 salt=bcrypt.gensalt()
 hash=bcrypt.hashpw(bytes, salt)
 
-def create_tables():
+def create_users():
     cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS usuarios(
         usuario_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,6 +22,12 @@ def create_tables():
         """)
     conn.commit()
 
+def drop_users():
+    cursor=conn.cursor()
+    cursor.execute("DROP TABLE usuarios")
+
+def create_access():
+    cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS accesos(
         acceso_id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario TEXT,
@@ -31,7 +37,13 @@ def create_tables():
         """)
     conn.commit()
 
-    cursor.execute("""CREATE TABLE IF NOT EXISTS administracion(
+def drop_access():
+    cursor=conn.cursor()
+    cursor.execute("DROP TABLE accesos")
+
+def create_configuration():
+    cursor=conn.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS configuracion(
         administracion_id INTEGER PRIMARY KEY AUTOINCREMENT,
         parqueadero TEXT,
         nit TEXT,
@@ -42,6 +54,28 @@ def create_tables():
         """)
     conn.commit()
 
+def drop_configuration():
+    cursor=conn.cursor()
+    cursor.execute("DROP TABLE configuracion")
+
+def create_variables():
+    cursor=conn.cursor()
+    cursor.execute("""CREATE TABLE IF NOT EXISTS variables(
+        vlr_hora_moto INTEGER,
+        vlr_dia_moto INTEGER,
+        vlr_hora_carro INTEGER,
+        vlr_dia_carro INTEGER,
+        vlr_hora_otro INTEGER,
+        vlr_dia_otro INTEGER)
+        """)
+    conn.commit()
+
+def drop_variables():
+    cursor=conn.cursor()
+    cursor.execute("DROP TABLE variables")
+
+def create_regist():
+    cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS registro(
         registro_id INTEGER PRIMARY KEY AUTOINCREMENT,
         placa TEXT,
@@ -49,6 +83,10 @@ def create_tables():
         salida DATETIME)
         """)
     conn.commit()
+
+def drop_regist():
+    cursor=conn.cursor()
+    cursor.execute("DROP TABLE registro")
 
 def develop_user():
     try:
@@ -75,6 +113,12 @@ def develop_access():
     except Exception as e:
         print(e)
 
-create_tables()
+create_users()
+create_access()
+create_variables()
+create_regist()
+create_configuration()
 develop_user()
 develop_access()
+
+conn.close()
