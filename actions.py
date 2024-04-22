@@ -79,8 +79,13 @@ def create_regist():
     cursor.execute("""CREATE TABLE IF NOT EXISTS registro(
         registro_id INTEGER PRIMARY KEY AUTOINCREMENT,
         placa TEXT,
-        entrada DATETIME,
-        salida DATETIME)
+        entrada TEXT,
+        salida TEXT,
+        vehiculo TEXT,
+        valor INTEGER,
+        total INTEGER,
+        cuadre INTEGER,
+        usuario TEXT)
         """)
     conn.commit()
 
