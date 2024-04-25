@@ -1,17 +1,26 @@
 import flet as ft
 from flet import Icon
-from datatable import tblRegistro, tb, lv, selectRegisters, selectRegister
+from datatable import tblRegistro, tb, selectRegisters, selectRegister, get_variables
 import sqlite3
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
 def main(page:ft.Page):
-    page.scroll="auto"
+    # page.scroll="auto"
+
+    vlr_total=0
 
     def showInputs(e):
-        card.offset=ft.transform.Offset(0,0)
-        placa.focus()
-        page.update()
+        variables=get_variables()
+        if variables != None:
+            card.offset=ft.transform.Offset(0,0)
+            placa.focus()
+            page.update()
+        else:
+            title="Variables"
+            mensaje=f"Debe ingresar los valores de las variables"
+            open_dlg_modal(e, title, mensaje)
+            return False
 
     def hideInputs(e):
         card.offset=ft.transform.Offset(2,0)
@@ -19,15 +28,36 @@ def main(page:ft.Page):
 
     def register(e):
         if placa.value != "":
+            if rdbVehiculo.value == "Moto":
+                if len(placa.value) < 5 or len(placa.value) > 6:
+                    title="Placa inválida"
+                    mensaje=f"La placa {placa.value} no es válida para una moto"
+                    open_dlg_modal(e, title, mensaje)
+                    return False
+                if len(placa.value) == 6 and placa.value[-1] in "0123456789":
+                    title="Placa inválida"
+                    mensaje=f"La placa {placa.value} no es válida para una moto"
+                    open_dlg_modal(e, title, mensaje)
+                    return False
+            if rdbVehiculo.value == "Carro":
+                if len(placa.value) != 6 or placa.value[-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                    title="Placa inválida"
+                    mensaje=f"La placa {placa.value} no es válida para un carro"
+                    open_dlg_modal(e, title, mensaje)
+                    return False
             for i in placa.value:
                 if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                    open_dlg_modal(e)
-                    return False
-            if rdbVehiculo.value == "Moto":
-                mensaje="La placa no es válida para una moto"
-            if rdbVehiculo.value == "Carro":
-                mensaje="La placa no es válida para un carro"
-            selectRegister(rdbVehiculo.value, placa.value)
+                    if rdbVehiculo.value == "Moto" or rdbVehiculo.value == "Carro":
+                        if rdbVehiculo.value == "Moto":
+                            mensaje=f"El caracter {i} no es válido para la placa de una moto"
+                        if rdbVehiculo.value == "Carro":
+                            mensaje=f"El caracter {i} no es válido para la placa de un carro"
+                        title="Placa inválida"
+                        open_dlg_modal(e, title, mensaje)
+                        return False
+            vlr_total=selectRegister(rdbVehiculo.value, placa.value)
+            total.hint_text="Total $"+str(vlr_total)
+            card.update()
             placa.value=""
             placa.focus()
             tb.rows.clear()
@@ -38,45 +68,42 @@ def main(page:ft.Page):
         dlg_modal.open=False
         page.update()
 
+    def open_dlg_modal(e, title, mensaje):
+        dlg_modal.title=ft.Text(title, text_align="center")
+        dlg_modal.content=ft.Text(mensaje, text_align="center")
+        page.dialog=dlg_modal
+        dlg_modal.open=True
+        page.update()
+
     def radiogroup_changed(e):
-        # vehiculo=e.control.value
         placa.focus()
 
     rdbVehiculo=ft.RadioGroup(
         content=ft.Row([
-            ft.Text("Vehículo", size=20),
+            # ft.Text("Vehículo", size=20),
             ft.Radio(label="Moto", value="Moto"),
             ft.Radio(label="Carro", value="Carro"),
             ft.Radio(label="Otro", value="Otro")
         ]),
+        value="Moto",
         on_change=radiogroup_changed
     )
 
-    rdbVehiculo.value="Moto"
-    mensaje="La placa no es válida para una moto"
-
-    dlg_modal = ft.AlertDialog(
+    dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_100),
         modal=True,
         icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
-        title=ft.Text("Placa inválida", text_align="center"),
-        content=ft.Text(mensaje, text_align="center"),
+        # title=ft.Text("Placa inválida", text_align="center"),
+        # content=ft.Text(mensaje, text_align="center"),
         actions=[
             ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
         ],
         actions_alignment=ft.MainAxisAlignment.END,
         on_dismiss=lambda e: placa.focus(),
     )
-
-    def open_dlg_modal(e):
-        page.dialog=dlg_modal
-        dlg_modal.open=True
-        page.update()
     
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", on_blur=register)
-    # total=ft.TextField(hint_text="Total a Pagar $0", border="none", text_size=90, width=page.width-50, text_align="right", read_only=True)
-    total=ft.TextField(hint_text="Total $0", border="none", text_size=65, width=600, text_align="left", read_only=True)
-    # total.hint_text = "Total $" + "999,999,999"
+    total=ft.TextField(hint_text="Total $"+str(vlr_total), border="none", text_size=65, width=600, text_align="left", read_only=True)
 
     card=ft.Card(
         margin=ft.margin.only(0, 50, 0, 0),
@@ -96,26 +123,32 @@ def main(page:ft.Page):
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
-                ft.Row([
-                    ft.Column([
-                        rdbVehiculo,
-                        placa,
-                        total
-                    ])
-                ],
-                alignment=ft.MainAxisAlignment.CENTER
-                # alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                # spacing=20
-                ),
-                ft.Row([
-                    # tblRegistro
-                    lv
-                ],
-                height=268,
-                alignment=ft.MainAxisAlignment.CENTER,
+                # ft.Row([
+                #     ft.Column([
+                #         rdbVehiculo,
+                #         placa,
+                #         total
+                #     ])
+                # ],
+                # alignment=ft.MainAxisAlignment.CENTER
+                # # alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                # # spacing=20
+                # ),
+                # ft.Row([
+                #     tblRegistro
+                #     # lv
+                # ],
+                # height=268,
+                # alignment=ft.MainAxisAlignment.CENTER,
                 
-                # spacing=20
-                ),
+                # # spacing=20
+                # ),
+
+                ft.ResponsiveRow([
+                    ft.Column(col=6, controls=[tblRegistro]),
+                    ft.Column(col=6, controls=[rdbVehiculo, placa, total])
+                ]),
+
                 # ft.Row([
                 #     ft.Column([
                 #     ft.Text("", size=20, width=530),
@@ -177,9 +210,8 @@ def main(page:ft.Page):
 
     showInputs
     selectRegisters()
-    tblRegistro.scroll="aito"
+    tblRegistro.scroll="auto"
     tblRegistro.update()
-    lv.update()
-
+    
 ft.app(target=main)
 # ft.app(target=main, view=ft.AppView.WEB_BROWSER, port=9000)
