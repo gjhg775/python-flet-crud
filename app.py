@@ -1,14 +1,18 @@
+import locale
 import flet as ft
-from flet import Icon
+from flet import Page
 from datatable import tblRegistro, tb, selectRegisters, selectRegister, get_variables
 import sqlite3
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
-def main(page:ft.Page):
+locale.setlocale(locale.LC_ALL, "")
+
+def main(page:Page):
     # page.scroll="auto"
 
     vlr_total=0
+    vlr_total=locale.currency(vlr_total, grouping=True)
 
     def showInputs(e):
         variables=get_variables()
@@ -18,8 +22,8 @@ def main(page:ft.Page):
             page.update()
         else:
             title="Variables"
-            mensaje=f"Debe ingresar los valores de las variables"
-            open_dlg_modal(e, title, mensaje)
+            message=f"Debe ingresar los valores de las variables"
+            open_dlg_modal(e, title, message)
             return False
 
     def hideInputs(e):
@@ -31,32 +35,33 @@ def main(page:ft.Page):
             if rdbVehiculo.value == "Moto":
                 if len(placa.value) < 5 or len(placa.value) > 6:
                     title="Placa inválida"
-                    mensaje=f"La placa {placa.value} no es válida para una moto"
-                    open_dlg_modal(e, title, mensaje)
+                    message=f"La placa {placa.value} no es válida para una moto"
+                    open_dlg_modal(e, title, message)
                     return False
                 if len(placa.value) == 6 and placa.value[-1] in "0123456789":
                     title="Placa inválida"
-                    mensaje=f"La placa {placa.value} no es válida para una moto"
-                    open_dlg_modal(e, title, mensaje)
+                    message=f"La placa {placa.value} no es válida para una moto"
+                    open_dlg_modal(e, title, message)
                     return False
             if rdbVehiculo.value == "Carro":
                 if len(placa.value) != 6 or placa.value[-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                     title="Placa inválida"
-                    mensaje=f"La placa {placa.value} no es válida para un carro"
-                    open_dlg_modal(e, title, mensaje)
+                    message=f"La placa {placa.value} no es válida para un carro"
+                    open_dlg_modal(e, title, message)
                     return False
             for i in placa.value:
                 if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
                     if rdbVehiculo.value == "Moto" or rdbVehiculo.value == "Carro":
                         if rdbVehiculo.value == "Moto":
-                            mensaje=f"El caracter {i} no es válido para la placa de una moto"
+                            message=f"El caracter {i} no es válido para la placa de una moto"
                         if rdbVehiculo.value == "Carro":
-                            mensaje=f"El caracter {i} no es válido para la placa de un carro"
+                            message=f"El caracter {i} no es válido para la placa de un carro"
                         title="Placa inválida"
-                        open_dlg_modal(e, title, mensaje)
+                        open_dlg_modal(e, title, message)
                         return False
             vlr_total=selectRegister(rdbVehiculo.value, placa.value)
-            total.hint_text="Total $"+str(vlr_total)
+            vlr_total=locale.currency(vlr_total, grouping=True)
+            total.hint_text="Total "+str(vlr_total)
             card.update()
             placa.value=""
             placa.focus()
@@ -68,9 +73,9 @@ def main(page:ft.Page):
         dlg_modal.open=False
         page.update()
 
-    def open_dlg_modal(e, title, mensaje):
+    def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Text(title, text_align="center")
-        dlg_modal.content=ft.Text(mensaje, text_align="center")
+        dlg_modal.content=ft.Text(message, text_align="center")
         page.dialog=dlg_modal
         dlg_modal.open=True
         page.update()
@@ -93,8 +98,8 @@ def main(page:ft.Page):
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_100),
         modal=True,
         icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
-        # title=ft.Text("Placa inválida", text_align="center"),
-        # content=ft.Text(mensaje, text_align="center"),
+        # title=ft.Text(title, text_align="center"),
+        # content=ft.Text(message, text_align="center"),
         actions=[
             ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
         ],
@@ -103,7 +108,7 @@ def main(page:ft.Page):
     )
     
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", on_blur=register)
-    total=ft.TextField(hint_text="Total $"+str(vlr_total), border="none", text_size=65, width=600, text_align="left", read_only=True)
+    total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=65, width=600, text_align="right", read_only=True)
 
     card=ft.Card(
         margin=ft.margin.only(0, 50, 0, 0),

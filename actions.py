@@ -24,7 +24,7 @@ def create_users():
 
 def drop_users():
     cursor=conn.cursor()
-    cursor.execute("DROP TABLE usuarios")
+    cursor.execute("DROP TABLE IF EXISTS usuarios")
 
 def create_access():
     cursor=conn.cursor()
@@ -39,7 +39,7 @@ def create_access():
 
 def drop_access():
     cursor=conn.cursor()
-    cursor.execute("DROP TABLE accesos")
+    cursor.execute("DROP TABLE IF EXISTS accesos")
 
 def create_configuration():
     cursor=conn.cursor()
@@ -50,13 +50,14 @@ def create_configuration():
         regimen TEXT,
         direccion TEXT,
         telefono TEXT,
-        servicio TEXT)
+        servicio TEXT,
+        consecutivo TEXT)
         """)
     conn.commit()
 
 def drop_configuration():
     cursor=conn.cursor()
-    cursor.execute("DROP TABLE configuracion")
+    cursor.execute("DROP TABLE IF EXISTS configuracion")
 
 def create_variables():
     cursor=conn.cursor()
@@ -72,7 +73,7 @@ def create_variables():
 
 def drop_variables():
     cursor=conn.cursor()
-    cursor.execute("DROP TABLE variables")
+    cursor.execute("DROP TABLE IF EXISTS variables")
 
 def create_regist():
     cursor=conn.cursor()
@@ -91,7 +92,7 @@ def create_regist():
 
 def drop_regist():
     cursor=conn.cursor()
-    cursor.execute("DROP TABLE registro")
+    cursor.execute("DROP TABLE IF EXISTS registro")
 
 def develop_user():
     try:
@@ -118,11 +119,17 @@ def develop_access():
     except Exception as e:
         print(e)
 
+drop_regist()
+drop_variables()
+drop_configuration()
+drop_access()
+drop_users()
+
 create_users()
 create_access()
+create_configuration()
 create_variables()
 create_regist()
-create_configuration()
 develop_user()
 develop_access()
 

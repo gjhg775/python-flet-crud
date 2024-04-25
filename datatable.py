@@ -190,9 +190,10 @@ def selectRegister(vehiculo, placa):
 
         if registros == []:
             add_register(vehiculo, placa)
+            total=0
         else:
             total=update_register(vehiculo, placa)
-            return total
+        return total
 
         # cursor=conn.cursor()
         # sql=f"""SELECT *, (strftime("%s", salida) - strftime("%s", entrada))/60/60 AS tiempo, (strftime("%s", salida) - strftime("%s", entrada))/60/60 * valor AS total FROM registro"""
