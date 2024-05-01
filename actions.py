@@ -44,14 +44,14 @@ def drop_access():
 def create_configuration():
     cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS configuracion(
-        administracion_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        configuracion_id INTEGER PRIMARY KEY AUTOINCREMENT,
         parqueadero TEXT,
         nit TEXT,
         regimen TEXT,
         direccion TEXT,
         telefono TEXT,
         servicio TEXT,
-        consecutivo TEXT)
+        consecutivo INTEGER)
         """)
     conn.commit()
 
@@ -79,11 +79,13 @@ def create_regist():
     cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS registro(
         registro_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        consecutivo INTEGER,
         placa TEXT,
         entrada TEXT,
         salida TEXT,
         vehiculo TEXT,
         valor INTEGER,
+        tiempo INTEGER,
         total INTEGER,
         cuadre INTEGER,
         usuario TEXT)

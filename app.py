@@ -1,7 +1,8 @@
+import time
 import locale
 import flet as ft
 from flet import Page
-from datatable import tblRegistro, tb, selectRegisters, selectRegister, get_variables
+from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister
 import sqlite3
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
@@ -13,6 +14,8 @@ def main(page:Page):
 
     vlr_total=0
     vlr_total=locale.currency(vlr_total, grouping=True)
+
+    parqueadero, regimen=get_configuration()
 
     def showInputs(e):
         variables=get_variables()
@@ -60,14 +63,37 @@ def main(page:Page):
                         open_dlg_modal(e, title, message)
                         return False
             vlr_total=selectRegister(rdbVehiculo.value, placa.value)
+
+            if vlr_total == None:
+                vlr_total = 0
+
+            if vlr_total == 0:
+                message="Registro creado satisfactoriamente"
+            else:
+                message="Registro actualizado satisfactoriamente"
+
+            placa.value=""
             vlr_total=locale.currency(vlr_total, grouping=True)
             total.hint_text="Total "+str(vlr_total)
             card.update()
-            placa.value=""
             placa.focus()
             tb.rows.clear()
             selectRegisters()
             tb.update()
+
+            page.snack_bar=ft.SnackBar(
+                ft.Text(message, color="white"),
+                bgcolor="green"
+            )
+            page.snack_bar.open=True
+            page.update()
+
+            time.sleep(4)
+
+            vlr_total=0
+            vlr_total=locale.currency(vlr_total, grouping=True)
+            total.hint_text="Total "+str(vlr_total)
+            card.update()
 
     def close_dlg(e):
         dlg_modal.open=False
@@ -184,6 +210,14 @@ def main(page:Page):
                         # width=300,
                         # height=300,
                         fit=ft.ImageFit.COVER
+                    ),
+                    ft.Row([
+                        ft.Column([
+                            ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold")
+                            # ft.ElevatedButton("Registro", on_click=showInputs)
+                        ])
+                    ], 
+                    alignment=ft.MainAxisAlignment.CENTER
                     ),
                     # ft.Row([
                         ft.ElevatedButton("Registro", on_click=showInputs),
