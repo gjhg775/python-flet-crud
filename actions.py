@@ -1,6 +1,7 @@
 import os
 import bcrypt
 import sqlite3
+import hashlib
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,8 +10,10 @@ conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
 password=os.getenv("psw")
 bytes=password.encode('utf-8')
-salt=bcrypt.gensalt()
-hash=bcrypt.hashpw(bytes, salt)
+# salt=bcrypt.gensalt()
+# hash=bcrypt.hashpw(bytes, salt)
+
+hash=hashlib.sha256(bytes).hexdigest()
 
 def create_users():
     cursor=conn.cursor()

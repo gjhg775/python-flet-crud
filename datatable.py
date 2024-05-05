@@ -1,5 +1,7 @@
+import bcrypt
 import datetime
 import sqlite3
+import hashlib
 from flet import *
 
 conn = sqlite3.connect('database/parqueadero.db',check_same_thread=False)
@@ -7,7 +9,8 @@ conn = sqlite3.connect('database/parqueadero.db',check_same_thread=False)
 valor=0
 
 tb = DataTable(
-    bgcolor="#FFFFFF",
+    bgcolor=colors.PRIMARY_CONTAINER,
+    # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
@@ -33,12 +36,34 @@ vehiculo_edit=RadioGroup(content=Row([
     Radio(label="Otro", value="Otro")
 ]))
 
+def selectUser(usuario, contrasena):
+    hash=hashlib.sha256(contrasena.encode()).hexdigest()
+    try:
+        cursor=conn.cursor()
+        sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
+        values=(usuario,)
+        cursor.execute(sql, values)
+        registros=cursor.fetchall()
+
+        print(registros[0])
+
+        hashed=registros[0][2]
+
+        if registros != [] and hash == hashed:
+            login=True
+        else:
+            login=False
+        return login
+    except Exception as e:
+        print(e)
+
 def get_configuration():
     try:
         id=1
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM configuracion WHERE configuracion_id = {id}"""
-        cursor.execute(sql)
+        sql=f"""SELECT * FROM configuracion WHERE configuracion_id = ?"""
+        values=(id,)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         if registros != []:
@@ -84,7 +109,6 @@ def update_register(vehiculo, consecutivo, id):
         sql=f"""UPDATE registro SET salida = ? WHERE registro_id = ?"""
         values=(f"{salida}", f"{id}")
         cursor.execute(sql, values)
-        conn.commit()
 
         sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = {id}"""
         cursor.execute(sql)
