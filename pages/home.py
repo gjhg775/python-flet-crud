@@ -19,7 +19,7 @@ class Home(ft.UserControl):
                     # padding=5,
                     # col={"sm":6, "md":6, "xl":4},
                     # alignment=ft.alignment.center,
-                    content=ft.Stack([
+                    # content=ft.Stack([
                         # ft.ResponsiveRow([
                         #     ft.Column([
                         #         # ft.ElevatedButton("Registro", on_click=showInputs)
@@ -31,24 +31,31 @@ class Home(ft.UserControl):
                         # ft.Row([
                         #     tblRegistro,
                         #     card
-                        # ]),
-                        
-                        ft.Image(
-                            src=f"img/fondo.jpg",
-                            # width=300,
-                            # height=300,
-                            fit=ft.ImageFit.COVER
-                        ),
+                        # ]),                        
                         
                         ft.ResponsiveRow([
+                            ft.Container(height=50),
                             ft.Row([
-                                ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
+                                # ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
                                 # ft.ElevatedButton("Registro", on_click=showInputs)
                             ],
                             alignment=ft.MainAxisAlignment.CENTER
                             ),
-                        ]),
-                    ]),
+                            ft.Container(height=50),
+                            ft.Row([
+                                ft.Image(
+                                    src=f"img/parqueadero.jpeg",
+                                    width=300,
+                                    height=295,
+                                    fit=ft.ImageFit.COVER,
+                                )
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            )
+                        ],
+                        vertical_alignment=ft.alignment.center
+                        ),
+                    # ]),
                 ),
                 # ft.Container(
                 #     padding=5,

@@ -35,12 +35,14 @@ class Register(ft.UserControl):
     def build(self):
         return ft.Column(
             controls=[
+                ft.Container(height=50),
                 ft.Container(
                     alignment=ft.alignment.center,
                     content=ft.Stack([
                         ft.Row([
                             ft.Column([
-                                ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
+                                ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
+                                # ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
                                 # ft.ElevatedButton("Registro", on_click=showInputs)
                             ])
                         ], 
@@ -57,17 +59,20 @@ class Register(ft.UserControl):
                         # ]),
                     ]),
                 ),
+                ft.Container(height=50),
                 ft.Container(
                     # bgcolor=ft.colors.PRIMARY_CONTAINER,
                     # border_radius=10,
                     alignment=ft.alignment.center,
                     padding=ft.padding.only(10, 20, 10, 0),
-                    content=ft.Stack([
-                       ft.ResponsiveRow([
-                            ft.Column(col=6, controls=[tblRegistro]),
-                            ft.Column(col=6, controls=[rdbVehiculo, placa, total])
+                    # content=ft.Stack([
+                    content=ft.ResponsiveRow([
+                            ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                            ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[tblRegistro]),
+                            ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa, total]),
+                            ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                         ]),
-                    ]),
+                    # ]),
                 )
             ]
             # ft.Container(

@@ -45,15 +45,24 @@ def selectUser(usuario, contrasena):
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
-        print(registros[0])
+        login_user=""
+        login_password=""
+        bln_login=False
 
-        hashed=registros[0][2]
+        if registros != []:
+            # print(registros[0])
 
-        if registros != [] and hash == hashed:
-            login=True
+            hashed=registros[0][2]
+
+            if hash == hashed:
+                bln_login=True
+            else:
+                bln_login=False
         else:
-            login=False
-        return login
+            login_user="Usuario no registrado"
+        if bln_login == False:
+            login_password="Contraseña inválida"
+        return login_user, login_password, bln_login
     except Exception as e:
         print(e)
 

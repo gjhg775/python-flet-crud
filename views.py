@@ -2,6 +2,7 @@ import flet as ft
 from pages.home import Home
 from pages.login import Login
 from pages.register import Register
+from pages.developer import Developer
 
 def views_handler(page):
     return {
@@ -21,6 +22,12 @@ def views_handler(page):
             route="/register",
             controls=[
                 Register(page)
+            ]
+        ),
+        "/developer":ft.View(
+            route="/developer",
+            controls=[
+                Developer(page)
             ]
         ),
     }

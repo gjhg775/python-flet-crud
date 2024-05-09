@@ -1,6 +1,9 @@
 import flet as ft
+from pages.login import Login
 from pages.home import Home
 from pages.register import *
+from pages.developer import Developer
+from datatable import get_configuration, selectUser
 
 # def main(page: ft.Page):
 #     page.drawer = ft.NavigationDrawer(
@@ -34,6 +37,8 @@ from pages.register import *
 
 # ft.app(main)
 
+parqueadero, regimen=get_configuration()
+
 def main(page: ft.Page):
 
     def change_navigation_destination(e):
@@ -41,7 +46,15 @@ def main(page: ft.Page):
             hide_drawer(e)
             page.clean()
             page.add(Home(page))
-        elif e.control.selected_index == 1:
+        if e.control.selected_index == 1:
+            hide_drawer(e)
+            # page.clean()
+            # page.add(Configuration(page))
+        if e.control.selected_index == 2:
+            hide_drawer(e)
+            # page.clean()
+            # page.add(Variables(page))
+        if e.control.selected_index == 3:
             hide_drawer(e)
             page.clean()
             page.add(Register(page))
@@ -49,6 +62,15 @@ def main(page: ft.Page):
             tblRegistro.update()
             page.update()
             placa.focus()
+        if e.control.selected_index == 4:
+            hide_drawer(e)
+            page.clean()
+            page.add(Developer(page))
+        if e.control.selected_index == 5:
+            logout()
+            hide_drawer(e)
+            page.clean()
+            page.add(container)
 
     page.drawer = ft.NavigationDrawer(
         controls=[
@@ -60,22 +82,40 @@ def main(page: ft.Page):
             ),
             ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
+                icon_content=ft.Icon(ft.icons.SETTINGS_OUTLINED),
+                label="Configuración",
+                selected_icon=ft.icons.SETTINGS,
+            ),
+            ft.NavigationDrawerDestination(
+                icon_content=ft.Icon(ft.icons.FACT_CHECK_OUTLINED),
+                label="Variables",
+                selected_icon=ft.icons.FACT_CHECK,
+            ),
+            ft.NavigationDrawerDestination(
                 icon_content=ft.Icon(ft.icons.EDIT_OUTLINED),
                 label="Registro",
                 selected_icon=ft.icons.EDIT_ROUNDED,
             ),
+            ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.PHONE_OUTLINED),
-                label="Item 3",
-                selected_icon=ft.icons.PHONE,
+                icon_content=ft.Icon(ft.icons.PERSON_OUTLINED),
+                label="Desarrollador",
+                selected_icon=ft.icons.PERSON_ROUNDED,
+            ),
+            ft.Divider(thickness=2),
+            ft.NavigationDrawerDestination(
+                icon_content=ft.Icon(ft.icons.POWER_SETTINGS_NEW_OUTLINED),
+                label="Cerrar sesión",
+                selected_icon=ft.icons.POWER_SETTINGS_NEW,
             ),
         ],
         on_change=lambda e: change_navigation_destination(e),
     )
 
     def show_drawer(e):
-        page.drawer.open = True
-        page.drawer.update()
+        if page.session.get("Loginme") != None:
+            page.drawer.open = True
+            page.drawer.update()
 
     def hide_drawer(e):
         page.drawer.open = False
@@ -86,11 +126,14 @@ def main(page: ft.Page):
     #     page.update()
 
     page.title="Parqueadero"
+    page.scroll="auto"
     page.window_opacity=0.8
     page.opacity=0.0
-    page.window_resizable=False
-    page.window_maximizable=False
-    # page.window_center()
+    # page.window_resizable=False
+    # page.window_maximizable=False
+    page.vertical_alignment="center"
+    page.horizontal_alignment="center"
+    page.window_center()
     page.appbar = ft.AppBar(
         leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
         leading_width=55,
@@ -112,9 +155,150 @@ def main(page: ft.Page):
         #     ),
         # ],
     )
-    page.add(Home(page))
 
-ft.app(target=main)
+    def validateUser(e):
+        user.error_text=""
+        password.error_text=""
+        if user.value == "":
+            user.error_text="Digite el usuario"
+        if password.value == "":
+            password.error_text="Digite la contraseña"
+        user.update()
+        password.update()
+        if user.error_text != "" and password.error_text != "":
+            user.focus()
+            user.update()
+        elif user.error_text != "" and password.error_text == "":
+            user.focus()
+            user.update()
+        elif user.error_text == "" and password.error_text != "":
+            password.focus()
+            password.update()
+        else:
+            login()
+
+    def login():
+        login_user=""
+        login_password=""
+        bln_login=False
+        if user.value != "" and password.value != "":
+            usuario=user.value
+            contrasena=password.value
+            login_user, login_password, bln_login=selectUser(usuario, contrasena)
+            if login_user != "":
+                user.error_text=login_user
+                user.focus()
+                user.update()
+            if login_password != "":
+                password.error_text=login_password
+                password.focus()
+                password.update()
+            if bln_login == True:
+                datalogin={"value":True, "username":user.value}
+                page.session.set("Loginme", datalogin)
+                username=page.session.get('Loginme')
+                # page.go("/register")
+                page.clean()
+                page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
+                page.add(Home(page))
+                page.update()
+                # page.snack_bar=ft.SnackBar(
+                #     ft.Text(f"Bienvenido {username['username']}", size=30, text_align="center"),
+                #     bgcolor="green"
+                # )
+                # page.snack_bar.open=True
+                # page.update()
+            # else:
+            #     page.snack_bar=ft.SnackBar(
+            #         ft.Text("Acceso denegado", size=30, text_align="center"),
+            #         bgcolor="red"
+            #     )
+            #     page.snack_bar.open=True
+            #     page.update()
+    
+    def logout():
+        user.value=""
+        password.value=""
+        page.session.clear()
+
+    lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
+    user=ft.TextField(width=280, height=40, hint_text="Usuario", border="underline", color="black", prefix_icon=ft.icons.PERSON_SHARP)
+    password=ft.TextField(width=280, height=40, hint_text="Contraseña", border="underline", color="black", prefix_icon=ft.icons.LOCK, password=True)
+    btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateUser)
+
+    container=ft.Column(
+            controls=[        
+                ft.Container(
+                    ft.Column([
+                        ft.Container(
+                            # ft.Text(
+                            #     "Iniciar sesión",
+                            #     width=320,
+                            #     # size=30,
+                            #     theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM,
+                            #     text_align="center",
+                            #     # weight="W900",
+                            #     color=ft.colors.BLUE_900
+                            # )
+                            lbl_login,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            user,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            password,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            btn_login,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            ft.Row([
+                                ft.Text("¿No tiene una cuenta?"),
+                                ft.TextButton("Crear cuenta")
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER
+                            ),
+                            padding=ft.padding.only(20,20)
+                        )
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                    ),
+                    border_radius=20,
+                    width=320,
+                    # height=500,
+                    height=page.height-70,
+                    # gradient=ft.LinearGradient([
+                    #     ft.colors.PURPLE,
+                    #     ft.colors.PINK,
+                    #     ft.colors.RED
+                    # ])
+                )
+            ]
+        )
+
+    # container=ft.Row([
+    #     ft.Column([
+    #         lbl_login,
+    #         user,
+    #         password,
+    #         btn_login
+    #     ],
+    #     alignment=ft.MainAxisAlignment.CENTER,
+    #     horizontal_alignment=ft.alignment.center
+    #     )
+    # ],
+    # alignment=ft.MainAxisAlignment.CENTER,
+    # )
+
+    # page.add(Home(page))
+    page.add(container)
+
+# ft.app(target=main, assets_dir="assets")
+ft.app(target=main, port=9000, view=ft.AppView.WEB_BROWSER, assets_dir="assets")
 
 
 
