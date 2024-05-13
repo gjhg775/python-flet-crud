@@ -65,6 +65,7 @@ def drop_configuration():
 def create_variables():
     cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS variables(
+        variable_id INTEGER PRIMARY KEY AUTOINCREMENT,
         vlr_hora_moto INTEGER,
         vlr_dia_moto INTEGER,
         vlr_hora_carro INTEGER,
@@ -124,6 +125,28 @@ def develop_access():
     except Exception as e:
         print(e)
 
+def add_configuration():
+    try:
+        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo) VALUES (?, ?, ?, ?, ?, ?, ?)"""
+        values=("", "", "", "", "", "", "")
+
+        cursor=conn.cursor()
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
+
+def add_variables():
+    try:
+        sql="""INSERT INTO variables (vlr_hora_moto, vlr_dia_moto, vlr_hora_carro, vlr_dia_carro, vlr_hora_otro, vlr_dia_otro) VALUES (?, ?, ?, ?, ?, ?)"""
+        values=("", "", "", "", "", "")
+
+        cursor=conn.cursor()
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
+
 drop_regist()
 drop_variables()
 drop_configuration()
@@ -137,5 +160,7 @@ create_variables()
 create_regist()
 develop_user()
 develop_access()
+add_configuration()
+add_variables()
 
 conn.close()

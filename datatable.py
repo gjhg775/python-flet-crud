@@ -77,15 +77,20 @@ def get_configuration():
 
         if registros != []:
             parqueadero=registros[0][1]
+            nit=registros[0][2]
             regimen=registros[0][3]
-            return parqueadero, regimen
+            direccion=registros[0][4]
+            telefono=registros[0][5]
+            servicio=registros[0][6]
+            consecutivo=registros[0][7]
+            return parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, 
     except Exception as e:
         print(e)
 
 configuracion = get_configuration()
 
 if configuracion != None:
-    consecutivo=configuracion[0][7]
+    consecutivo=configuracion[6]
 
 def get_variables():
     try:
@@ -102,12 +107,23 @@ def get_variables():
 variables = get_variables()
 
 if variables != None:
-    vlr_hora_moto=variables[0][0]
-    vlr_dia_moto=variables[0][1]
-    vlr_hora_carro=variables[0][2]
-    vlr_dia_carro=variables[0][3]
-    vlr_hora_otro=variables[0][4]
-    vlr_dia_otro=variables[0][5]
+    valor_hora_moto=variables[0][1]
+    valor_dia_moto=variables[0][2]
+    valor_hora_carro=variables[0][3]
+    valor_dia_carro=variables[0][4]
+    valor_hora_otro=variables[0][5]
+    valor_dia_otro=variables[0][6]
+
+def update_variables(vlr_hora_moto, vlr_dia_moto, vlr_hora_carro, vlr_dia_carro, vlr_hora_otro, vlr_dia_otro, id):
+    try:
+        cursor=conn.cursor()
+
+        sql=f"""UPDATE variables SET vlr_hora_moto = ?, vlr_dia_moto = ?, vlr_hora_carro = ?, vlr_dia_carro = ?, vlr_hora_otro = ?, vlr_dia_otro = ? WHERE variable_id = ?"""
+        values=(f"{vlr_hora_moto}", f"{vlr_dia_moto}", f"{vlr_hora_carro}", f"{vlr_dia_carro}", f"{vlr_hora_otro}", f"{vlr_dia_otro}", f"{id}")
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
 
 def update_register(vehiculo, consecutivo, id):
     try:
@@ -118,6 +134,7 @@ def update_register(vehiculo, consecutivo, id):
         sql=f"""UPDATE registro SET salida = ? WHERE registro_id = ?"""
         values=(f"{salida}", f"{id}")
         cursor.execute(sql, values)
+        conn.commit()
 
         sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = {id}"""
         cursor.execute(sql)
@@ -140,20 +157,20 @@ def update_register(vehiculo, consecutivo, id):
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
             if vehiculo == "Moto":
-                if total > vlr_dia_moto:
-                    total=vlr_dia_moto
+                if total > valor_dia_moto:
+                    total=valor_dia_moto
             if vehiculo == "Carro":
-                if total > vlr_dia_carro:
-                    total=vlr_dia_carro
+                if total > valor_dia_carro:
+                    total=valor_dia_carro
             if vehiculo == "Otro":
-                total=vlr_dia_otro
+                total=valor_dia_otro
         else:
             if vehiculo == "Moto":
-                total=vlr_dia_moto
+                total=valor_dia_moto
             if vehiculo == "Carro":
-                total=vlr_dia_carro
+                total=valor_dia_carro
             if vehiculo == "Otro":
-                total=vlr_dia_otro
+                total=valor_dia_otro
             if tiempo > 12:
                 turno=tiempo/12
                 turno=int(turno)
@@ -165,40 +182,40 @@ def update_register(vehiculo, consecutivo, id):
                     turno=turno+1
                 if vehiculo == "Moto":
                     if int(round(horas)) <= 4:
-                        total=int(round(horas))*vlr_hora_moto
+                        total=int(round(horas))*valor_hora_moto
                         if ((int(round(horas))/60) % 60) == 0:
                             valor_fraccion=0
                         if ((int(round(horas))/60) % 60) > 0 and ((int(round(horas))/60) % 60) <= 15:
                             valor_fraccion=valor/2
                         if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
                             valor_fraccion=valor
-                        total=total+valor_fraccion+(vlr_dia_moto*turno)
+                        total=total+valor_fraccion+(valor_dia_moto*turno)
                     else:
-                        total=vlr_dia_moto*turno
+                        total=valor_dia_moto*turno
                 if vehiculo == "Carro":
                     if int(round(horas)) <= 4:
-                        total=int(round(horas))*vlr_hora_carro
+                        total=int(round(horas))*valor_hora_carro
                         if ((int(round(horas))/60) % 60) == 0:
                             valor_fraccion=0
                         if ((int(round(horas))/60) % 60) > 0 and ((int(round(horas))/60) % 60) <= 15:
                             valor_fraccion=valor/2
                         if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
                             valor_fraccion=valor
-                        total=total+valor_fraccion+(vlr_dia_carro*turno)
+                        total=total+valor_fraccion+(valor_dia_carro*turno)
                     else:
-                        total=vlr_dia_carro*turno
+                        total=valor_dia_carro*turno
                 if vehiculo == "Otro":
                     if int(round(horas)) <= 4:
-                        total=int(round(horas))*vlr_hora_otro
+                        total=int(round(horas))*valor_hora_otro
                         if ((int(round(horas))/60) % 60) == 0:
                             valor_fraccion=0
                         if ((int(round(horas))/60) % 60) > 0 and ((int(round(horas))/60) % 60) <= 15:
                             valor_fraccion=valor/2
                         if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
                             valor_fraccion=valor
-                        total=total+valor_fraccion+(vlr_dia_otro*turno)
+                        total=total+valor_fraccion+(valor_dia_otro*turno)
                     else:
-                        total=vlr_dia_otro*turno
+                        total=valor_dia_otro*turno
 
         tiempo=int(tiempo)
         sql=f"""UPDATE registro SET salida = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
@@ -223,11 +240,11 @@ def add_register(vehiculo, placa):
     vehiculo=vehiculo
 
     if vehiculo == "Moto":
-        valor=vlr_hora_moto
+        valor=valor_hora_moto
     if vehiculo == "Carro":
-        valor=vlr_hora_carro
+        valor=valor_hora_carro
     if vehiculo == "Otro":
-        valor=vlr_hora_otro
+        valor=valor_hora_otro
 
     tiempo=0
     total=0

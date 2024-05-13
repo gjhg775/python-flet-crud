@@ -13,19 +13,19 @@ locale.setlocale(locale.LC_ALL, "")
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
 
-parqueadero, regimen=get_configuration()
+parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo=get_configuration()
 
-def showInputs(e):
-    variables=get_variables()
-    if variables != None:
-        card.offset=ft.transform.Offset(0,0)
-        placa.focus()
-        # page.update()
-    else:
-        title="Variables"
-        message=f"Debe ingresar los valores de las variables"
-        open_dlg_modal(e, title, message)
-        return False
+# def showInputs(e):
+#     variables=get_variables()
+#     if variables != None:
+#         card.offset=ft.transform.Offset(0,0)
+#         placa.focus()
+#         page.update()
+#     else:
+#         title="Variables"
+#         message=f"Debe ingresar los valores de las variables"
+#         open_dlg_modal(e, title, message)
+#         return False
 
 class Register(ft.UserControl):
     def __init__(self, page):
@@ -35,7 +35,7 @@ class Register(ft.UserControl):
     def build(self):
         return ft.Column(
             controls=[
-                ft.Container(height=50),
+                ft.Container(height=20),
                 ft.Container(
                     alignment=ft.alignment.center,
                     content=ft.Stack([
@@ -59,7 +59,7 @@ class Register(ft.UserControl):
                         # ]),
                     ]),
                 ),
-                ft.Container(height=50),
+                # ft.Container(height=50),
                 ft.Container(
                     # bgcolor=ft.colors.PRIMARY_CONTAINER,
                     # border_radius=10,
@@ -69,10 +69,17 @@ class Register(ft.UserControl):
                     content=ft.ResponsiveRow([
                             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                             ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[tblRegistro]),
-                            ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa, total]),
+                            ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
                             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                         ]),
                     # ]),
+                ),
+                ft.Container(
+                    content=ft.ResponsiveRow([
+                        total
+                    ],
+                    alignment=ft.MainAxisAlignment.END
+                    ),
                 )
             ]
             # ft.Container(
@@ -216,7 +223,7 @@ dlg_modal=ft.AlertDialog(
 )
 
 placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", on_blur=register)
-total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=65, width=600, text_align="right", read_only=True)
+total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=90, width=600, text_align="right", read_only=True)
 
 card=ft.Card(
     margin=ft.margin.only(0, 50, 0, 0),
