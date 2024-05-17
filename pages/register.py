@@ -13,7 +13,16 @@ locale.setlocale(locale.LC_ALL, "")
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
 
-parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo=get_configuration()
+configuracion = get_configuration()
+
+if configuracion != None:
+    parqueqdero=configuracion[0][1]
+    nit=configuracion[0][2]
+    regimen=configuracion[0][3]
+    direccion=configuracion[0][4]
+    telefono=configuracion[0][5]
+    servicio=configuracion[0][6]
+    consecutivo=configuracion[0][7]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -31,6 +40,97 @@ class Register(ft.UserControl):
     def __init__(self, page):
         super().__init__()
         self.page=page
+
+        self.rdbVehiculo=ft.RadioGroup(
+            content=ft.Row([
+                # ft.Text("Vehículo", size=20),
+                ft.Radio(label="Moto", value="Moto"),
+                ft.Radio(label="Carro", value="Carro"),
+                ft.Radio(label="Otro", value="Otro")
+            ]),
+            value="Moto",
+            on_change=self.radiogroup_changed
+        )
+
+        self.dlg_modal=ft.AlertDialog(
+            bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_100),
+            modal=True,
+            icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
+            # title=ft.Text(title, text_align="center"),
+            # content=ft.Text(message, text_align="center"),
+            actions=[
+                ft.TextButton("Aceptar", autofocus=True, on_click=self.close_dlg)
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+            on_dismiss=lambda _: self.placa.focus(),
+        )
+
+        self.placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", autofocus=True, on_blur=self.register)
+        self.total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=90, width=600, text_align="right", read_only=True)
+
+        # card=ft.Card(
+        #     margin=ft.margin.only(0, 50, 0, 0),
+        #     offset=ft.transform.Offset(2,0),
+        #     animate_offset=ft.animation.Animation(300, curve="easeIn"),
+        #     elevation=30,
+        #     content=ft.Container(
+        #         ft.Column([
+        #             ft.Row([
+        #                 # ft.Text("Registro", size=20, weight="bold"),
+        #                 ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_SMALL),
+        #                 ft.IconButton(
+        #                     icon="close",
+        #                     icon_size=30,
+        #                     on_click=self.hideInputs
+        #                 ),
+        #             ],
+        #             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        #             ),
+        #             # ft.Row([
+        #             #     ft.Column([
+        #             #         rdbVehiculo,
+        #             #         placa,
+        #             #         total
+        #             #     ])
+        #             # ],
+        #             # alignment=ft.MainAxisAlignment.CENTER
+        #             # # alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        #             # # spacing=20
+        #             # ),
+        #             # ft.Row([
+        #             #     tblRegistro
+        #             #     # lv
+        #             # ],
+        #             # height=268,
+        #             # alignment=ft.MainAxisAlignment.CENTER,
+                    
+        #             # # spacing=20
+        #             # ),
+
+        #             ft.ResponsiveRow([
+        #                 # ft.Column(col=6, controls=[tblRegistro]),
+        #                 ft.Column(col=6, controls=[self.rdbVehiculo, self.placa, self.total])
+        #             ]),
+
+        #             # ft.Row([
+        #             #     ft.Column([
+        #             #     ft.Text("", size=20, width=530),
+        #             #     ]),
+        #             #     ft.Column([
+        #             #         placa
+        #             #     ]),
+        #             # ],
+        #             # alignment=ft.MainAxisAlignment.END
+        #             # ),
+        #             # ft.Row([
+        #             #     total
+        #             # ],
+        #             # alignment=ft.MainAxisAlignment.END
+        #             # ),
+        #         ]),
+        #         padding=ft.padding.all(10)
+        #     )
+        # )
 
     def build(self):
         return ft.Column(
@@ -69,14 +169,14 @@ class Register(ft.UserControl):
                     content=ft.ResponsiveRow([
                             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                             ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[tblRegistro]),
-                            ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
+                            ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[self.rdbVehiculo, self.placa]),
                             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                         ]),
                     # ]),
                 ),
                 ft.Container(
                     content=ft.ResponsiveRow([
-                        total
+                        self.total
                     ],
                     alignment=ft.MainAxisAlignment.END
                     ),
@@ -114,182 +214,94 @@ class Register(ft.UserControl):
             # )
         )
 
-def hideInputs(e):
-    card.offset=ft.transform.Offset(2,0)
-    # page.update()
+    # def hideInputs(self, e):
+    #     self.card.offset=ft.transform.Offset(2,0)
+    #     self.page.update()
 
-def register(e):
-    if placa.value != "":
-        if rdbVehiculo.value == "Moto":
-            if len(placa.value) < 5 or len(placa.value) > 6:
-                title="Placa inválida"
-                message=f"La placa {placa.value} no es válida para una moto"
-                open_dlg_modal(e, title, message)
-                return False
-            if len(placa.value) == 6 and placa.value[-1] in "0123456789":
-                title="Placa inválida"
-                message=f"La placa {placa.value} no es válida para una moto"
-                open_dlg_modal(e, title, message)
-                return False
-        if rdbVehiculo.value == "Carro":
-            if len(placa.value) != 6 or placa.value[-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                title="Placa inválida"
-                message=f"La placa {placa.value} no es válida para un carro"
-                open_dlg_modal(e, title, message)
-                return False
-        for i in placa.value:
-            if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                if rdbVehiculo.value == "Moto" or rdbVehiculo.value == "Carro":
-                    if rdbVehiculo.value == "Moto":
-                        message=f"El caracter {i} no es válido para la placa de una moto"
-                    if rdbVehiculo.value == "Carro":
-                        message=f"El caracter {i} no es válido para la placa de un carro"
+    def register(self, e):
+        if self.placa.value != "":
+            if self.rdbVehiculo.value == "Moto":
+                for i in self.placa.value:
+                    if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                        if self.rdbVehiculo.value == "Moto" or self.rdbVehiculo.value == "Carro":
+                            if self.rdbVehiculo.value == "Moto":
+                                message=f"El caracter {i} no es válido para la placa de una moto"
+                            if self.rdbVehiculo.value == "Carro":
+                                message=f"El caracter {i} no es válido para la placa de un carro"
+                            title="Placa inválida"
+                            self.open_dlg_modal(e, title, message)
+                            return False
+                if len(self.placa.value) < 5 or len(self.placa.value) > 6:
                     title="Placa inválida"
-                    open_dlg_modal(e, title, message)
+                    message=f"La placa {self.placa.value} no es válida para una moto"
+                    self.open_dlg_modal(e, title, message)
                     return False
-        vlr_total=selectRegister(rdbVehiculo.value, placa.value)
-
-        if vlr_total == None:
-            vlr_total = 0
-
-        if vlr_total == 0:
-            message="Registro creado satisfactoriamente"
-        else:
-            message="Registro actualizado satisfactoriamente"
-
-        placa.value=""
-        vlr_total=locale.currency(vlr_total, grouping=True)
-        total.hint_text="Total "+str(vlr_total)
-        # card.update()
-        total.update()
-        placa.focus()
-        tb.rows.clear()
-        selectRegisters()
-        tb.update()
-        tblRegistro.update()
-
-        # page.snack_bar=ft.SnackBar(
-        #     ft.Text(message, color="white"),
-        #     bgcolor="green"
-        # )
-        # page.snack_bar.open=True
-        # page.update()
-
-        time.sleep(4)
-
-        vlr_total=0
-        vlr_total=locale.currency(vlr_total, grouping=True)
-        total.hint_text="Total "+str(vlr_total)
-        # card.update()
-        total.update()
-
-def close_dlg(e):
-    dlg_modal.open=False
-    # page.update()
-    total.update()
-
-def open_dlg_modal(e, title, message):
-    dlg_modal.title=ft.Text(title, text_align="center")
-    dlg_modal.content=ft.Text(message, text_align="center")
-    # page.dialog=dlg_modal
-    dlg_modal.open=True
-    # page.update()
-
-def radiogroup_changed(e):
-    placa.focus()
-
-rdbVehiculo=ft.RadioGroup(
-    content=ft.Row([
-        # ft.Text("Vehículo", size=20),
-        ft.Radio(label="Moto", value="Moto"),
-        ft.Radio(label="Carro", value="Carro"),
-        ft.Radio(label="Otro", value="Otro")
-    ]),
-    value="Moto",
-    on_change=radiogroup_changed
-)
-
-dlg_modal=ft.AlertDialog(
-    bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_100),
-    modal=True,
-    icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
-    # title=ft.Text(title, text_align="center"),
-    # content=ft.Text(message, text_align="center"),
-    actions=[
-        ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
-    ],
-    actions_alignment=ft.MainAxisAlignment.END,
-    on_dismiss=lambda e: placa.focus(),
-)
-
-placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", on_blur=register)
-total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=90, width=600, text_align="right", read_only=True)
-
-card=ft.Card(
-    margin=ft.margin.only(0, 50, 0, 0),
-    offset=ft.transform.Offset(2,0),
-    animate_offset=ft.animation.Animation(300, curve="easeIn"),
-    elevation=30,
-    content=ft.Container(
-        ft.Column([
-            ft.Row([
-                # ft.Text("Registro", size=20, weight="bold"),
-                ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_SMALL),
-                ft.IconButton(
-                    icon="close",
-                    icon_size=30,
-                    on_click=hideInputs
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-            ),
-            # ft.Row([
-            #     ft.Column([
-            #         rdbVehiculo,
-            #         placa,
-            #         total
-            #     ])
-            # ],
-            # alignment=ft.MainAxisAlignment.CENTER
-            # # alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-            # # spacing=20
-            # ),
-            # ft.Row([
-            #     tblRegistro
-            #     # lv
-            # ],
-            # height=268,
-            # alignment=ft.MainAxisAlignment.CENTER,
+                if len(self.placa.value) == 6 and self.placa.value[-1] in "0123456789":
+                    title="Placa inválida"
+                    message=f"La placa {self.placa.value} no es válida para una moto"
+                    self.open_dlg_modal(e, title, message)
+                    return False
+            if self.rdbVehiculo.value == "Carro":
+                if len(self.placa.value) != 6 or self.placa.value[-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                    title="Placa inválida"
+                    message=f"La placa {self.placa.value} no es válida para un carro"
+                    self.open_dlg_modal(e, title, message)
+                    return False
             
-            # # spacing=20
-            # ),
+            vlr_total=selectRegister(self.rdbVehiculo.value, self.placa.value)
 
-            ft.ResponsiveRow([
-                # ft.Column(col=6, controls=[tblRegistro]),
-                ft.Column(col=6, controls=[rdbVehiculo, placa, total])
-            ]),
+            # print("Total " + str(vlr_total))
 
-            # ft.Row([
-            #     ft.Column([
-            #     ft.Text("", size=20, width=530),
-            #     ]),
-            #     ft.Column([
-            #         placa
-            #     ]),
-            # ],
-            # alignment=ft.MainAxisAlignment.END
-            # ),
-            # ft.Row([
-            #     total
-            # ],
-            # alignment=ft.MainAxisAlignment.END
-            # ),
-        ]),
-        padding=ft.padding.all(10)
-    )
-)
+            # if vlr_total == None or vlr_total == "":
+            #     vlr_total = 0
 
-selectRegisters()
+            if vlr_total == 0:
+                message="Registro creado satisfactoriamente"
+            else:
+                message="Registro actualizado satisfactoriamente"
+
+            self.placa.value=""
+            vlr_total=locale.currency(vlr_total, grouping=True)
+            self.total.hint_text="Total "+str(vlr_total)
+            # card.update()
+            self.total.update()
+            self.placa.focus()
+            tb.rows.clear()
+            selectRegisters()
+            tb.update()
+            tblRegistro.update()
+
+            # page.snack_bar=ft.SnackBar(
+            #     ft.Text(message, color="white"),
+            #     bgcolor="green"
+            # )
+            # page.snack_bar.open=True
+            # page.update()
+
+            time.sleep(4)
+
+            vlr_total=0
+            vlr_total=locale.currency(vlr_total, grouping=True)
+            self.total.hint_text="Total "+str(vlr_total)
+            # card.update()
+            self.total.update()
+
+    def close_dlg(self, e):
+        self.dlg_modal.open=False
+        self.page.update()
+        self.total.update()
+
+    def open_dlg_modal(self, e, title, message):
+        self.dlg_modal.title=ft.Text(title, text_align="center")
+        self.dlg_modal.content=ft.Text(message, text_align="center")
+        self.page.dialog=self.dlg_modal
+        self.dlg_modal.open=True
+        self.page.update()
+
+    def radiogroup_changed(self, e):
+        self.placa.focus()
+    
+    selectRegisters()
 
 
 

@@ -1,6 +1,7 @@
 import flet as ft
 from pages.login import Login
 from pages.home import Home
+from pages.configuration import Configuration
 from pages.variables import Variables
 from pages.register import *
 from pages.developer import Developer
@@ -38,7 +39,16 @@ from datatable import get_configuration, selectUser
 
 # ft.app(main)
 
-parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo=get_configuration()
+configuracion=get_configuration()
+
+if configuracion != None:
+    parqueadero=configuracion[0][1]
+    nit=configuracion[0][2]
+    regimen=configuracion[0][3]
+    direccion=configuracion[0][4]
+    telefono=configuracion[0][5]
+    servicio=configuracion[0][6]
+    consecutivo=configuracion[0][7]
 
 def main(page: ft.Page):
 
@@ -49,8 +59,8 @@ def main(page: ft.Page):
             page.add(Home(page))
         if e.control.selected_index == 1:
             hide_drawer(e)
-            # page.clean()
-            # page.add(Configuration(page))
+            page.clean()
+            page.add(Configuration(page))
         if e.control.selected_index == 2:
             hide_drawer(e)
             page.clean()
@@ -63,7 +73,7 @@ def main(page: ft.Page):
             tblRegistro.scroll="auto"
             tblRegistro.update()
             page.update()
-            placa.focus()
+            # placa.focus()
         if e.control.selected_index == 4:
             hide_drawer(e)
             page.clean()
@@ -92,42 +102,66 @@ def main(page: ft.Page):
     #     e.control.checked = not e.control.checked
     #     page.update()
 
-    def validateUser(e):
+    # def validateUser(e):
+    #     user.error_text=""
+    #     password.error_text=""
+    #     if user.value == "":
+    #         user.error_text="Digite el usuario"
+    #     if password.value == "":
+    #         password.error_text="Digite la contraseña"
+    #     user.update()
+    #     password.update()
+    #     if user.error_text != "" and password.error_text != "":
+    #         user.focus()
+    #         user.update()
+    #     elif user.error_text != "" and password.error_text == "":
+    #         user.focus()
+    #         user.update()
+    #     elif user.error_text == "" and password.error_text != "":
+    #         password.focus()
+    #         password.update()
+    #     else:
+    #         login()
+
+        # if user.error_text != "" and password.error_text != "":
+        #     btn_login.focus()
+        #     # user.update()
+        # if user.error_text != "" and password.error_text == "":
+        #     btn_login.focus()
+        #     # user.update()
+        # if user.error_text == "" and password.error_text != "":
+        #     btn_login.focus()
+        #     # password.update()
+        # # user.update()
+        # # password.update()
+        # page.update()
+        # if user.error_text == "" and password.error_text == "":
+        #     login()
+
+
+    def login(e):
         user.error_text=""
         password.error_text=""
-        if user.value == "":
-            user.error_text="Digite el usuario"
-        if password.value == "":
-            password.error_text="Digite la contraseña"
-        user.update()
-        password.update()
-        if user.error_text != "" and password.error_text != "":
-            user.focus()
-            user.update()
-        elif user.error_text != "" and password.error_text == "":
-            user.focus()
-            user.update()
-        elif user.error_text == "" and password.error_text != "":
-            password.focus()
-            password.update()
-        else:
-            login()
-
-    def login():
-        login_user=""
-        login_password=""
         bln_login=False
         if user.value != "" and password.value != "":
             usuario=user.value
             contrasena=password.value
             login_user, login_password, bln_login=selectUser(usuario, contrasena)
-            if login_user != "":
+            if login_user != "" and bln_login == False:
                 user.error_text=login_user
-                user.focus()
+                # user.focus()
+                btn_login.focus()
                 user.update()
-            if login_password != "":
+            else:
+                user.error_text=""
+                user.update()
+            if login_password != "" and bln_login == False:
                 password.error_text=login_password
-                password.focus()
+                # password.focus()
+                btn_login.focus()
+                password.update()
+            else:
+                password.error_text=""
                 password.update()
             if bln_login == True:
                 datalogin={"value":True, "username":user.value}
@@ -151,6 +185,15 @@ def main(page: ft.Page):
             #     )
             #     page.snack_bar.open=True
             #     page.update()
+        else:
+            if user.value == "":
+                user.error_text="Digite el usuario"
+                btn_login.focus()
+            if password.value == "":
+                password.error_text="Digite la contraseña"
+                btn_login.focus()
+            user.update()
+            password.update()
     
     def logout():
         user.value=""
@@ -229,7 +272,8 @@ def main(page: ft.Page):
     page.appbar = ft.AppBar(
         leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
         leading_width=55,
-        title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+        # title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+        title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
         center_title=False,
         # bgcolor=ft.colors.PRIMARY_CONTAINER,
         bgcolor=ft.colors.BLUE_900,
@@ -254,7 +298,7 @@ def main(page: ft.Page):
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
     user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True)
-    btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateUser)
+    btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
 
     container=ft.Column(
             controls=[        

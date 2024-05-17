@@ -68,39 +68,47 @@ def selectUser(usuario, contrasena):
 
 def get_configuration():
     try:
-        id=1
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM configuracion WHERE configuracion_id = ?"""
-        values=(id,)
-        cursor.execute(sql, values)
-        registros=cursor.fetchall()
+        sql="SELECT * FROM configuracion"
+        cursor.execute(sql)
+        configuracion=cursor.fetchall()
 
-        if registros != []:
-            parqueadero=registros[0][1]
-            nit=registros[0][2]
-            regimen=registros[0][3]
-            direccion=registros[0][4]
-            telefono=registros[0][5]
-            servicio=registros[0][6]
-            consecutivo=registros[0][7]
-            return parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, 
+        if configuracion != []:
+            return configuracion
     except Exception as e:
         print(e)
 
 configuracion = get_configuration()
 
 if configuracion != None:
-    consecutivo=configuracion[6]
+    parqueqdero=configuracion[0][1]
+    nit=configuracion[0][2]
+    regimen=configuracion[0][3]
+    direccion=configuracion[0][4]
+    telefono=configuracion[0][5]
+    servicio=configuracion[0][6]
+    consecutivo=configuracion[0][7]
+
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, id):
+    try:
+        cursor=conn.cursor()
+
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{id}")
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
 
 def get_variables():
     try:
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM variables"""
+        sql="SELECT * FROM variables"
         cursor.execute(sql)
-        registros=cursor.fetchall()
+        variables=cursor.fetchall()
 
-        if registros != []:
-            return registros
+        if variables != []:
+            return variables
     except Exception as e:
         print(e)
 
@@ -115,7 +123,7 @@ if variables != None:
     valor_dia_otro=variables[0][6]
 
 def update_variables(vlr_hora_moto, vlr_dia_moto, vlr_hora_carro, vlr_dia_carro, vlr_hora_otro, vlr_dia_otro, id):
-    try:
+    try:        
         cursor=conn.cursor()
 
         sql=f"""UPDATE variables SET vlr_hora_moto = ?, vlr_dia_moto = ?, vlr_hora_carro = ?, vlr_dia_carro = ?, vlr_hora_otro = ?, vlr_dia_otro = ? WHERE variable_id = ?"""
@@ -125,14 +133,21 @@ def update_variables(vlr_hora_moto, vlr_dia_moto, vlr_hora_carro, vlr_dia_carro,
     except Exception as e:
         print(e)
 
-def update_register(vehiculo, consecutivo, id):
+def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro):
     try:
         salida=datetime.datetime.now()
 
+        if vehiculo == "Moto":
+            valor=valor_hora_moto
+        if vehiculo == "Carro":
+            valor=valor_hora_carro
+        if vehiculo == "Otro":
+            valor=valor_hora_otro
+
         cursor=conn.cursor()
 
-        sql=f"""UPDATE registro SET salida = ? WHERE registro_id = ?"""
-        values=(f"{salida}", f"{id}")
+        sql=f"""UPDATE registro SET salida = ?, valor = ? WHERE registro_id = ?"""
+        values=(f"{salida}", f"{valor}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -142,18 +157,18 @@ def update_register(vehiculo, consecutivo, id):
 
         id=registros[0][0]
         valor=registros[0][6]
-        tiempo=((registros[0][8])/60)/60
+        tiempo=((registros[0][11])/60)/60
 
         if tiempo <= 4:
             if int(tiempo) == 0:
                 total=valor
             else:
                 valor_horas=valor*int(tiempo)
-                if (((registros[0][9])/60) % 60) == 0:
+                if (((registros[0][11])/60) % 60) == 0:
                     valor_fraccion=0
-                if ((registros[0][9])/60) % 60 > 0 and ((registros[0][9])/60) % 60 <= 15:
+                if ((registros[0][11])/60) % 60 > 0 and ((registros[0][11])/60) % 60 <= 15:
                     valor_fraccion=valor/2
-                if (((registros[0][9])/60) % 60 > 15 and ((registros[0][9])/60) % 60 <= 30) or ((registros[0][9])/60) % 60 > 30:
+                if (((registros[0][11])/60) % 60 > 15 and ((registros[0][11])/60) % 60 <= 30) or ((registros[0][11])/60) % 60 > 30:
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
             if vehiculo == "Moto":
@@ -218,8 +233,8 @@ def update_register(vehiculo, consecutivo, id):
                         total=valor_dia_otro*turno
 
         tiempo=int(tiempo)
-        sql=f"""UPDATE registro SET salida = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
-        values=(f"{salida}", f"{tiempo}", f"{total}", f"{id}")
+        sql=f"""UPDATE registro SET salida = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
+        values=(f"{salida}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -280,9 +295,21 @@ def selectRegister(vehiculo, placa):
             add_register(vehiculo, placa)
             total=0
         else:
+            variables = get_variables()
+
+            if variables != None:
+                valor_hora_moto=variables[0][1]
+                valor_dia_moto=variables[0][2]
+                valor_hora_carro=variables[0][3]
+                valor_dia_carro=variables[0][4]
+                valor_hora_otro=variables[0][5]
+                valor_dia_otro=variables[0][6]
+
             id=registros[0][0]
             consecutivo=registros[0][1]
-            total=update_register(vehiculo, consecutivo, id)
+            total=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro)
+            if total == None:
+                total=0
         return total
 
         # cursor=conn.cursor()
