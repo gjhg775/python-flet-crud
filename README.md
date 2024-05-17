@@ -1,2 +1,2 @@
 # python-flet-crud
-## app de escritorio
+## app de escritorio y web
