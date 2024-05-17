@@ -1,10 +1,10 @@
 import flet as ft
 from pages.login import Login
-from pages.home import Home
+from pages.home import home
 from pages.configuration import Configuration
 from pages.variables import Variables
 from pages.register import *
-from pages.developer import Developer
+from pages.developer import developer
 from datatable import get_configuration, selectUser
 
 # def main(page: ft.Page):
@@ -56,7 +56,7 @@ def main(page: ft.Page):
         if e.control.selected_index == 0:
             hide_drawer(e)
             page.clean()
-            page.add(Home(page))
+            page.add(home(page))
         if e.control.selected_index == 1:
             hide_drawer(e)
             page.clean()
@@ -77,7 +77,7 @@ def main(page: ft.Page):
         if e.control.selected_index == 4:
             hide_drawer(e)
             page.clean()
-            page.add(Developer(page))
+            page.add(developer(page))
         if e.control.selected_index == 5:
             logout()
             hide_drawer(e)
@@ -170,7 +170,7 @@ def main(page: ft.Page):
                 # page.go("/register")
                 page.clean()
                 page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
-                page.add(Home(page))
+                page.add(home(page))
                 page.update()
                 # page.snack_bar=ft.SnackBar(
                 #     ft.Text(f"Bienvenido {username['username']}", size=30, text_align="center"),
