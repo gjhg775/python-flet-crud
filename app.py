@@ -51,7 +51,7 @@ if configuracion != None:
     consecutivo=configuracion[0][7]
 
 def main(page: ft.Page):
-
+    
     def change_navigation_destination(e):
         if e.control.selected_index == 0:
             hide_drawer(e)
@@ -169,7 +169,8 @@ def main(page: ft.Page):
                 username=page.session.get('Loginme')
                 # page.go("/register")
                 page.clean()
-                page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
+                # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
+                page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
                 page.add(home(page))
                 page.update()
                 # page.snack_bar=ft.SnackBar(
@@ -264,6 +265,7 @@ def main(page: ft.Page):
     page.theme_mode="light"
     page.window_opacity=0.8
     page.opacity=0.0
+    # page.window_width=992
     # page.window_resizable=False
     # page.window_maximizable=False
     page.vertical_alignment="center"
@@ -272,8 +274,8 @@ def main(page: ft.Page):
     page.appbar = ft.AppBar(
         leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
         leading_width=55,
-        # title=ft.Text("Parqueadero", color=ft.colors.WHITE),
-        title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
+        title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+        # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
         center_title=False,
         # bgcolor=ft.colors.PRIMARY_CONTAINER,
         bgcolor=ft.colors.BLUE_900,
@@ -297,7 +299,7 @@ def main(page: ft.Page):
 
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
     user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
-    password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True)
+    password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
 
     container=ft.Column(

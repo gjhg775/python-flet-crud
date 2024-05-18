@@ -16,7 +16,7 @@ vlr_total=locale.currency(vlr_total, grouping=True)
 configuracion = get_configuration()
 
 if configuracion != None:
-    parqueqdero=configuracion[0][1]
+    parqueadero=configuracion[0][1]
     nit=configuracion[0][2]
     regimen=configuracion[0][3]
     direccion=configuracion[0][4]
@@ -305,7 +305,7 @@ if configuracion != None:
 
 def Register(page):
 
-    # def hideInputs( e):
+    # def hideInputs(e):
     #     card.offset=ft.transform.Offset(2,0)
     #     page.update()
 
@@ -389,7 +389,7 @@ def Register(page):
         dlg_modal.open=True
         page.update()
 
-    def radiogroup_changed( e):
+    def radiogroup_changed(e):
         placa.focus()
 
     rdbVehiculo=ft.RadioGroup(
@@ -416,8 +416,17 @@ def Register(page):
         on_dismiss=lambda _: placa.focus(),
     )
 
-    placa=ft.TextField(hint_text="Placa", border="underline", text_size=90, width=600, text_align="center", capitalization="CHARACTERS", autofocus=True, on_blur=register)
-    total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=90, width=600, text_align="right", read_only=True)
+    if page.window_width <= 425:
+        textsize=30
+    elif page.window_width > 425 and page.window_width <= 678:
+        textsize=50
+    elif page.window_width >= 768 and page.window_width < 992:
+        textsize=70
+    elif page.window_width >= 992:
+        textsize=90
+    
+    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", capitalization="CHARACTERS", autofocus=True, on_blur=register)
+    total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", read_only=True)
 
     # card=ft.Card(
     #     margin=ft.margin.only(0, 50, 0, 0),
@@ -491,6 +500,7 @@ def Register(page):
                 content=ft.Stack([
                     ft.Row([
                         ft.Column([
+                            ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900),
                             ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
                             # ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
                             # ft.ElevatedButton("Registro", on_click=showInputs)
@@ -565,7 +575,6 @@ def Register(page):
     )
 
 selectRegisters()
-
 
 
 
