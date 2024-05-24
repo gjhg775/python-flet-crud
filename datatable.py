@@ -156,6 +156,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
         registros=cursor.fetchall()
 
         id=registros[0][0]
+        placa=registros[0][2]
+        entrada=registros[0][3]
         valor=registros[0][6]
         tiempo=((registros[0][11])/60)/60
 
@@ -238,6 +240,12 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
         cursor.execute(sql, values)
         conn.commit()
 
+        sql="SELECT consecutivo FROM configuracion"
+        cursor.execute(sql)
+        registros=cursor.fetchall()
+
+        consecutivo=registros[0][0]
+
         id=1
         consecutivo=consecutivo+1
         sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
@@ -245,7 +253,11 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
         cursor.execute(sql, values)
         conn.commit()
 
-        return total
+        # salida=salida.strftime('%d/%m/%Y %H:%M')
+        comentario1=""
+        comentario2=""
+
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total
     except Exception as e:
         print(e)
 
@@ -280,6 +292,11 @@ def add_register(vehiculo, placa):
         values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
+
+        comentario1="* Sin éste recibo no se entrega el automotor"
+        comentario2="* Después de retirado el automotor no se acepta reclamos"
+
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total
     except Exception as e:
         print(e)
 
@@ -292,8 +309,7 @@ def selectRegister(vehiculo, placa):
         registros=cursor.fetchall()
 
         if registros == []:
-            add_register(vehiculo, placa)
-            total=0
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total=add_register(vehiculo, placa)
         else:
             variables = get_variables()
 
@@ -307,10 +323,10 @@ def selectRegister(vehiculo, placa):
 
             id=registros[0][0]
             consecutivo=registros[0][1]
-            total=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro)
             if total == None:
                 total=0
-        return total
+        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total
 
         # cursor=conn.cursor()
         # sql=f"""SELECT *, (strftime("%s", salida) - strftime("%s", entrada))/60/60 AS tiempo, (strftime("%s", salida) - strftime("%s", entrada))/60/60 * valor AS total FROM registro"""

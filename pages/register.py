@@ -3,6 +3,7 @@ import locale
 import flet as ft
 # from flet import Page
 # from app import page
+from pages.receipt import show_input, show_output
 from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister
 import sqlite3
 
@@ -305,10 +306,6 @@ if configuracion != None:
 
 def Register(page):
 
-    # def hideInputs(e):
-    #     card.offset=ft.transform.Offset(2,0)
-    #     page.update()
-
     def register(e):
         if placa.value != "":
             if rdbVehiculo.value == "Moto":
@@ -339,7 +336,12 @@ def Register(page):
                     open_dlg_modal(e, title, message)
                     return False
             
-            vlr_total=selectRegister(rdbVehiculo.value, placa.value)
+            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, vlr_total=selectRegister(rdbVehiculo.value, placa.value)
+
+            if comentario1 != "":
+                show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2)
+            else:
+                show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total)
 
             # print("Total " + str(vlr_total))
 
@@ -540,7 +542,7 @@ def Register(page):
                 ],
                 alignment=ft.MainAxisAlignment.END
                 ),
-            )
+            ),
         ]
         # ft.Container(
         #     ft.Column([
