@@ -78,7 +78,7 @@ def get_configuration():
     except Exception as e:
         print(e)
 
-configuracion = get_configuration()
+configuracion=get_configuration()
 
 if configuracion != None:
     parqueqdero=configuracion[0][1]
@@ -112,7 +112,7 @@ def get_variables():
     except Exception as e:
         print(e)
 
-variables = get_variables()
+variables=get_variables()
 
 if variables != None:
     valor_hora_moto=variables[0][1]
@@ -180,7 +180,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
                 if total > valor_dia_carro:
                     total=valor_dia_carro
             if vehiculo == "Otro":
-                total=valor_dia_otro
+                if total > valor_dia_otro:
+                    total=valor_dia_otro
         else:
             if vehiculo == "Moto":
                 total=valor_dia_moto

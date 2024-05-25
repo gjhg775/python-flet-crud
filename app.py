@@ -373,10 +373,8 @@ def main(page: ft.Page):
     # page.add(Home(page))
     page.add(container)
 
-ft.app(target=main, assets_dir="assets")
-# ft.app(target=main, port=9000, view=ft.AppView.WEB_BROWSER, assets_dir="assets")
-
-
+ft.app(target=main)
+# ft.app(target=main, assets_dir="assets", port=9000, view=ft.AppView.WEB_BROWSER)
 
 
 # import flet as ft

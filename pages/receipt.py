@@ -1,12 +1,18 @@
 import locale
 import qrcode
 import datetime
+import subprocess
+# import webbrowser
 from fpdf import FPDF
-from datatable import valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro
+# from datatable import valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro
+from datatable import get_variables
 
 title=f"Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
+
+path="receipt.pdf"
+# path="receipt/receipt.pdf"
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2):
     nit="Nit " + nit
@@ -68,10 +74,17 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # pdf.cell(10, 155, "")
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
-    pdf.code39(f"*{placas}*", x=13, y=100, w=2, h=15)
+    if vehiculo == "Moto":
+        pdf.code39(f"*{placas}*", x=13, y=100, w=2, h=15)
+    if vehiculo == "Carro":
+        pdf.code39(f"*{placas}*", x=8, y=100, w=2, h=15)
+    if vehiculo == "Otro":
+        pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     img=qrcode.make(f"{placas}")
     pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
-    pdf.output(f"assets/receipt/receipt.pdf")
+    pdf.output(path)
+    subprocess.Popen([path], shell=True)
+    # webbrowser.open_new(path)
 
 def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total):
     nit="Nit " + nit
@@ -93,6 +106,16 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
     entrada=f"Entrada " + str(entrada)
     salida=f"Salida   " + str(salida)
+
+    variables=get_variables()
+
+    if variables != None:
+        valor_hora_moto=variables[0][1]
+        valor_dia_moto=variables[0][2]
+        valor_hora_carro=variables[0][3]
+        valor_dia_carro=variables[0][4]
+        valor_hora_otro=variables[0][5]
+        valor_dia_otro=variables[0][6]
     
     if vehiculo == "Moto":
         if int(tiempo) <= 4:
@@ -176,4 +199,6 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.cell(vlr_total_w, 212, vlr_total, align="C")
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
-    pdf.output(f"assets/receipt/receipt.pdf")
+    pdf.output(path)
+    subprocess.Popen([path], shell=True)
+    # webbrowser.open_new(path)

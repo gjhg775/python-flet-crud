@@ -14,7 +14,7 @@ locale.setlocale(locale.LC_ALL, "")
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
 
-configuracion = get_configuration()
+configuracion=get_configuration()
 
 if configuracion != None:
     parqueadero=configuracion[0][1]
@@ -305,7 +305,18 @@ if configuracion != None:
 #     selectRegisters()
 
 def Register(page):
+    configuracion=get_configuration()
 
+    if configuracion != None:
+        id=configuracion[0][0]
+        parqueadero=configuracion[0][1]
+        nit=configuracion[0][2]
+        regimen=configuracion[0][3]
+        direccion=configuracion[0][4]
+        telefono=configuracion[0][5]
+        servicio=configuracion[0][6]
+        consecutivo=configuracion[0][7]
+    
     def register(e):
         if placa.value != "":
             if rdbVehiculo.value == "Moto":
@@ -502,7 +513,7 @@ def Register(page):
                 content=ft.Stack([
                     ft.Row([
                         ft.Column([
-                            ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900),
+                            ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
                             ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
                             # ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
                             # ft.ElevatedButton("Registro", on_click=showInputs)
