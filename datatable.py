@@ -161,7 +161,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
         valor=registros[0][6]
         tiempo=((registros[0][11])/60)/60
 
-        if tiempo <= 4:
+        if int(tiempo) <= 4:
             if int(tiempo) == 0:
                 total=valor
             else:
@@ -241,6 +241,13 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
         cursor.execute(sql, values)
         conn.commit()
 
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = '{id}'"""
+        cursor.execute(sql)
+        registros=cursor.fetchall()
+
+        entradas=registros[0][11]
+        salidas=registros[0][12]
+
         sql="SELECT consecutivo FROM configuracion"
         cursor.execute(sql)
         registros=cursor.fetchall()
@@ -258,7 +265,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
         comentario1=""
         comentario2=""
 
-        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
     except Exception as e:
         print(e)
 
@@ -294,10 +301,17 @@ def add_register(vehiculo, placa):
         cursor.execute(sql, values)
         conn.commit()
 
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE placa = '{placa}' AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
+        cursor.execute(sql)
+        registros=cursor.fetchall()
+
+        entradas=registros[0][11]
+        salidas=registros[0][12]
+
         comentario1="* Sin éste recibo no se entrega el automotor"
         comentario2="* Después de retirado el automotor no se acepta reclamos"
 
-        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
     except Exception as e:
         print(e)
 
@@ -305,12 +319,13 @@ def selectRegister(vehiculo, placa):
     try:
         cursor=conn.cursor()
         sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
+        # sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
         values=(f"{placa}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         if registros == []:
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total=add_register(vehiculo, placa)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas=add_register(vehiculo, placa)
         else:
             variables = get_variables()
 
@@ -324,10 +339,10 @@ def selectRegister(vehiculo, placa):
 
             id=registros[0][0]
             consecutivo=registros[0][1]
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro)
             if total == None:
                 total=0
-        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total
+        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
 
         # cursor=conn.cursor()
         # sql=f"""SELECT *, (strftime("%s", salida) - strftime("%s", entrada))/60/60 AS tiempo, (strftime("%s", salida) - strftime("%s", entrada))/60/60 * valor AS total FROM registro"""

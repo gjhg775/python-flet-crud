@@ -347,12 +347,12 @@ def Register(page):
                     open_dlg_modal(e, title, message)
                     return False
             
-            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, vlr_total=selectRegister(rdbVehiculo.value, placa.value)
+            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, vlr_total, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
             if comentario1 != "":
-                show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2)
+                show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, entradas)
             else:
-                show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total)
+                show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas)
 
             # print("Total " + str(vlr_total))
 

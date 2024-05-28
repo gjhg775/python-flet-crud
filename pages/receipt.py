@@ -12,9 +12,9 @@ title=f"Parqueadero"
 locale.setlocale(locale.LC_ALL, "")
 
 path="receipt.pdf"
-# path="receipt/receipt.pdf"
+# path="/receipt/receipt.pdf"
 
-def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2):
+def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, entradas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -22,7 +22,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     consecutivo="Recibo " + str(consecutivo)
     entrada=str(entrada)
     entrada=str(entrada[0:19])
-    entrada=f"Entrada " + str(entrada)
+    entrada=f"Entrada " + str(entradas)
 
     pdf=FPDF("P", "mm", (100, 150))
     pdf.add_page()
@@ -72,40 +72,46 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.cell(comentario2_w, 167, comentario2, align="C")
     # pdf.set_font("helvetica", "", size=15)
     # pdf.cell(10, 155, "")
+    img=qrcode.make(f"{placas}")
+    pdf.image(img.get_image(), x=35, y=96, w=30, h=30)
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
     if vehiculo == "Moto":
-        pdf.code39(f"*{placas}*", x=13, y=100, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=13, y=128, w=2, h=15)
     if vehiculo == "Carro":
-        pdf.code39(f"*{placas}*", x=8, y=100, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=8, y=128, w=2, h=15)
     if vehiculo == "Otro":
-        pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
-    img=qrcode.make(f"{placas}")
-    pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
+        pdf.code39(f"*{placas}*", x=2, y=128, w=2, h=15)
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
 
-def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total):
+def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     consecutivo="Recibo " + str(consecutivo)
-    formato=f"%Y-%m-%d %H:%M:%S"
+    formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
-    entrada=str(entrada[0:19])
-    salida=str(salida[0:19])
+    entrada=str(entrada[0:16])
+    salida=str(salida[0:16])
     entrada=datetime.datetime.strptime(entrada, formato)
     salida=datetime.datetime.strptime(salida, formato)
     tiempos=salida - entrada
-    horas=tiempos.days*24
-    minutos=tiempos.seconds/60
-    minutos=round(minutos)
-    duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
-    entrada=f"Entrada " + str(entrada)
-    salida=f"Salida   " + str(salida)
+    tiempos=str(tiempos)
+    tiempos=tiempos[0:len(tiempos)-3]
+    # print(tiempos)
+    # horas=tiempos.days*24
+    # print(horas)
+    # minutos=tiempos.seconds//60
+    # print(minutos)
+    # minutos=round(minutos)
+    # duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+    duracion="Tiempo hh:mm " + str(f'{tiempos}')
+    entrada=f"Entrada " + str(entradas)
+    salida=f"Salida   " + str(salidas)
 
     variables=get_variables()
 
