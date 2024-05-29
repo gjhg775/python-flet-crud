@@ -1,12 +1,24 @@
+import locale
+import qrcode
+import subprocess
+# import webbrowser
 import bcrypt
 import datetime
 import sqlite3
 import hashlib
 from flet import *
+from fpdf import FPDF
 
-conn = sqlite3.connect('database/parqueadero.db',check_same_thread=False)
+conn=sqlite3.connect('database/parqueadero.db',check_same_thread=False)
 
 valor=0
+
+title=f"Parqueadero"
+
+locale.setlocale(locale.LC_ALL, "")
+
+path="receipt.pdf"
+# path="/receipt/receipt.pdf"
 
 tb = DataTable(
     bgcolor=colors.PRIMARY_CONTAINER,
@@ -81,7 +93,7 @@ def get_configuration():
 configuracion=get_configuration()
 
 if configuracion != None:
-    parqueqdero=configuracion[0][1]
+    parqueadero=configuracion[0][1]
     nit=configuracion[0][2]
     regimen=configuracion[0][3]
     direccion=configuracion[0][4]
@@ -358,7 +370,40 @@ def selectRegister(vehiculo, placa):
 def showedit(e):
     # data_edit=e.control.data
     # id_edit=data_edit["id"]
-    print(f"{e.control.data}")
+    consecutivo=f"{e.control.data}"
+    try:
+        cursor=conn.cursor()
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
+        values=(f"{consecutivo}",)
+        cursor.execute(sql, values)
+        registros=cursor.fetchall()
+
+        parqueadero=configuracion[0][1]
+        nit=configuracion[0][2]
+        regimen=configuracion[0][3]
+        direccion=configuracion[0][4]
+        telefono=configuracion[0][5]
+        servicio=configuracion[0][6]
+
+        placa=registros[0][2]
+        entrada=registros[0][3]
+        salida=registros[0][4]
+        vehiculo=registros[0][5]
+        valor=registros[0][6]
+        tiempo=registros[0][7]
+        vlr_total=registros[0][8]
+        entradas=registros[0][11]
+        salidas=registros[0][12]
+
+        comentario1="* Sin éste recibo no se entrega el automotor"
+        comentario2="* Después de retirado el automotor no se acepta reclamos"
+
+        if vlr_total == 0:
+            showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, entradas)
+        if vlr_total > 0:
+            showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
+    except Exception as e:
+        print(e)
 
 def showdelete(e):
     try:
@@ -372,6 +417,204 @@ def showdelete(e):
         tb.update()
     except Exception as e:
         print(e)
+
+path="receipt.pdf"
+# path="/receipt/receipt.pdf"
+
+def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, entradas):
+    nit="Nit " + nit
+    regimen="Régimen " + regimen
+    telefono="Teléfono " + telefono
+    servicio= "Servicio " + servicio
+    consecutivo="Recibo " + str(consecutivo)
+    entrada=str(entrada)
+    entrada=str(entrada[0:19])
+    entrada=f"Entrada " + str(entradas)
+
+    pdf=FPDF("P", "mm", (100, 150))
+    pdf.add_page()
+    pdf.set_font("helvetica", "", size=20)
+    title_w=pdf.get_string_width(title)
+    doc_w=pdf.w
+    pdf.set_x((doc_w - title_w) / 2)
+    pdf.cell(title_w, 0, title, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    parqueadero_w=pdf.get_string_width(parqueadero)
+    pdf.set_x((doc_w - parqueadero_w) / 2)
+    pdf.cell(parqueadero_w, 18, parqueadero, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    nit_w=pdf.get_string_width(nit)
+    pdf.set_x((doc_w - nit_w) / 2)
+    pdf.cell(nit_w, 35, nit, align="C")
+    regimen_w=pdf.get_string_width(regimen)
+    pdf.set_x((doc_w - regimen_w) / 2)
+    pdf.cell(regimen_w, 49, regimen, align="C")
+    direccion_w=pdf.get_string_width(direccion)
+    pdf.set_x((doc_w - direccion_w) / 2)
+    pdf.cell(direccion_w, 63, direccion, align="C")
+    telefono_w=pdf.get_string_width(telefono)
+    pdf.set_x((doc_w - telefono_w) / 2)
+    pdf.cell(telefono_w, 77, telefono, align="C")
+    servicio_w=pdf.get_string_width(servicio)
+    pdf.set_x((doc_w - servicio_w) / 2)
+    pdf.cell(servicio_w, 91, servicio, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    consecutivo_w=pdf.get_string_width(consecutivo)
+    pdf.set_x((doc_w - consecutivo_w) / 2)
+    pdf.cell(consecutivo_w, 107, consecutivo, align="C")
+    placas1=f"Placa {placas}"
+    placas1_w=pdf.get_string_width(placas1)
+    pdf.set_x((doc_w - placas1_w) / 2)
+    pdf.cell(placas1_w, 125, placas1, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    entrada_w=pdf.get_string_width(entrada)
+    pdf.set_x((doc_w - entrada_w) / 2)
+    pdf.cell(entrada_w, 142, entrada, align="C")
+    pdf.set_font("helvetica", "", size=10)
+    comentario1_w=pdf.get_string_width(comentario1)
+    pdf.set_x((doc_w - comentario1_w) / 2)
+    pdf.cell(comentario1_w, 160, comentario1, align="C")
+    comentario2_w=pdf.get_string_width(comentario2)
+    pdf.set_x((doc_w - comentario2_w) / 2)
+    pdf.cell(comentario2_w, 167, comentario2, align="C")
+    # pdf.set_font("helvetica", "", size=15)
+    # pdf.cell(10, 155, "")
+    img=qrcode.make(f"{placas}")
+    pdf.image(img.get_image(), x=35, y=96, w=30, h=30)
+    pdf.set_font("helvetica", "", size=15)
+    # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
+    if vehiculo == "Moto":
+        pdf.code39(f"*{placas}*", x=13, y=128, w=2, h=15)
+    if vehiculo == "Carro":
+        pdf.code39(f"*{placas}*", x=8, y=128, w=2, h=15)
+    if vehiculo == "Otro":
+        pdf.code39(f"*{placas}*", x=2, y=128, w=2, h=15)
+    pdf.output(path)
+    subprocess.Popen([path], shell=True)
+    # webbrowser.open_new(path)
+
+def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
+    nit="Nit " + nit
+    regimen="Régimen " + regimen
+    telefono="Teléfono " + telefono
+    servicio= "Servicio " + servicio
+    consecutivo="Recibo " + str(consecutivo)
+    formato=f"%Y-%m-%d %H:%M"
+    entrada=str(entrada)
+    salida=str(salida)
+    entrada=str(entrada[0:16])
+    salida=str(salida[0:16])
+    entrada=datetime.datetime.strptime(entrada, formato)
+    salida=datetime.datetime.strptime(salida, formato)
+    tiempos=salida - entrada
+    tiempos=str(tiempos)
+    tiempos=tiempos[0:len(tiempos)-3]
+    # print(tiempos)
+    # horas=tiempos.days*24
+    # print(horas)
+    # minutos=tiempos.seconds//60
+    # print(minutos)
+    # minutos=round(minutos)
+    # duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+    duracion="Tiempo hh:mm " + str(f'{tiempos}')
+    entrada=f"Entrada " + str(entradas)
+    salida=f"Salida   " + str(salidas)
+
+    variables=get_variables()
+
+    if variables != None:
+        valor_hora_moto=variables[0][1]
+        valor_dia_moto=variables[0][2]
+        valor_hora_carro=variables[0][3]
+        valor_dia_carro=variables[0][4]
+        valor_hora_otro=variables[0][5]
+        valor_dia_otro=variables[0][6]
+    
+    if vehiculo == "Moto":
+        if int(tiempo) <= 4:
+            tarifa="Tarifa Horas-Moto"
+            valor=valor_hora_moto
+        else:
+            tarifa="Tarifa Turno-Moto"
+            valor=valor_dia_moto
+    if vehiculo == "Carro":
+        if int(tiempo) <= 4:
+            tarifa="Tarifa Horas-Carro"
+            valor=valor_hora_carro
+        else:
+            tarifa="Tarifa Turno-Carro"
+            valor=valor_dia_carro
+    if vehiculo == "Otro":
+        if int(tiempo) <= 4:
+            tarifa="Tarifa Horas-Otro"
+            valor=valor_hora_otro
+        else:
+            tarifa="Tarifa Turno-Otro"
+            valor=valor_dia_otro
+
+    pdf=FPDF("P", "mm", (100, 150))
+    pdf.add_page()
+    pdf.set_font("helvetica", "", size=20)
+    title_w=pdf.get_string_width(title)
+    doc_w=pdf.w
+    pdf.set_x((doc_w - title_w) / 2)
+    pdf.cell(title_w, 0, title, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    parqueadero_w=pdf.get_string_width(parqueadero)
+    pdf.set_x((doc_w - parqueadero_w) / 2)
+    pdf.cell(parqueadero_w, 18, parqueadero, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    nit_w=pdf.get_string_width(nit)
+    pdf.set_x((doc_w - nit_w) / 2)
+    pdf.cell(nit_w, 35, nit, align="C")
+    regimen_w=pdf.get_string_width(regimen)
+    pdf.set_x((doc_w - regimen_w) / 2)
+    pdf.cell(regimen_w, 49, regimen, align="C")
+    direccion_w=pdf.get_string_width(direccion)
+    pdf.set_x((doc_w - direccion_w) / 2)
+    pdf.cell(direccion_w, 63, direccion, align="C")
+    telefono_w=pdf.get_string_width(telefono)
+    pdf.set_x((doc_w - telefono_w) / 2)
+    pdf.cell(telefono_w, 77, telefono, align="C")
+    servicio_w=pdf.get_string_width(servicio)
+    pdf.set_x((doc_w - servicio_w) / 2)
+    pdf.cell(servicio_w, 91, servicio, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    consecutivo_w=pdf.get_string_width(consecutivo)
+    pdf.set_x((doc_w - consecutivo_w) / 2)
+    pdf.cell(consecutivo_w, 107, consecutivo, align="C")
+    placas1=f"Placa {placas}"
+    placas1_w=pdf.get_string_width(placas1)
+    pdf.set_x((doc_w - placas1_w) / 2)
+    pdf.cell(placas1_w, 125, placas1, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    entrada_w=pdf.get_string_width(entrada)
+    pdf.set_x((doc_w - entrada_w) / 2)
+    pdf.cell(entrada_w, 142, entrada, align="C")
+    salida_w=pdf.get_string_width(salida)
+    pdf.set_x((doc_w - salida_w) / 2)
+    pdf.cell(salida_w, 156, salida, align="C")
+    duracion_w=pdf.get_string_width(duracion)
+    pdf.set_x((doc_w - duracion_w) / 2)
+    pdf.cell(duracion_w, 170, duracion, align="C")
+    tarifa_w=pdf.get_string_width(tarifa)
+    pdf.set_x((doc_w - tarifa_w) / 2)
+    pdf.cell(tarifa_w, 184, tarifa, align="C")
+    valor=locale.currency(valor, grouping=True)
+    valor="Valor Unidad " + str(valor) 
+    valor_w=pdf.get_string_width(valor)
+    pdf.set_x((doc_w - valor_w) / 2)
+    pdf.cell(valor_w, 198, valor, align="C")
+    vlr_total=locale.currency(vlr_total, grouping=True)
+    vlr_total="Total " + str(vlr_total) 
+    vlr_total_w=pdf.get_string_width(vlr_total)
+    pdf.set_x((doc_w - vlr_total_w) / 2)
+    pdf.cell(vlr_total_w, 212, vlr_total, align="C")
+    # img=qrcode.make(f"{placas}")
+    # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
+    pdf.output(path)
+    subprocess.Popen([path], shell=True)
+    # webbrowser.open_new(path)
 
 def selectRegisters():
     cursor=conn.cursor()

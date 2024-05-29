@@ -100,16 +100,18 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     entrada=datetime.datetime.strptime(entrada, formato)
     salida=datetime.datetime.strptime(salida, formato)
     tiempos=salida - entrada
-    tiempos=str(tiempos)
-    tiempos=tiempos[0:len(tiempos)-3]
+    # tiempos=str(tiempos)
+    # tiempos=tiempos[0:len(tiempos)-3]
     # print(tiempos)
-    # horas=tiempos.days*24
+    dias=tiempos.days*24
+    horas=tiempos.seconds//3600
+    horas+=dias
     # print(horas)
-    # minutos=tiempos.seconds//60
+    sobrante=tiempos.seconds%3600
+    minutos=sobrante//60
     # print(minutos)
-    # minutos=round(minutos)
-    # duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
-    duracion="Tiempo hh:mm " + str(f'{tiempos}')
+    duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+    # duracion="Tiempo hh:mm " + str(f'{tiempos}')
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
 
