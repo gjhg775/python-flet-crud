@@ -13,6 +13,7 @@ locale.setlocale(locale.LC_ALL, "")
 
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
+textsize=90
 
 configuracion=get_configuration()
 
@@ -305,6 +306,8 @@ if configuracion != None:
 #     selectRegisters()
 
 def Register(page):
+    page.window_width=page.width
+
     configuracion=get_configuration()
 
     if configuracion != None:
@@ -375,12 +378,12 @@ def Register(page):
             tb.update()
             tblRegistro.update()
 
-            # page.snack_bar=ft.SnackBar(
-            #     ft.Text(message, color="white"),
-            #     bgcolor="green"
-            # )
-            # page.snack_bar.open=True
-            # page.update()
+            page.snack_bar=ft.SnackBar(
+                ft.Text(message, color="white", text_align="center"),
+                bgcolor="green"
+            )
+            page.snack_bar.open=True
+            page.update()
 
             time.sleep(4)
 

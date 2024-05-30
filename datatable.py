@@ -109,6 +109,9 @@ def update_configuration(parqueadero, nit, regimen, direccion, telefono, servici
         values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
+
+        message="Configuración actualizada satisfactoriamente"
+        return message
     except Exception as e:
         print(e)
 
@@ -128,24 +131,27 @@ variables=get_variables()
 
 if variables != None:
     valor_hora_moto=variables[0][1]
-    valor_dia_moto=variables[0][2]
+    valor_turno_moto=variables[0][2]
     valor_hora_carro=variables[0][3]
-    valor_dia_carro=variables[0][4]
+    valor_turno_carro=variables[0][4]
     valor_hora_otro=variables[0][5]
-    valor_dia_otro=variables[0][6]
+    valor_turno_otro=variables[0][6]
 
-def update_variables(vlr_hora_moto, vlr_dia_moto, vlr_hora_carro, vlr_dia_carro, vlr_hora_otro, vlr_dia_otro, id):
+def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_carro, vlr_hora_otro, vlr_turno_otro, id):
     try:        
         cursor=conn.cursor()
 
-        sql=f"""UPDATE variables SET vlr_hora_moto = ?, vlr_dia_moto = ?, vlr_hora_carro = ?, vlr_dia_carro = ?, vlr_hora_otro = ?, vlr_dia_otro = ? WHERE variable_id = ?"""
-        values=(f"{vlr_hora_moto}", f"{vlr_dia_moto}", f"{vlr_hora_carro}", f"{vlr_dia_carro}", f"{vlr_hora_otro}", f"{vlr_dia_otro}", f"{id}")
+        sql=f"""UPDATE variables SET vlr_hora_moto = ?, vlr_turno_moto = ?, vlr_hora_carro = ?, vlr_turno_carro = ?, vlr_hora_otro = ?, vlr_turno_otro = ? WHERE variable_id = ?"""
+        values=(f"{vlr_hora_moto}", f"{vlr_turno_moto}", f"{vlr_hora_carro}", f"{vlr_turno_carro}", f"{vlr_hora_otro}", f"{vlr_turno_otro}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
+
+        message="Variables actualizadas satisfactoriamente"
+        return message
     except Exception as e:
         print(e)
 
-def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro):
+def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro):
     try:
         salida=datetime.datetime.now()
 
@@ -186,21 +192,21 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
             if vehiculo == "Moto":
-                if total > valor_dia_moto:
-                    total=valor_dia_moto
+                if total > valor_turno_moto:
+                    total=valor_turno_moto
             if vehiculo == "Carro":
-                if total > valor_dia_carro:
-                    total=valor_dia_carro
+                if total > valor_turno_carro:
+                    total=valor_turno_carro
             if vehiculo == "Otro":
-                if total > valor_dia_otro:
-                    total=valor_dia_otro
+                if total > valor_turno_otro:
+                    total=valor_turno_otro
         else:
             if vehiculo == "Moto":
-                total=valor_dia_moto
+                total=valor_turno_moto
             if vehiculo == "Carro":
-                total=valor_dia_carro
+                total=valor_turno_carro
             if vehiculo == "Otro":
-                total=valor_dia_otro
+                total=valor_turno_otro
             if tiempo > 12:
                 turno=tiempo/12
                 turno=int(turno)
@@ -219,9 +225,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
                             valor_fraccion=valor/2
                         if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
                             valor_fraccion=valor
-                        total=total+valor_fraccion+(valor_dia_moto*turno)
+                        total=total+valor_fraccion+(valor_turno_moto*turno)
                     else:
-                        total=valor_dia_moto*turno
+                        total=valor_turno_moto*turno
                 if vehiculo == "Carro":
                     if int(round(horas)) <= 4:
                         total=int(round(horas))*valor_hora_carro
@@ -231,9 +237,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
                             valor_fraccion=valor/2
                         if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
                             valor_fraccion=valor
-                        total=total+valor_fraccion+(valor_dia_carro*turno)
+                        total=total+valor_fraccion+(valor_turno_carro*turno)
                     else:
-                        total=valor_dia_carro*turno
+                        total=valor_turno_carro*turno
                 if vehiculo == "Otro":
                     if int(round(horas)) <= 4:
                         total=int(round(horas))*valor_hora_otro
@@ -243,9 +249,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, 
                             valor_fraccion=valor/2
                         if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
                             valor_fraccion=valor
-                        total=total+valor_fraccion+(valor_dia_otro*turno)
+                        total=total+valor_fraccion+(valor_turno_otro*turno)
                     else:
-                        total=valor_dia_otro*turno
+                        total=valor_turno_otro*turno
 
         tiempo=int(tiempo)
         sql=f"""UPDATE registro SET salida = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
@@ -343,15 +349,15 @@ def selectRegister(vehiculo, placa):
 
             if variables != None:
                 valor_hora_moto=variables[0][1]
-                valor_dia_moto=variables[0][2]
+                valor_turno_moto=variables[0][2]
                 valor_hora_carro=variables[0][3]
-                valor_dia_carro=variables[0][4]
+                valor_turno_carro=variables[0][4]
                 valor_hora_otro=variables[0][5]
-                valor_dia_otro=variables[0][6]
+                valor_turno_otro=variables[0][6]
 
             id=registros[0][0]
             consecutivo=registros[0][1]
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
             if total == None:
                 total=0
         return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
@@ -524,11 +530,11 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
 
     if variables != None:
         valor_hora_moto=variables[0][1]
-        valor_dia_moto=variables[0][2]
+        valor_turno_moto=variables[0][2]
         valor_hora_carro=variables[0][3]
-        valor_dia_carro=variables[0][4]
+        valor_turno_carro=variables[0][4]
         valor_hora_otro=variables[0][5]
-        valor_dia_otro=variables[0][6]
+        valor_turno_otro=variables[0][6]
     
     if vehiculo == "Moto":
         if int(tiempo) <= 4:
@@ -536,21 +542,21 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
             valor=valor_hora_moto
         else:
             tarifa="Tarifa Turno-Moto"
-            valor=valor_dia_moto
+            valor=valor_turno_moto
     if vehiculo == "Carro":
         if int(tiempo) <= 4:
             tarifa="Tarifa Horas-Carro"
             valor=valor_hora_carro
         else:
             tarifa="Tarifa Turno-Carro"
-            valor=valor_dia_carro
+            valor=valor_turno_carro
     if vehiculo == "Otro":
         if int(tiempo) <= 4:
             tarifa="Tarifa Horas-Otro"
             valor=valor_hora_otro
         else:
             tarifa="Tarifa Turno-Otro"
-            valor=valor_dia_otro
+            valor=valor_turno_otro
 
     pdf=FPDF("P", "mm", (100, 150))
     pdf.add_page()

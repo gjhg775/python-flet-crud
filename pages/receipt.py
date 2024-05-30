@@ -3,8 +3,9 @@ import qrcode
 import datetime
 import subprocess
 # import webbrowser
+import pywhatkit
 from fpdf import FPDF
-# from datatable import valor_hora_moto, valor_dia_moto, valor_hora_carro, valor_dia_carro, valor_hora_otro, valor_dia_otro
+# from datatable import valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro
 from datatable import get_variables
 
 title=f"Parqueadero"
@@ -85,6 +86,14 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+    # ahora=str(datetime.datetime.now())
+    # ahora=ahora.split(" ")
+    # ahora=ahora[1]
+    # ahora=ahora.split(":")
+    # hora=int(ahora[0])
+    # minuto=int(ahora[1])
+    # minuto+=1
+    # pywhatkit.sendwhatmsg("+573046002498", path, hora, minuto, 15, True, 2)
 
 def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
@@ -119,11 +128,11 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
 
     if variables != None:
         valor_hora_moto=variables[0][1]
-        valor_dia_moto=variables[0][2]
+        valor_turno_moto=variables[0][2]
         valor_hora_carro=variables[0][3]
-        valor_dia_carro=variables[0][4]
+        valor_turno_carro=variables[0][4]
         valor_hora_otro=variables[0][5]
-        valor_dia_otro=variables[0][6]
+        valor_turno_otro=variables[0][6]
     
     if vehiculo == "Moto":
         if int(tiempo) <= 4:
@@ -131,21 +140,21 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
             valor=valor_hora_moto
         else:
             tarifa="Tarifa Turno-Moto"
-            valor=valor_dia_moto
+            valor=valor_turno_moto
     if vehiculo == "Carro":
         if int(tiempo) <= 4:
             tarifa="Tarifa Horas-Carro"
             valor=valor_hora_carro
         else:
             tarifa="Tarifa Turno-Carro"
-            valor=valor_dia_carro
+            valor=valor_turno_carro
     if vehiculo == "Otro":
         if int(tiempo) <= 4:
             tarifa="Tarifa Horas-Otro"
             valor=valor_hora_otro
         else:
             tarifa="Tarifa Turno-Otro"
-            valor=valor_dia_otro
+            valor=valor_turno_otro
 
     pdf=FPDF("P", "mm", (100, 150))
     pdf.add_page()
@@ -210,3 +219,11 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+    # ahora=str(datetime.datetime.now())
+    # ahora=ahora.split(" ")
+    # ahora=ahora[1]
+    # ahora=ahora.split(":")
+    # hora=int(ahora[0])
+    # minuto=int(ahora[1])
+    # minuto+=1
+    # pywhatkit.sendwhatmsg("+573046002498", path, hora, minuto, 15, True, 2)

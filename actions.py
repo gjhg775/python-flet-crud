@@ -67,11 +67,11 @@ def create_variables():
     cursor.execute("""CREATE TABLE IF NOT EXISTS variables(
         variable_id INTEGER PRIMARY KEY AUTOINCREMENT,
         vlr_hora_moto INTEGER,
-        vlr_dia_moto INTEGER,
+        vlr_turno_moto INTEGER,
         vlr_hora_carro INTEGER,
-        vlr_dia_carro INTEGER,
+        vlr_turno_carro INTEGER,
         vlr_hora_otro INTEGER,
-        vlr_dia_otro INTEGER)
+        vlr_turno_otro INTEGER)
         """)
     conn.commit()
 
@@ -138,7 +138,7 @@ def add_configuration():
 
 def add_variables():
     try:
-        sql="""INSERT INTO variables (vlr_hora_moto, vlr_dia_moto, vlr_hora_carro, vlr_dia_carro, vlr_hora_otro, vlr_dia_otro) VALUES (?, ?, ?, ?, ?, ?)"""
+        sql="""INSERT INTO variables (vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_carro, vlr_hora_otro, vlr_turno_otro) VALUES (?, ?, ?, ?, ?, ?)"""
         values=("", "", "", "", "", "")
 
         cursor=conn.cursor()

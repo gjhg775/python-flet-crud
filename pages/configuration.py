@@ -3,6 +3,7 @@ from datatable import get_configuration, update_configuration
 import sqlite3
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+message=""
 
 # class Configuration(ft.UserControl):
 #     def __init__(self, page):
@@ -188,7 +189,14 @@ def Configuration(page):
             telefono.update()
             servicio.update()
             consecutivo.update()
-            update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, configuracion_id)
+            if message != "":
+                page.snack_bar=ft.SnackBar(
+                    ft.Text(message, color="white", text_align="center"),
+                    bgcolor="green"
+                )
+                page.snack_bar.open=True
+                page.update()
 
     configuracion_id=id
     parqueadero=ft.TextField(label="Parqueadero", width=280, value=parqueadero)
