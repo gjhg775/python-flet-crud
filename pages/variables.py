@@ -67,11 +67,11 @@ message=""
 
 #         self.variable_id=self.id
 #         self.vlr_hora_moto=ft.TextField(label="Hora Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=self.valor_hora_moto)
-#         self.vlr_turno_moto=ft.TextField(label="Día Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=self.valor_turno_moto)
+#         self.vlr_turno_moto=ft.TextField(label="Turno Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=self.valor_turno_moto)
 #         self.vlr_hora_carro=ft.TextField(label="Hora Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=self.valor_hora_carro)
-#         self.vlr_turno_carro=ft.TextField(label="Día Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=self.valor_turno_carro)
+#         self.vlr_turno_carro=ft.TextField(label="Turno Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=self.valor_turno_carro)
 #         self.vlr_hora_otro=ft.TextField(label="Hora Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=self.valor_hora_otro)
-#         self.vlr_turno_otro=ft.TextField(label="Día Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=self.valor_turno_otro)
+#         self.vlr_turno_otro=ft.TextField(label="Turno Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=self.valor_turno_otro)
 #         self.btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateVariables)
 
 #     def build(self):
@@ -174,11 +174,11 @@ def Variables(page):
 
     variable_id=id
     vlr_hora_moto=ft.TextField(label="Hora Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_hora_moto)
-    vlr_turno_moto=ft.TextField(label="Día Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_turno_moto)
+    vlr_turno_moto=ft.TextField(label="Turno Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_turno_moto)
     vlr_hora_carro=ft.TextField(label="Hora Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_hora_carro)
-    vlr_turno_carro=ft.TextField(label="Día Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_turno_carro)
+    vlr_turno_carro=ft.TextField(label="Turno Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_turno_carro)
     vlr_hora_otro=ft.TextField(label="Hora Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=valor_hora_otro)
-    vlr_turno_otro=ft.TextField(label="Día Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=valor_turno_otro)
+    vlr_turno_otro=ft.TextField(label="Turno Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=valor_turno_otro)
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateVariables)
 
     return ft.Column(
