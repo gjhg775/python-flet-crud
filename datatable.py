@@ -4,6 +4,7 @@ import subprocess
 # import webbrowser
 import bcrypt
 import datetime
+import settings
 import sqlite3
 import hashlib
 from flet import *
@@ -152,6 +153,8 @@ def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_ca
         print(e)
 
 def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro):
+    usuario=settings.username["username"]
+    
     try:
         salida=datetime.datetime.now()
 
@@ -164,8 +167,14 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
         cursor=conn.cursor()
 
-        sql=f"""UPDATE registro SET salida = ?, valor = ? WHERE registro_id = ?"""
-        values=(f"{salida}", f"{valor}", f"{id}")
+        sql=f"""SELECT * FROM usuarios WHERE usuario = '{usuario}'"""
+        cursor.execute(sql)
+        registros=cursor.fetchall()
+
+        usuario=registros[0][3]
+
+        sql=f"""UPDATE registro SET salida = ?, valor = ?, usuario = ? WHERE registro_id = ?"""
+        values=(f"{salida}", f"{valor}", f"{usuario}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -259,31 +268,32 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         cursor.execute(sql, values)
         conn.commit()
 
-        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = '{id}'"""
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = {id}"""
         cursor.execute(sql)
         registros=cursor.fetchall()
 
         entradas=registros[0][11]
         salidas=registros[0][12]
 
-        sql="SELECT consecutivo FROM configuracion"
-        cursor.execute(sql)
-        registros=cursor.fetchall()
+        # sql="SELECT consecutivo FROM configuracion"
+        # cursor.execute(sql)
+        # registros=cursor.fetchall()
 
-        consecutivo=registros[0][0]
+        # consecutivo=registros[0][0]
 
-        id=1
-        consecutivo=consecutivo+1
-        sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
-        values=(f"{consecutivo}", f"{id}")
-        cursor.execute(sql, values)
-        conn.commit()
+        # id=1
+        # consecutivo+=1
+        # sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
+        # values=(f"{consecutivo}", f"{id}")
+        # cursor.execute(sql, values)
+        # conn.commit()
 
         # salida=salida.strftime('%d/%m/%Y %H:%M')
         comentario1=""
         comentario2=""
+        comentario3=""
 
-        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
     except Exception as e:
         print(e)
 
@@ -302,10 +312,16 @@ def add_register(vehiculo, placa):
     tiempo=0
     total=0
     cuadre=0
-    usuario="Gabriel Jaime Hoyos Garcés"
+    usuario=settings.username["username"]
 
     try:
         cursor=conn.cursor()
+
+        sql=f"""SELECT * FROM usuarios WHERE usuario = '{usuario}'"""
+        cursor.execute(sql)
+        registros=cursor.fetchall()
+
+        usuario=registros[0][3]
 
         id=1
         sql=f"""SELECT consecutivo FROM configuracion WHERE configuracion_id = {id}"""
@@ -326,10 +342,18 @@ def add_register(vehiculo, placa):
         entradas=registros[0][11]
         salidas=registros[0][12]
 
-        comentario1="* Sin éste recibo no se entrega el automotor"
-        comentario2="* Después de retirado el automotor no se acepta reclamos"
+        id=1
+        consecutivos=int(consecutivo)+1
+        sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
+        values=(f"{consecutivos}", f"{id}")
+        cursor.execute(sql, values)
+        conn.commit()
 
-        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
+        comentario1="Sin éste recibo no se entrega el automotor."
+        comentario2="Después de retirado el automotor no se"
+        comentario3="acepta reclamos."
+
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
     except Exception as e:
         print(e)
 
@@ -343,7 +367,7 @@ def selectRegister(vehiculo, placa):
         registros=cursor.fetchall()
 
         if registros == []:
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas=add_register(vehiculo, placa)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas=add_register(vehiculo, placa)
         else:
             variables = get_variables()
 
@@ -357,10 +381,10 @@ def selectRegister(vehiculo, placa):
 
             id=registros[0][0]
             consecutivo=registros[0][1]
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
             if total == None:
                 total=0
-        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, total, entradas, salidas
+        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
 
         # cursor=conn.cursor()
         # sql=f"""SELECT *, (strftime("%s", salida) - strftime("%s", entrada))/60/60 AS tiempo, (strftime("%s", salida) - strftime("%s", entrada))/60/60 * valor AS total FROM registro"""
@@ -376,7 +400,7 @@ def selectRegister(vehiculo, placa):
 def showedit(e):
     # data_edit=e.control.data
     # id_edit=data_edit["id"]
-    consecutivo=f"{e.control.data}"
+    consecutivo=e.control.data["consecutivo"]
     try:
         cursor=conn.cursor()
         sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
@@ -401,11 +425,12 @@ def showedit(e):
         entradas=registros[0][11]
         salidas=registros[0][12]
 
-        comentario1="* Sin éste recibo no se entrega el automotor"
-        comentario2="* Después de retirado el automotor no se acepta reclamos"
+        comentario1="Sin éste recibo no se entrega el automotor."
+        comentario2="Después de retirado el automotor no se"
+        comentario3="acepta reclamos."
 
         if vlr_total == 0:
-            showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, entradas)
+            showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, comentario3, entradas)
         if vlr_total > 0:
             showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
     except Exception as e:
@@ -427,7 +452,7 @@ def showdelete(e):
 path="receipt.pdf"
 # path="/receipt/receipt.pdf"
 
-def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, entradas):
+def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -437,8 +462,9 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     entrada=str(entrada[0:19])
     entrada=f"Entrada " + str(entradas)
 
-    pdf=FPDF("P", "mm", (100, 150))
+    pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
+    # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
@@ -479,25 +505,36 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     pdf.set_font("helvetica", "", size=10)
     comentario1_w=pdf.get_string_width(comentario1)
     pdf.set_x((doc_w - comentario1_w) / 2)
-    pdf.cell(comentario1_w, 160, comentario1, align="C")
+    pdf.cell(comentario1_w, 157, comentario1, align="C")
     comentario2_w=pdf.get_string_width(comentario2)
     pdf.set_x((doc_w - comentario2_w) / 2)
-    pdf.cell(comentario2_w, 167, comentario2, align="C")
+    pdf.cell(comentario2_w, 164, comentario2, align="C")
+    comentario3_w=pdf.get_string_width(comentario3)
+    pdf.set_x((doc_w - comentario3_w) / 2)
+    pdf.cell(comentario3_w, 171, comentario3, align="C")
     # pdf.set_font("helvetica", "", size=15)
     # pdf.cell(10, 155, "")
     img=qrcode.make(f"{placas}")
-    pdf.image(img.get_image(), x=35, y=96, w=30, h=30)
+    pdf.image(img.get_image(), x=25, y=98, w=30, h=30)
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
     if vehiculo == "Moto":
-        pdf.code39(f"*{placas}*", x=13, y=128, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     if vehiculo == "Carro":
-        pdf.code39(f"*{placas}*", x=8, y=128, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     if vehiculo == "Otro":
-        pdf.code39(f"*{placas}*", x=2, y=128, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+    # ahora=str(datetime.datetime.now())
+    # ahora=ahora.split(" ")
+    # ahora=ahora[1]
+    # ahora=ahora.split(":")
+    # hora=int(ahora[0])
+    # minuto=int(ahora[1])
+    # minuto+=1
+    # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
 def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
@@ -513,16 +550,18 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     entrada=datetime.datetime.strptime(entrada, formato)
     salida=datetime.datetime.strptime(salida, formato)
     tiempos=salida - entrada
-    tiempos=str(tiempos)
-    tiempos=tiempos[0:len(tiempos)-3]
+    # tiempos=str(tiempos)
+    # tiempos=tiempos[0:len(tiempos)-3]
     # print(tiempos)
-    # horas=tiempos.days*24
+    dias=tiempos.days*24
+    horas=tiempos.seconds//3600
+    horas+=dias
     # print(horas)
-    # minutos=tiempos.seconds//60
+    sobrante=tiempos.seconds%3600
+    minutos=sobrante//60
     # print(minutos)
-    # minutos=round(minutos)
-    # duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
-    duracion="Tiempo hh:mm " + str(f'{tiempos}')
+    duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+    # duracion="Tiempo hh:mm " + str(f'{tiempos}')
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
 
@@ -558,8 +597,9 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
             tarifa="Tarifa Turno-Otro"
             valor=valor_turno_otro
 
-    pdf=FPDF("P", "mm", (100, 150))
+    pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
+    # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
@@ -621,15 +661,27 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+    # ahora=str(datetime.datetime.now())
+    # ahora=ahora.split(" ")
+    # ahora=ahora[1]
+    # ahora=ahora.split(":")
+    # hora=int(ahora[0])
+    # minuto=int(ahora[1])
+    # minuto+=1
+    # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-def selectRegisters():
+def selectRegisters(search):
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
-    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro"""
+    if search == "":
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro"""
+    else:
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%'"""
+
     cursor.execute(sql)
     registros=cursor.fetchall()
 
-    if registros != "":
+    if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
         keys=["consecutivo", "placa", "entrada", "salida"]
         result=[dict(zip(keys, values)) for values in registros]
@@ -638,8 +690,8 @@ def selectRegisters():
             tb.rows.append(
                 DataRow(
                     selected=False,
-                    data=x["consecutivo"],
-                    # data=x,
+                    # data=x["id"],
+                    data=x,
                     on_select_changed=showedit,
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),

@@ -1,11 +1,11 @@
 import time
 import locale
 import flet as ft
+import sqlite3
 # from flet import Page
 # from app import page
 from pages.receipt import show_input, show_output
 from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister
-import sqlite3
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
@@ -14,6 +14,7 @@ locale.setlocale(locale.LC_ALL, "")
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
 textsize=90
+search=""
 
 configuracion=get_configuration()
 
@@ -318,7 +319,7 @@ def Register(page):
         direccion=configuracion[0][4]
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
-        consecutivo=configuracion[0][7]
+        # consecutivo=configuracion[0][7]
     
     def register(e):
         if placa.value != "":
@@ -350,10 +351,10 @@ def Register(page):
                     open_dlg_modal(e, title, message)
                     return False
             
-            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, vlr_total, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
+            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
             if comentario1 != "":
-                show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, entradas)
+                show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas)
             else:
                 show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas)
 
@@ -374,7 +375,7 @@ def Register(page):
             total.update()
             placa.focus()
             tb.rows.clear()
-            selectRegisters()
+            selectRegisters(search)
             tb.update()
             tblRegistro.update()
 
@@ -404,6 +405,19 @@ def Register(page):
         page.dialog=dlg_modal
         dlg_modal.open=True
         page.update()
+    
+    def search_change(e):
+        search=e.control.value
+        tb.rows.clear()
+        selectRegisters(search)
+        if tb.rows != []:
+            tblRegistro.height=296
+            no_registros.visible=False
+        else:
+            tblRegistro.height=60
+            no_registros.visible=True
+        tblRegistro.update()
+        no_registros.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -441,6 +455,8 @@ def Register(page):
     elif page.window_width >= 992:
         textsize=90
     
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color="white", filled=True, width=300, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    no_registros=ft.Text("No se encontraron registros", visible=False)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", capitalization="CHARACTERS", autofocus=True, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", read_only=True)
 
@@ -544,7 +560,7 @@ def Register(page):
                 # content=ft.Stack([
                 content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[tblRegistro]),
+                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[buscar, tblRegistro, no_registros]),
                         ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                     ]),
@@ -590,7 +606,7 @@ def Register(page):
         # )
     )
 
-selectRegisters()
+selectRegisters(search)
 
 
 

@@ -54,7 +54,7 @@ def create_configuration():
         direccion TEXT,
         telefono TEXT,
         servicio TEXT,
-        consecutivo INTEGER)
+        consecutivo TEXT)
         """)
     conn.commit()
 
@@ -83,7 +83,7 @@ def create_regist():
     cursor=conn.cursor()
     cursor.execute("""CREATE TABLE IF NOT EXISTS registro(
         registro_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        consecutivo INTEGER,
+        consecutivo TEXT,
         placa TEXT,
         entrada TEXT,
         salida TEXT,

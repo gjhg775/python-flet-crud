@@ -1,4 +1,5 @@
 import flet as ft
+import settings
 from pages.login import Login
 from pages.home import home
 from pages.configuration import Configuration
@@ -166,7 +167,7 @@ def main(page: ft.Page):
             if bln_login == True:
                 datalogin={"value":True, "username":user.value}
                 page.session.set("Loginme", datalogin)
-                username=page.session.get('Loginme')
+                settings.username=page.session.get('Loginme')
                 # page.go("/register")
                 page.clean()
                 # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)

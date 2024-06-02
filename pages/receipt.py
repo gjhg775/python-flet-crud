@@ -15,7 +15,7 @@ locale.setlocale(locale.LC_ALL, "")
 path="receipt.pdf"
 # path="/receipt/receipt.pdf"
 
-def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, entradas):
+def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -25,8 +25,9 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     entrada=str(entrada[0:19])
     entrada=f"Entrada " + str(entradas)
 
-    pdf=FPDF("P", "mm", (100, 150))
+    pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
+    # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
@@ -67,22 +68,25 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.set_font("helvetica", "", size=10)
     comentario1_w=pdf.get_string_width(comentario1)
     pdf.set_x((doc_w - comentario1_w) / 2)
-    pdf.cell(comentario1_w, 160, comentario1, align="C")
+    pdf.cell(comentario1_w, 157, comentario1, align="C")
     comentario2_w=pdf.get_string_width(comentario2)
     pdf.set_x((doc_w - comentario2_w) / 2)
-    pdf.cell(comentario2_w, 167, comentario2, align="C")
+    pdf.cell(comentario2_w, 164, comentario2, align="C")
+    comentario3_w=pdf.get_string_width(comentario3)
+    pdf.set_x((doc_w - comentario3_w) / 2)
+    pdf.cell(comentario3_w, 171, comentario3, align="C")
     # pdf.set_font("helvetica", "", size=15)
     # pdf.cell(10, 155, "")
     img=qrcode.make(f"{placas}")
-    pdf.image(img.get_image(), x=35, y=96, w=30, h=30)
+    pdf.image(img.get_image(), x=25, y=98, w=30, h=30)
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
     if vehiculo == "Moto":
-        pdf.code39(f"*{placas}*", x=13, y=128, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     if vehiculo == "Carro":
-        pdf.code39(f"*{placas}*", x=8, y=128, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     if vehiculo == "Otro":
-        pdf.code39(f"*{placas}*", x=2, y=128, w=2, h=15)
+        pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
@@ -93,7 +97,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # hora=int(ahora[0])
     # minuto=int(ahora[1])
     # minuto+=1
-    # pywhatkit.sendwhatmsg("+573046002498", path, hora, minuto, 15, True, 2)
+    # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
 def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
@@ -156,8 +160,9 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
             tarifa="Tarifa Turno-Otro"
             valor=valor_turno_otro
 
-    pdf=FPDF("P", "mm", (100, 150))
+    pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
+    # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
@@ -226,4 +231,4 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     # hora=int(ahora[0])
     # minuto=int(ahora[1])
     # minuto+=1
-    # pywhatkit.sendwhatmsg("+573046002498", path, hora, minuto, 15, True, 2)
+    # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
