@@ -267,6 +267,7 @@ def main(page: ft.Page):
     page.window_opacity=0.8
     page.opacity=0.0
     page.window_min_width=378
+    # page.window_width=378
     # page.window_width=992
     # page.window_resizable=False
     # page.window_maximizable=False

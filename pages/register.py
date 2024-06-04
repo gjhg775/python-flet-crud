@@ -1,6 +1,7 @@
 import time
 import locale
 import flet as ft
+import settings
 import sqlite3
 # from flet import Page
 # from app import page
@@ -13,8 +14,8 @@ locale.setlocale(locale.LC_ALL, "")
 
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
-textsize=90
 search=""
+textsize=settings.textsize
 
 configuracion=get_configuration()
 
@@ -394,6 +395,20 @@ def Register(page):
             # card.update()
             total.update()
 
+    def page_resize(e):
+        if page.window_width <= 425:
+            settings.textsize=30
+        elif page.window_width > 425 and page.window_width <= 678:
+            settings.textsize=50
+        elif page.window_width >= 768 and page.window_width < 992:
+            settings.textsize=70
+        elif page.window_width >= 992:
+            settings.textsize=90
+        placa.text_size=settings.textsize
+        total.text_size=settings.textsize
+        placa.update()
+        total.update()
+
     def close_dlg(e):
         dlg_modal.open=False
         page.update()
@@ -446,6 +461,8 @@ def Register(page):
         on_dismiss=lambda _: placa.focus(),
     )
 
+    page.on_resize=page_resize
+
     if page.window_width <= 425:
         textsize=30
     elif page.window_width > 425 and page.window_width <= 678:
@@ -455,7 +472,7 @@ def Register(page):
     elif page.window_width >= 992:
         textsize=90
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color="white", filled=True, width=300, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, filled=False, width=300, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
     no_registros=ft.Text("No se encontraron registros", visible=False)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", capitalization="CHARACTERS", autofocus=True, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", read_only=True)
