@@ -88,6 +88,7 @@ def create_regist():
         entrada TEXT,
         salida TEXT,
         vehiculo TEXT,
+        facturacion INTEGER,
         valor INTEGER,
         tiempo INTEGER,
         total INTEGER,

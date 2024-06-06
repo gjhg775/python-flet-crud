@@ -21,6 +21,25 @@ locale.setlocale(locale.LC_ALL, "")
 path="receipt.pdf"
 # path="/receipt/receipt.pdf"
 
+tbc = DataTable(
+    bgcolor=colors.PRIMARY_CONTAINER,
+    # bgcolor="#FFFFFF",
+    # border_radius=10,
+    # data_row_color={"hovered": "#e5eff5"},
+	columns=[
+		DataColumn(Text("Consecutivo")),
+		DataColumn(Text("Placa")),
+		DataColumn(Text("Entrada")),
+		DataColumn(Text("Salida")),
+        DataColumn(Text("Vehículo")),
+        DataColumn(Text("Facturación")),
+        DataColumn(Text("Valor"), numeric=True),
+        DataColumn(Text("Total"), numeric=True),
+        # DataColumn(Text("Cuadre")),
+	],
+	rows=[]
+)
+
 tb = DataTable(
     bgcolor=colors.PRIMARY_CONTAINER,
     # bgcolor="#FFFFFF",
@@ -185,19 +204,19 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         id=registros[0][0]
         placa=registros[0][2]
         entrada=registros[0][3]
-        valor=registros[0][6]
-        tiempo=((registros[0][11])/60)/60
+        valor=registros[0][7]
+        tiempo=((registros[0][12])/60)/60
 
         if int(tiempo) <= 4:
             if int(tiempo) == 0:
                 total=valor
             else:
                 valor_horas=valor*int(tiempo)
-                if (((registros[0][11])/60) % 60) == 0:
+                if (((registros[0][12])/60) % 60) == 0:
                     valor_fraccion=0
-                if ((registros[0][11])/60) % 60 > 0 and ((registros[0][11])/60) % 60 <= 15:
+                if ((registros[0][12])/60) % 60 > 0 and ((registros[0][12])/60) % 60 <= 15:
                     valor_fraccion=valor/2
-                if (((registros[0][11])/60) % 60 > 15 and ((registros[0][11])/60) % 60 <= 30) or ((registros[0][11])/60) % 60 > 30:
+                if (((registros[0][12])/60) % 60 > 15 and ((registros[0][12])/60) % 60 <= 30) or ((registros[0][12])/60) % 60 > 30:
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
             if vehiculo == "Moto":
@@ -209,6 +228,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             if vehiculo == "Otro":
                 if total > valor_turno_otro:
                     total=valor_turno_otro
+            facturacion=0
         else:
             if vehiculo == "Moto":
                 total=valor_turno_moto
@@ -261,10 +281,11 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                         total=total+valor_fraccion+(valor_turno_otro*turno)
                     else:
                         total=valor_turno_otro*turno
+            facturacion=1
 
         tiempo=int(tiempo)
-        sql=f"""UPDATE registro SET salida = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
-        values=(f"{salida}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
+        sql=f"""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
+        values=(f"{salida}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -272,8 +293,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         cursor.execute(sql)
         registros=cursor.fetchall()
 
-        entradas=registros[0][11]
-        salidas=registros[0][12]
+        entradas=registros[0][12]
+        salidas=registros[0][13]
 
         # sql="SELECT consecutivo FROM configuracion"
         # cursor.execute(sql)
@@ -309,6 +330,7 @@ def add_register(vehiculo, placa):
     if vehiculo == "Otro":
         valor=valor_hora_otro
 
+    facturacion=0
     tiempo=0
     total=0
     cuadre=0
@@ -330,8 +352,8 @@ def add_register(vehiculo, placa):
 
         consecutivo=registros[0][0]
 
-        sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, valor, tiempo, total, cuadre, usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-        values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}")
+        sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, facturacion, valor, tiempo, total, cuadre, usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -339,8 +361,8 @@ def add_register(vehiculo, placa):
         cursor.execute(sql)
         registros=cursor.fetchall()
 
-        entradas=registros[0][11]
-        salidas=registros[0][12]
+        entradas=registros[0][12]
+        salidas=registros[0][13]
 
         id=1
         consecutivos=int(consecutivo)+1
@@ -448,9 +470,6 @@ def showdelete(e):
         tb.update()
     except Exception as e:
         print(e)
-
-path="receipt.pdf"
-# path="/receipt/receipt.pdf"
 
 def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
@@ -724,6 +743,61 @@ def selectRegisters(search):
                 ),
             )
 
+def do_nothing(e):
+    pass
+
+def selectCashRegister():
+    cursor=conn.cursor()    
+    # sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = 0 AND cuadre = 0"""
+    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = 0"""
+    cursor.execute(sql)
+    registros=cursor.fetchall()
+
+    if registros != []:
+        keys=["consecutivo", "placa", "entrada", "salida", "vehiculo", "facturacion", "valor", "tiempo", "total", "cuadre"]
+        result=[dict(zip(keys, values)) for values in registros]
+
+        for x in result:
+            tbc.rows.append(
+                DataRow(
+                    selected=False,
+                    # data=x["id"],
+                    data=x,
+                    on_select_changed=do_nothing,
+                    # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
+                    # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
+                    cells=[
+                        DataCell(Text(x["consecutivo"])),
+                        DataCell(Text(x["placa"])),
+                        DataCell(Text(x["entrada"])),
+                        DataCell(Text(x["salida"])),
+                        DataCell(Text(x["vehiculo"])),
+                        DataCell(Text("Horas" if x["facturacion"] == 0 else "Turnos")),
+                        DataCell(Text(locale.currency(x["valor"], grouping=True))),
+                        DataCell(Text(locale.currency(x["total"], grouping=True))),
+                        # DataCell(Text(x["cuadre"])),
+                        DataCell(Row([
+                        	# IconButton(icon="create",icon_color="blue",
+                        	# 	data=x,
+                        	# 	on_click=showedit
+                        	# 	),
+                        	# IconButton(icon="delete",icon_color="red",
+                        	# 	data=x["id"],
+                        	# 	on_click=showdelete
+                        	# 	),
+                            # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        	# 	data=x,
+                        	# 	on_click=showedit
+                        	# 	),
+                        	])),
+                    ],
+                ),
+            )
+
 tblRegistro = Column([
     Row([tb], scroll="always")
-], height=296)
+], height=246)
+
+tblCuadre = Column([
+    Row([tbc], scroll="always")
+], height=344)

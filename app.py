@@ -5,6 +5,8 @@ from pages.home import home
 from pages.configuration import Configuration
 from pages.variables import Variables
 from pages.register import *
+from pages.cash_register import *
+from pages.closing_day import Closing_day
 from pages.developer import developer
 from datatable import get_configuration, selectUser
 
@@ -78,8 +80,19 @@ def main(page: ft.Page):
         if e.control.selected_index == 4:
             hide_drawer(e)
             page.clean()
-            page.add(developer(page))
+            page.add(Cash_register(page))
+            tblCuadre.scroll="auto"
+            tblCuadre.update()
+            page.update()
         if e.control.selected_index == 5:
+            hide_drawer(e)
+            page.clean()
+            page.add(Closing_day(page))
+        if e.control.selected_index == 6:
+            hide_drawer(e)
+            page.clean()
+            page.add(developer(page))
+        if e.control.selected_index == 7:
             logout()
             hide_drawer(e)
             page.clean()
@@ -236,6 +249,16 @@ def main(page: ft.Page):
                 label="Registro",
                 selected_icon=ft.icons.EDIT_ROUNDED,
             ),
+            ft.NavigationDrawerDestination(
+                icon_content=ft.Icon(ft.icons.ATTACH_MONEY_OUTLINED),
+                label="Cuadre de caja",
+                selected_icon=ft.icons.ATTACH_MONEY_SHARP,
+            ),
+            ft.NavigationDrawerDestination(
+                icon_content=ft.Icon(ft.icons.CALENDAR_MONTH_OUTLINED),
+                label="Cierre de día",
+                selected_icon=ft.icons.CALENDAR_MONTH,
+            ),
             ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
                 icon_content=ft.Icon(ft.icons.PERSON_OUTLINED),
@@ -271,6 +294,7 @@ def main(page: ft.Page):
     # page.window_width=992
     # page.window_resizable=False
     # page.window_maximizable=False
+    page.padding=0
     page.vertical_alignment="center"
     page.horizontal_alignment="center"
     page.window_center()
@@ -300,7 +324,7 @@ def main(page: ft.Page):
         ],
     )
 
-    lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
+    lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
     user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
@@ -376,8 +400,10 @@ def main(page: ft.Page):
     # page.add(Home(page))
     page.add(container)
 
-ft.app(target=main)
-# ft.app(target=main, assets_dir="assets", port=9000, view=ft.AppView.WEB_BROWSER)
+if settings.sw == 0:
+    ft.app(target=main)
+else:
+    ft.app(target=main, assets_dir="assets", port=9000, view=ft.AppView.WEB_BROWSER)
 
 
 # import flet as ft

@@ -216,7 +216,7 @@ def Configuration(page):
                 content=ft.Stack([
                     ft.Row([
                         ft.Column([
-                            ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
+                            ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
                         ])
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER,

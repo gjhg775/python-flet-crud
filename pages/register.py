@@ -324,6 +324,7 @@ def Register(page):
     
     def register(e):
         if placa.value != "":
+            buscar.value=""
             if rdbVehiculo.value == "Moto":
                 for i in placa.value:
                     if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
@@ -402,12 +403,17 @@ def Register(page):
             settings.textsize=50
         elif page.window_width >= 768 and page.window_width < 992:
             settings.textsize=70
-        elif page.window_width >= 992:
+        elif page.window_width >= 992 and page.window_width <= 1400:
             settings.textsize=90
-        placa.text_size=settings.textsize
-        total.text_size=settings.textsize
+        if settings.sw == 0:
+            placa.text_size=settings.textsize
+            total.text_size=settings.textsize
+        else:
+            textsize=settings.textsize
+            textsize=settings.textsize
         placa.update()
         total.update()
+        page.update()
 
     def close_dlg(e):
         dlg_modal.open=False
@@ -426,7 +432,7 @@ def Register(page):
         tb.rows.clear()
         selectRegisters(search)
         if tb.rows != []:
-            tblRegistro.height=296
+            tblRegistro.height=246
             no_registros.visible=False
         else:
             tblRegistro.height=60
@@ -472,7 +478,7 @@ def Register(page):
     elif page.window_width >= 992:
         textsize=90
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, filled=False, width=300, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
     no_registros=ft.Text("No se encontraron registros", visible=False)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", capitalization="CHARACTERS", autofocus=True, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", read_only=True)
@@ -550,7 +556,7 @@ def Register(page):
                     ft.Row([
                         ft.Column([
                             ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
-                            ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.BLUE_900)
+                            ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
                             # ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
                             # ft.ElevatedButton("Registro", on_click=showInputs)
                         ])
@@ -584,6 +590,7 @@ def Register(page):
                 # ]),
             ),
             ft.Container(
+                padding=ft.padding.only(0, 0, 10, 0),
                 content=ft.ResponsiveRow([
                     total
                 ],

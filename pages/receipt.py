@@ -13,6 +13,8 @@ title=f"Parqueadero"
 locale.setlocale(locale.LC_ALL, "")
 
 path="receipt.pdf"
+path2="cash_register.pdf"
+path3="cash_register2.pdf"
 # path="/receipt/receipt.pdf"
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
@@ -232,3 +234,193 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     # minuto=int(ahora[1])
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
+
+def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
+    nit="Nit " + nit
+    regimen="Régimen " + regimen
+    telefono="Teléfono " + telefono
+    servicio= "Servicio " + servicio
+    titulo="Reporte de Cuadre"
+    registro="Registro Efectivo"
+    fecha=datetime.datetime.now()
+    fechahora=fecha.strftime('%d/%m/%Y %H:%M')
+    fechahora=fechahora.split(" ")
+    fecha=str(fechahora[0])
+    hora=str(fechahora[1])
+    fecha="Fecha " + fecha
+    hora=" Hora " + hora
+    fecha=fecha + hora
+
+    pdf=FPDF("P", "mm", (80, 150))
+    pdf.add_page()
+    # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
+    pdf.set_font("helvetica", "", size=20)
+    title_w=pdf.get_string_width(title)
+    doc_w=pdf.w
+    pdf.set_x((doc_w - title_w) / 2)
+    pdf.cell(title_w, 0, title, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    parqueadero_w=pdf.get_string_width(parqueadero)
+    pdf.set_x((doc_w - parqueadero_w) / 2)
+    pdf.cell(parqueadero_w, 18, parqueadero, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    nit_w=pdf.get_string_width(nit)
+    pdf.set_x((doc_w - nit_w) / 2)
+    pdf.cell(nit_w, 35, nit, align="C")
+    regimen_w=pdf.get_string_width(regimen)
+    pdf.set_x((doc_w - regimen_w) / 2)
+    pdf.cell(regimen_w, 49, regimen, align="C")
+    direccion_w=pdf.get_string_width(direccion)
+    pdf.set_x((doc_w - direccion_w) / 2)
+    pdf.cell(direccion_w, 63, direccion, align="C")
+    telefono_w=pdf.get_string_width(telefono)
+    pdf.set_x((doc_w - telefono_w) / 2)
+    pdf.cell(telefono_w, 77, telefono, align="C")
+    servicio_w=pdf.get_string_width(servicio)
+    pdf.set_x((doc_w - servicio_w) / 2)
+    pdf.cell(servicio_w, 91, servicio, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    titulo_w=pdf.get_string_width(titulo)
+    pdf.set_x((doc_w - titulo_w) / 2)
+    pdf.cell(titulo_w, 105, titulo, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    registro_w=pdf.get_string_width(registro)
+    pdf.set_x((doc_w - registro_w) / 2)
+    pdf.cell(registro_w, 119, registro, align="C")
+    pdf.set_font("helvetica", "", size=10)
+    fecha_w=pdf.get_string_width(fecha)
+    pdf.set_x((doc_w - fecha_w) / 2)
+    pdf.cell(fecha_w, 133, fecha, align="C")
+    pdf.set_font("helvetica", "", size=9)
+    pos=133
+    contador=0
+    efectivo=0
+    for registro in registros:
+        pos+=10
+        contador+=1
+        consecutivo=registro[0]
+        placa=registro[1]
+        entrada=registro[2]
+        salida=registro[3]
+        vehiculo=registro[4]
+        entrada=entrada.split(" ")
+        entrada=str(entrada[1])
+        salida=salida.split(" ")
+        salida=str(salida[1])
+        facturacion="Horas" if registro[5] == 0 else "Turnos"
+        valor=locale.currency(registro[6], grouping=True)
+        total=locale.currency(registro[8], grouping=True)
+        row=consecutivo + "  " + placa + "  " + entrada + "  " + salida
+        row_w=pdf.get_string_width(row)
+        pdf.set_x((doc_w - row_w) / 2)
+        pdf.cell(row_w, pos, row, align="C")
+        pos+=10
+        row=vehiculo + "  " + facturacion + "  " + str(valor) + "  " + str(total)
+        row_w=pdf.get_string_width(row)
+        pdf.set_x((doc_w - row_w) / 2)
+        pdf.cell(row_w, pos, row, align="C")
+        # pdf.cell(1, pos, row, align="R")
+        efectivo+=registro[8]
+        if contador == 6:
+            pdf.add_page(same=True)
+            pos=0
+    pdf.set_font("helvetica", "B", size=9)
+    pos+=10
+    efectivo=locale.currency(efectivo, grouping=True)
+    efectivo="Total efectivo " + str(efectivo)
+    # efectivo_w=pdf.get_string_width(efectivo)
+    # pdf.set_x((doc_w - efectivo_w) / 2)
+    # pdf.cell(efectivo_w, pos, efectivo, align="C")
+    pdf.cell(1, pos, efectivo, align="R")
+    pdf.output(path2)
+    subprocess.Popen([path2], shell=True)
+    # webbrowser.open_new(path2)
+
+def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
+    nit="Nit " + nit
+    regimen="Régimen " + regimen
+    telefono="Teléfono " + telefono
+    servicio= "Servicio " + servicio
+    titulo="Reporte de Cuadre"
+    registro="Registro Pendiente"
+    fecha=datetime.datetime.now()
+    fechahora=fecha.strftime('%d/%m/%Y %H:%M')
+    fechahora=fechahora.split(" ")
+    fecha=str(fechahora[0])
+    hora=str(fechahora[1])
+    fecha="Fecha " + fecha
+    hora=" Hora " + hora
+    fecha=fecha + hora
+
+    pdf=FPDF("P", "mm", (80, 150))
+    pdf.add_page()
+    # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
+    pdf.set_font("helvetica", "", size=20)
+    title_w=pdf.get_string_width(title)
+    doc_w=pdf.w
+    pdf.set_x((doc_w - title_w) / 2)
+    pdf.cell(title_w, 0, title, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    parqueadero_w=pdf.get_string_width(parqueadero)
+    pdf.set_x((doc_w - parqueadero_w) / 2)
+    pdf.cell(parqueadero_w, 18, parqueadero, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    nit_w=pdf.get_string_width(nit)
+    pdf.set_x((doc_w - nit_w) / 2)
+    pdf.cell(nit_w, 35, nit, align="C")
+    regimen_w=pdf.get_string_width(regimen)
+    pdf.set_x((doc_w - regimen_w) / 2)
+    pdf.cell(regimen_w, 49, regimen, align="C")
+    direccion_w=pdf.get_string_width(direccion)
+    pdf.set_x((doc_w - direccion_w) / 2)
+    pdf.cell(direccion_w, 63, direccion, align="C")
+    telefono_w=pdf.get_string_width(telefono)
+    pdf.set_x((doc_w - telefono_w) / 2)
+    pdf.cell(telefono_w, 77, telefono, align="C")
+    servicio_w=pdf.get_string_width(servicio)
+    pdf.set_x((doc_w - servicio_w) / 2)
+    pdf.cell(servicio_w, 91, servicio, align="C")
+    pdf.set_font("helvetica", "B", size=20)
+    titulo_w=pdf.get_string_width(titulo)
+    pdf.set_x((doc_w - titulo_w) / 2)
+    pdf.cell(titulo_w, 105, titulo, align="C")
+    pdf.set_font("helvetica", "", size=15)
+    registro_w=pdf.get_string_width(registro)
+    pdf.set_x((doc_w - registro_w) / 2)
+    pdf.cell(registro_w, 119, registro, align="C")
+    pdf.set_font("helvetica", "", size=10)
+    fecha_w=pdf.get_string_width(fecha)
+    pdf.set_x((doc_w - fecha_w) / 2)
+    pdf.cell(fecha_w, 133, fecha, align="C")
+    pdf.set_font("helvetica", "", size=9)
+    pos=133
+    contador=0
+    pendiente=0
+    for registro in registros:
+        pos+=10
+        contador+=1
+        pendiente+=1
+        consecutivo=registro[0]
+        placa=registro[1]
+        entrada=registro[2]
+        vehiculo=registro[4]
+        entrada=entrada.split(" ")
+        entrada=str(entrada[1])
+        facturacion="Horas" if registro[5] == 0 else "Turnos"
+        valor=locale.currency(registro[6], grouping=True)
+        row=consecutivo + "  " + placa + "  " + entrada + "  " + vehiculo + "  " + facturacion + "  " + valor
+        row_w=pdf.get_string_width(row)
+        pdf.set_x((doc_w - row_w) / 2)
+        pdf.cell(row_w, pos, row, align="C")
+        if contador == 13:
+            pdf.add_page(same=True)
+            pos=0
+    pdf.set_font("helvetica", "B", size=9)
+    pos+=10
+    pendiente="Total pendiente " + str(pendiente)
+    pendiente_w=pdf.get_string_width(pendiente)
+    pdf.set_x((doc_w - pendiente_w) / 2)
+    pdf.cell(pendiente_w, pos, pendiente, align="C")
+    pdf.output(path3)
+    subprocess.Popen([path3], shell=True)
+    # webbrowser.open_new(path3)
