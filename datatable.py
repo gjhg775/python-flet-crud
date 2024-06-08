@@ -7,6 +7,8 @@ import datetime
 import settings
 import sqlite3
 import hashlib
+import win32api
+import win32print
 from flet import *
 from fpdf import FPDF
 
@@ -14,7 +16,7 @@ conn=sqlite3.connect('database/parqueadero.db',check_same_thread=False)
 
 valor=0
 
-title=f"Parqueadero"
+title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -546,6 +548,20 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+
+    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+    cPrinter=win32print.GetDefaultPrinter()
+    pdfFile="C:/receipt/receipt.pdf"
+    win32api.ShellExecute(
+        0,
+        "open",
+        gsprint,
+        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+        '.',
+        0
+    )
+
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
     # ahora=ahora[1]
@@ -680,6 +696,20 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+
+    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+    cPrinter=win32print.GetDefaultPrinter()
+    pdfFile="C:/receipt/receipt.pdf"
+    win32api.ShellExecute(
+        0,
+        "open",
+        gsprint,
+        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+        '.',
+        0
+    )
+
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
     # ahora=ahora[1]

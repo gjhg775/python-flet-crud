@@ -403,7 +403,7 @@ def main(page: ft.Page):
 if settings.sw == 0:
     ft.app(target=main)
 else:
-    ft.app(target=main, assets_dir="assets", port=9000, view=ft.AppView.WEB_BROWSER)
+    ft.app(target=main, port=9000, assets_dir="assets", view=ft.AppView.WEB_BROWSER)
 
 
 # import flet as ft

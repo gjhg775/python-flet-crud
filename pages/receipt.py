@@ -4,11 +4,13 @@ import datetime
 import subprocess
 # import webbrowser
 import pywhatkit
+import win32api
+import win32print
 from fpdf import FPDF
 # from datatable import valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro
 from datatable import get_variables
 
-title=f"Parqueadero"
+title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -92,6 +94,20 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+
+    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+    cPrinter=win32print.GetDefaultPrinter()
+    pdfFile="C:/receipt/receipt.pdf"
+    win32api.ShellExecute(
+        0,
+        "open",
+        gsprint,
+        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+        '.',
+        0
+    )
+
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
     # ahora=ahora[1]
@@ -226,6 +242,20 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.output(path)
     subprocess.Popen([path], shell=True)
     # webbrowser.open_new(path)
+
+    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+    cPrinter=win32print.GetDefaultPrinter()
+    pdfFile="C:/receipt/receipt.pdf"
+    win32api.ShellExecute(
+        0,
+        "open",
+        gsprint,
+        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+        '.',
+        0
+    )
+
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
     # ahora=ahora[1]
@@ -336,6 +366,19 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     subprocess.Popen([path2], shell=True)
     # webbrowser.open_new(path2)
 
+    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+    cPrinter=win32print.GetDefaultPrinter()
+    pdfFile="C:/receipt/cash_register.pdf"
+    win32api.ShellExecute(
+        0,
+        "open",
+        gsprint,
+        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+        '.',
+        0
+    )
+
 def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
     nit="Nit " + nit
     regimen="Régimen " + regimen
@@ -424,3 +467,16 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf.output(path3)
     subprocess.Popen([path3], shell=True)
     # webbrowser.open_new(path3)
+
+    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+    cPrinter=win32print.GetDefaultPrinter()
+    pdfFile="C:/receipt/cash_register2.pdf"
+    win32api.ShellExecute(
+        0,
+        "open",
+        gsprint,
+        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+        '.',
+        0
+    )
