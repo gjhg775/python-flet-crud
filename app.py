@@ -76,7 +76,6 @@ def main(page: ft.Page):
             tblRegistro.scroll="auto"
             tblRegistro.update()
             page.update()
-            # placa.focus()
         if e.control.selected_index == 4:
             hide_drawer(e)
             page.clean()
@@ -298,31 +297,39 @@ def main(page: ft.Page):
     page.vertical_alignment="center"
     page.horizontal_alignment="center"
     page.window_center()
+    page.locale_configuration = ft.LocaleConfiguration(
+            supported_locales=[
+                # ft.Locale("de", "DE"),  # German, Germany
+                # ft.Locale("fr", "FR"),  # French, France
+                ft.Locale("es"),        # Spanish
+            ],
+            current_locale=ft.Locale("es", "ES"),
+        )
     page.appbar = ft.AppBar(
-        leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
-        leading_width=55,
-        title=ft.Text("Parqueadero", color=ft.colors.WHITE),
-        # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
-        center_title=False,
-        # bgcolor=ft.colors.PRIMARY_CONTAINER,
-        bgcolor=ft.colors.BLUE_900,
-        actions=[
-            toggledarklight,
-            # mode_switch
-            # ft.IconButton(ft.icons.WB_SUNNY_OUTLINED, icon_color="white", padding=ft.padding.only(right=20), on_click=change_mode_theme),
-        #     ft.IconButton(ft.icons.FILTER_3),
-        #     ft.PopupMenuButton(
-        #         items=[
-        #             ft.PopupMenuItem(text="Registro"),
-        #             ft.PopupMenuItem(),  # divider
-        #             ft.PopupMenuItem(
-        #                 text="Checked item", checked=False, on_click=check_item_clicked
-        #             ),
-        #         ]
-        #     ),
-        ft.Container(width=10)
-        ],
-    )
+            leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
+            leading_width=55,
+            title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+            # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
+            center_title=False,
+            # bgcolor=ft.colors.PRIMARY_CONTAINER,
+            bgcolor=ft.colors.BLUE_900,
+            actions=[
+                toggledarklight,
+                # mode_switch
+                # ft.IconButton(ft.icons.WB_SUNNY_OUTLINED, icon_color="white", padding=ft.padding.only(right=20), on_click=change_mode_theme),
+            #     ft.IconButton(ft.icons.FILTER_3),
+            #     ft.PopupMenuButton(
+            #         items=[
+            #             ft.PopupMenuItem(text="Registro"),
+            #             ft.PopupMenuItem(),  # divider
+            #             ft.PopupMenuItem(
+            #                 text="Checked item", checked=False, on_click=check_item_clicked
+            #             ),
+            #         ]
+            #     ),
+            ft.Container(width=10)
+            ],
+        )
 
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
     user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)

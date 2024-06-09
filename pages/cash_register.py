@@ -35,7 +35,7 @@ def Cash_register(page):
         if registros != []:
             show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio, registros)
 
-        time.sleep(1)
+        time.sleep(0.1)
         
         sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = {total} AND cuadre = {cuadre}"""
         cursor.execute(sql)
@@ -47,6 +47,7 @@ def Cash_register(page):
     tbc.rows.clear()
     selectCashRegister()
 
+    no_registros=ft.Text("No se encontraron registros", visible=False)
     btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
     
     return ft.Column(
@@ -76,7 +77,7 @@ def Cash_register(page):
                 content=ft.Stack([
                 # content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[tblCuadre,]),
+                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[tblCuadre, no_registros]),
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
                     # ]),
                 ]),

@@ -383,8 +383,9 @@ def add_register(vehiculo, placa):
 
 def selectRegister(vehiculo, placa):
     try:
+        total=0
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
+        sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = {total}"""
         # sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
         values=(f"{placa}",)
         cursor.execute(sql, values)
@@ -720,12 +721,13 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
 def selectRegisters(search):
+    cuadre=0
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE cuadre = {cuadre}"""
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%'"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%' AND cuadre = {cuadre}"""
 
     cursor.execute(sql)
     registros=cursor.fetchall()
@@ -777,9 +779,10 @@ def do_nothing(e):
     pass
 
 def selectCashRegister():
+    cuadre=0
     cursor=conn.cursor()    
     # sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = 0 AND cuadre = 0"""
-    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = 0"""
+    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = {cuadre}"""
     cursor.execute(sql)
     registros=cursor.fetchall()
 

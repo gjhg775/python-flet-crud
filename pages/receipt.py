@@ -17,7 +17,6 @@ locale.setlocale(locale.LC_ALL, "")
 path="receipt.pdf"
 path2="cash_register.pdf"
 path3="cash_register2.pdf"
-# path="/receipt/receipt.pdf"
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
@@ -98,7 +97,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
     cPrinter=win32print.GetDefaultPrinter()
-    pdfFile="C:/receipt/receipt.pdf"
+    pdfFile=path
     win32api.ShellExecute(
         0,
         "open",
@@ -246,7 +245,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
     cPrinter=win32print.GetDefaultPrinter()
-    pdfFile="C:/receipt/receipt.pdf"
+    pdfFile=path
     win32api.ShellExecute(
         0,
         "open",
@@ -323,10 +322,12 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     pdf.cell(fecha_w, 133, fecha, align="C")
     pdf.set_font("helvetica", "", size=9)
     pos=133
+    pagina=0
     contador=0
     efectivo=0
     for registro in registros:
         pos+=10
+        pagina+=1
         contador+=1
         consecutivo=registro[0]
         placa=registro[1]
@@ -351,7 +352,10 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         pdf.cell(row_w, pos, row, align="C")
         # pdf.cell(1, pos, row, align="R")
         efectivo+=registro[8]
-        if contador == 6:
+        if pagina > 0 and contador == 6:
+            pdf.add_page(same=True)
+            pos=0
+        if (contador%18) == 0:
             pdf.add_page(same=True)
             pos=0
     pdf.set_font("helvetica", "B", size=9)
@@ -369,7 +373,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
     cPrinter=win32print.GetDefaultPrinter()
-    pdfFile="C:/receipt/cash_register.pdf"
+    pdfFile=path2
     win32api.ShellExecute(
         0,
         "open",
@@ -471,7 +475,7 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
     cPrinter=win32print.GetDefaultPrinter()
-    pdfFile="C:/receipt/cash_register2.pdf"
+    pdfFile=path3
     win32api.ShellExecute(
         0,
         "open",

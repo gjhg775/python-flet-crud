@@ -40,28 +40,38 @@ def Closing_day(page):
         close_dlg(e)
         dia=fecha.value
         if dia != "":
-            cuadre=0
+            cuadre=1
             cursor=conn.cursor()
             sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre}"""
             cursor.execute(sql)
             registros=cursor.fetchall()
 
             if registros != []:
-                cuadre=1
-                total=0
-                sql=f"""UPDATE registro SET cuadre = ? WHERE strftime('%d/%m/%Y', salida) = ? AND total > ?"""
-                values=(f"{cuadre}", f"{dia}", f"{total}")
-                cursor.execute(sql, values)
-                conn.commit()
-
-                fecha.value=""
-                fecha.update()
-
-                message="Proceso realizado satisfactoriamente"
-                bg_color="green"
+                message="El día ya fué cerrado con anterioridad"
+                bg_color="blue"
             else:
-                message="Día a cerrar no encontrado ó ya está cerrado. Favor verificar"
-                bg_color="red"
+                cuadre=0
+                cursor=conn.cursor()
+                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre}"""
+                cursor.execute(sql)
+                registros=cursor.fetchall()
+
+                if registros != []:
+                    cuadre=1
+                    total=0
+                    sql=f"""UPDATE registro SET cuadre = ? WHERE strftime('%d/%m/%Y', salida) = ? AND total > ?"""
+                    values=(f"{cuadre}", f"{dia}", f"{total}")
+                    cursor.execute(sql, values)
+                    conn.commit()
+
+                    fecha.value=""
+                    fecha.update()
+
+                    message="Proceso realizado satisfactoriamente"
+                    bg_color="green"
+                else:
+                    message="Día a cerrar no encontrado ó ya está cerrado. Favor verificar"
+                    bg_color="red"
 
             fecha.focus()
 
@@ -89,45 +99,40 @@ def Closing_day(page):
         fecha.update()
         page.update()
 
-    # def change_date(e):
-    #     fecha_cierre=str(date_picker.value)
-    #     fecha_cierre=fecha_cierre.split(" ")
-    #     fecha_cierre=fecha_cierre[0]
-    #     fecha_cierre=fecha_cierre.split("-")
-    #     ano=fecha_cierre[0]
-    #     mes=fecha_cierre[1]
-    #     dia=fecha_cierre[2]
-    #     fecha.value=dia + "/" + mes + "/" + ano
-    #     fecha.update()
-    #     # print(f"Date picker changed, value is {date_picker.value}")
+    def change_date(e):
+        fecha_cierre=str(date_picker.value)
+        fecha_cierre=fecha_cierre.split(" ")
+        fecha_cierre=fecha_cierre[0]
+        fecha_cierre=fecha_cierre.split("-")
+        ano=fecha_cierre[0]
+        mes=fecha_cierre[1]
+        dia=fecha_cierre[2]
+        fecha.value=dia + "/" + mes + "/" + ano
+        fecha.focus()
+        date_button.focus()
+        # print(f"Date picker changed, value is {date_picker.value}")
 
     # def date_picker_dismissed(e):
     #     print(f"Date picker dismissed, value is {date_picker.value}")
 
-    # date_picker = ft.DatePicker(
-    #     cancel_text="Cancelar",
-    #     confirm_text="Aceptar",
-    #     error_format_text="Formato no válido",
-    #     error_invalid_text="Fuera de rango",
-    #     field_hint_text="dd/mm/aaaa",
-    #     field_label_text="Ingresar fecha",
-    #     help_text="Seleccionar fecha",
-    #     on_change=change_date,
-    #     on_dismiss=date_picker_dismissed,
-    #     first_date=datetime.datetime(2023, 10, 1),
-    #     last_date=datetime.datetime(2024, 10, 1),
-    # )
+    date_picker = ft.DatePicker(
+        confirm_text="Aceptar",
+        on_change=change_date,
+        # on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2023, 10, 1),
+        last_date=datetime.datetime(2024, 10, 1),
+    )
 
-    # page.overlay.append(date_picker)
+    page.overlay.append(date_picker)
 
-    # date_button = ft.ElevatedButton(
-    #     "Seleccionar fecha",
-    #     icon=ft.icons.CALENDAR_MONTH,
-    #     width=280,
-    #     bgcolor=ft.colors.BLUE_900,
-    #     color="white",
-    #     on_click=lambda _: date_picker.pick_date(),
-    # )
+    date_button = ft.ElevatedButton(
+        "Seleccionar fecha",
+        icon=ft.icons.CALENDAR_MONTH,
+        width=280,
+        bgcolor=ft.colors.BLUE_900,
+        color="white",
+        on_click=lambda _: date_picker.pick_date(),
+    )
 
     def close_dlg(e):
         dlg_modal.open=False
@@ -166,8 +171,8 @@ def Closing_day(page):
     elif page.window_width >= 992:
         textsize=90
 
-    fecha=ft.TextField(hint_text="dd/mm/aaaa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True)
-    btn_cierre=ft.ElevatedButton(text="Cerrar día", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=close_day)
+    fecha=ft.TextField(hint_text="dd/mm/aaaa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=close_day)
+    # btn_cierre=ft.ElevatedButton(text="Cerrar día", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=close_day)
     
     return ft.Column(
         controls=[
@@ -204,8 +209,8 @@ def Closing_day(page):
             ft.Container(
                 alignment=ft.alignment.center,
                 content=ft.Stack([
-                    btn_cierre
-                    # date_button
+                    # btn_cierre,
+                    date_button
                 ]),
             ),
         ]
