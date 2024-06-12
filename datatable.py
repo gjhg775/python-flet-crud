@@ -1,3 +1,4 @@
+import os
 import locale
 import qrcode
 import subprocess
@@ -100,6 +101,16 @@ def selectUser(usuario, contrasena):
     except Exception as e:
         print(e)
 
+def add_user(usuario, hashed, nombre):
+    try:
+        cursor=conn.cursor()
+        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
+        values=(f"{usuario}", f"{hashed}", f"{nombre}")
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
+
 def get_configuration():
     try:
         cursor=conn.cursor()
@@ -126,7 +137,6 @@ if configuracion != None:
 def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, id):
     try:
         cursor=conn.cursor()
-
         sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ? WHERE configuracion_id = ?"""
         values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{id}")
         cursor.execute(sql, values)
@@ -162,7 +172,6 @@ if variables != None:
 def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_carro, vlr_hora_otro, vlr_turno_otro, id):
     try:        
         cursor=conn.cursor()
-
         sql=f"""UPDATE variables SET vlr_hora_moto = ?, vlr_turno_moto = ?, vlr_hora_carro = ?, vlr_turno_carro = ?, vlr_hora_otro = ?, vlr_turno_otro = ? WHERE variable_id = ?"""
         values=(f"{vlr_hora_moto}", f"{vlr_turno_moto}", f"{vlr_hora_carro}", f"{vlr_turno_carro}", f"{vlr_hora_otro}", f"{vlr_turno_otro}", f"{id}")
         cursor.execute(sql, values)
@@ -727,7 +736,7 @@ def selectRegisters(search):
     if search == "":
         sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE cuadre = {cuadre}"""
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%' AND cuadre = {cuadre}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE (consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%') AND cuadre = {cuadre}"""
 
     cursor.execute(sql)
     registros=cursor.fetchall()
@@ -774,6 +783,7 @@ def selectRegisters(search):
                     ],
                 ),
             )
+    return registros
 
 def do_nothing(e):
     pass
@@ -826,11 +836,12 @@ def selectCashRegister():
                     ],
                 ),
             )
+    return registros
 
 tblRegistro = Column([
     Row([tb], scroll="always")
-], height=246)
+], height=60)
 
 tblCuadre = Column([
     Row([tbc], scroll="always")
-], height=344)
+], height=60)

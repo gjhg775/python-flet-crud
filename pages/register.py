@@ -367,6 +367,8 @@ def Register(page):
 
             if vlr_total == 0:
                 message="Registro creado satisfactoriamente"
+                tblRegistro.height=246
+                no_registros.visible=False
             else:
                 message="Registro actualizado satisfactoriamente"
 
@@ -429,16 +431,18 @@ def Register(page):
     
     def search_change(e):
         search=e.control.value
+        if search == "":
+            no_registros.visible=False
         tb.rows.clear()
         selectRegisters(search)
-        # if tb.rows != []:
-        #     tblRegistro.height=246
-        #     no_registros.visible=False
-        # else:
-        #     tblRegistro.height=60
-        #     no_registros.visible=True
-        # tblRegistro.update()
-        # no_registros.update()
+        if tb.rows != []:
+            tblRegistro.height=246
+            no_registros.visible=False
+        else:
+            tblRegistro.height=60
+            no_registros.visible=True
+        tblRegistro.update()
+        no_registros.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -454,11 +458,11 @@ def Register(page):
         on_change=radiogroup_changed
     )
 
-    tb.rows.clear()
-    selectRegisters(search)
+    # tb.rows.clear()
+    # selectRegisters(search)
 
     dlg_modal=ft.AlertDialog(
-        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_100),
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
         modal=True,
         icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
         # title=ft.Text(title, text_align="center"),
@@ -482,9 +486,15 @@ def Register(page):
         textsize=90
     
     buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
-    no_registros=ft.Text("No se encontraron registros", visible=False)
+    no_registros=ft.Text("No se encontraron registros", visible=True)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", read_only=True)
+
+    tb.rows.clear()
+    registros=selectRegisters(search)
+    if registros != []:
+        tblRegistro.height=246
+        no_registros.visible=False
 
     # card=ft.Card(
     #     margin=ft.margin.only(0, 50, 0, 0),

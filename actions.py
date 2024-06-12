@@ -8,12 +8,16 @@ load_dotenv()
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
-password=os.getenv("psw")
+password=os.getenv("pswsa")
 bytes=password.encode('utf-8')
-# salt=bcrypt.gensalt()
-# hash=bcrypt.hashpw(bytes, salt)
+hashsa=hashlib.sha256(bytes).hexdigest()
 
-hash=hashlib.sha256(bytes).hexdigest()
+password=os.getenv("pswa")
+bytes=password.encode('utf-8')
+hasha=hashlib.sha256(bytes).hexdigest()
+
+# # salt=bcrypt.gensalt()
+# # hash=bcrypt.hashpw(bytes, salt)
 
 def create_users():
     cursor=conn.cursor()
@@ -103,10 +107,14 @@ def drop_regist():
 
 def develop_user():
     try:
-        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
-        values=("Gareca", f"{hash}", "Gabriel Jaime Hoyos Garcés")
-
         cursor=conn.cursor()
+        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
+        values=("Super Admin", f"{hashsa}", "Super Admin")
+        cursor.execute(sql, values)
+        conn.commit()
+
+        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
+        values=("Admin", f"{hasha}", "Admin")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:
@@ -114,13 +122,12 @@ def develop_user():
 
 def develop_access():
     try:
-        programs=["Registro", "Cuadre", "Cierre", "Variables", "Administración"]
+        programs=["Configuración", "Variables", "Registro", "Cuadre", "Cierre"]
 
         for x in programs:
-            sql=f"""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
-            values=("Gareca", f"{x}", 1)
-
             cursor=conn.cursor()
+            sql=f"""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
+            values=("Super Admin", f"{x}", 1)
             cursor.execute(sql, values)
             conn.commit()
     except Exception as e:
@@ -128,10 +135,9 @@ def develop_access():
 
 def add_configuration():
     try:
+        cursor=conn.cursor()
         sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo) VALUES (?, ?, ?, ?, ?, ?, ?)"""
         values=("", "", "", "", "", "", "")
-
-        cursor=conn.cursor()
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:
@@ -139,10 +145,9 @@ def add_configuration():
 
 def add_variables():
     try:
+        cursor=conn.cursor()
         sql="""INSERT INTO variables (vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_carro, vlr_hora_otro, vlr_turno_otro) VALUES (?, ?, ?, ?, ?, ?)"""
         values=("", "", "", "", "", "")
-
-        cursor=conn.cursor()
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

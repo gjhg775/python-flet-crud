@@ -1,5 +1,7 @@
+import os
 import flet as ft
 import settings
+import hashlib
 from pages.login import Login
 from pages.home import home
 from pages.configuration import Configuration
@@ -8,7 +10,7 @@ from pages.register import *
 from pages.cash_register import *
 from pages.closing_day import Closing_day
 from pages.developer import developer
-from datatable import get_configuration, selectUser
+from datatable import get_configuration, selectUser, add_user
 
 # def main(page: ft.Page):
 #     page.drawer = ft.NavigationDrawer(
@@ -151,6 +153,20 @@ def main(page: ft.Page):
         # if user.error_text == "" and password.error_text == "":
         #     login()
 
+    def loginMe(e):
+        lbl_login.value="Iniciar sesión"
+        btn_login.text="Iniciar sesión"
+        btn_login.on_click=login
+        name.visible=False
+        lbl_cuenta.value="¿No tiene una cuenta?"
+        btn_cuenta.visible=True
+        btn_loginme.visible=False
+        user.value=""
+        password.value=""
+        user.error_text=""
+        password.error_text=""
+        name.error_text=""
+        page.update()
 
     def login(e):
         user.error_text=""
@@ -208,6 +224,100 @@ def main(page: ft.Page):
                 btn_login.focus()
             user.update()
             password.update()
+
+    def signUp(e):
+        message=""
+        user.error_text=""
+        password.error_text=""
+        name.error_text=""
+        bln_login=False
+        if user.value != "" and password.value != "" and name.value != "":
+            usuario=user.value
+            contrasena=password.value
+            nombre=name.value
+            login_user, login_password, bln_login=selectUser(usuario, contrasena)
+            if login_user == "Usuario no registrado" and bln_login == False:
+                user.error_text=""
+                # user.focus()
+                # btn_login.focus()
+                # user.update()
+                hash=hashlib.sha256(contrasena.encode()).hexdigest()
+                add_user(usuario, hash, nombre)
+                user.value=""
+                password.value=""
+                name.value=""
+                message="Cuenta creada satisfactoriamente"
+            else:
+                user.error_text="Usuario ya registrado"
+                user.update()
+        if message != "":
+            page.snack_bar=ft.SnackBar(
+                ft.Text(message, color="white", text_align="center"),
+                bgcolor="green"
+            )
+            page.snack_bar.open=True
+            page.update()
+                
+            # if login_password != "" and bln_login == False:
+            #     password.error_text=login_password
+            #     # password.focus()
+            #     btn_login.focus()
+            #     password.update()
+            # else:
+            #     password.error_text=""
+            #     password.update()
+            # if bln_login == True:
+            #     datalogin={"value":True, "username":user.value}
+            #     page.session.set("Loginme", datalogin)
+            #     settings.username=page.session.get('Loginme')
+            #     # page.go("/register")
+            #     page.clean()
+            #     # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
+            #     page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
+            #     page.add(home(page))
+            #     page.update()
+            #     # page.snack_bar=ft.SnackBar(
+            #     #     ft.Text(f"Bienvenido {username['username']}", size=30, text_align="center"),
+            #     #     bgcolor="green"
+            #     # )
+            #     # page.snack_bar.open=True
+            #     # page.update()
+            # # else:
+            # #     page.snack_bar=ft.SnackBar(
+            # #         ft.Text("Acceso denegado", size=30, text_align="center"),
+            # #         bgcolor="red"
+            # #     )
+            # #     page.snack_bar.open=True
+            # #     page.update()
+        else:
+            if user.value == "":
+                user.error_text="Digite el usuario"
+                btn_login.focus()
+            if password.value == "":
+                password.error_text="Digite la contraseña"
+                btn_login.focus()
+            if name.value == "":
+                name.error_text="Digite el nombre"
+                btn_login.focus()
+            user.update()
+            password.update()
+            name.update()
+
+    def sign_up(e):
+        lbl_login.value="Crear cuenta"
+        btn_login.text="Crear cuenta"
+        btn_login.on_click=signUp
+        name.visible=True
+        lbl_cuenta.value="Ya tengo una cuenta"
+        btn_cuenta.visible=False
+        btn_loginme.visible=True
+        user.value=""
+        password.value=""
+        name.value=""
+        user.error_text=""
+        password.error_text=""
+        name.error_text=""
+        page.update()
     
     def logout():
         user.value=""
@@ -303,7 +413,7 @@ def main(page: ft.Page):
                 # ft.Locale("fr", "FR"),  # French, France
                 ft.Locale("es"),        # Spanish
             ],
-            current_locale=ft.Locale("es", "ES"),
+            current_locale=ft.Locale("es"),
         )
     page.appbar = ft.AppBar(
             leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
@@ -334,7 +444,11 @@ def main(page: ft.Page):
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
     user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
+    name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
+    lbl_cuenta=ft.Text("¿No tiene una cuenta?")
+    btn_cuenta=ft.TextButton("Crear cuenta", on_click=sign_up)
+    btn_loginme=ft.TextButton("Iniciar sesión", visible=False, on_click=loginMe)
 
     container=ft.Column(
             controls=[        
@@ -362,13 +476,18 @@ def main(page: ft.Page):
                             padding=ft.padding.only(20,20)
                         ),
                         ft.Container(
+                            name,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
                             btn_login,
                             padding=ft.padding.only(20,20)
                         ),
                         ft.Container(
                             ft.Row([
-                                ft.Text("¿No tiene una cuenta?"),
-                                ft.TextButton("Crear cuenta")
+                                lbl_cuenta,
+                                btn_cuenta,
+                                btn_loginme,
                             ],
                             alignment=ft.MainAxisAlignment.CENTER
                             ),

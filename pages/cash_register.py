@@ -44,11 +44,17 @@ def Cash_register(page):
         if registros != []:
             show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros)
 
-    tbc.rows.clear()
-    selectCashRegister()
+    # tbc.rows.clear()
+    # selectCashRegister()
 
-    no_registros=ft.Text("No se encontraron registros", visible=False)
+    no_registros=ft.Text("No se encontraron registros", visible=True)
     btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
+
+    tbc.rows.clear()
+    registros=selectCashRegister()
+    if registros != []:
+        tblCuadre.height=344
+        no_registros.visible=False
     
     return ft.Column(
         controls=[
