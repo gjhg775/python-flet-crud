@@ -24,21 +24,28 @@ locale.setlocale(locale.LC_ALL, "")
 path="receipt.pdf"
 # path="/receipt/receipt.pdf"
 
-tbc = DataTable(
+tbu = DataTable(
     bgcolor=colors.PRIMARY_CONTAINER,
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
-		DataColumn(Text("Consecutivo")),
-		DataColumn(Text("Placa")),
-		DataColumn(Text("Entrada")),
-		DataColumn(Text("Salida")),
-        DataColumn(Text("Vehículo")),
-        DataColumn(Text("Facturación")),
-        DataColumn(Text("Valor"), numeric=True),
-        DataColumn(Text("Total"), numeric=True),
-        # DataColumn(Text("Cuadre")),
+		DataColumn(Text("Usuario")),
+		DataColumn(Text("Nombre")),
+		# DataColumn(Text("Acción")),
+	],
+	rows=[]
+)
+
+tba = DataTable(
+    bgcolor=colors.PRIMARY_CONTAINER,
+    # bgcolor="#FFFFFF",
+    # border_radius=10,
+    # data_row_color={"hovered": "#e5eff5"},
+	columns=[
+		DataColumn(Text("Programa")),
+		DataColumn(Text("Acceso")),
+		# DataColumn(Text("Acción")),
 	],
 	rows=[]
 )
@@ -60,6 +67,25 @@ tb = DataTable(
         # DataColumn(Text("Cuadre")),
         # DataColumn(Text("Usuario")),
 		# DataColumn(Text("Acción")),
+	],
+	rows=[]
+)
+
+tbc = DataTable(
+    bgcolor=colors.PRIMARY_CONTAINER,
+    # bgcolor="#FFFFFF",
+    # border_radius=10,
+    # data_row_color={"hovered": "#e5eff5"},
+	columns=[
+		DataColumn(Text("Consecutivo")),
+		DataColumn(Text("Placa")),
+		DataColumn(Text("Entrada")),
+		DataColumn(Text("Salida")),
+        DataColumn(Text("Vehículo")),
+        DataColumn(Text("Facturación")),
+        DataColumn(Text("Valor"), numeric=True),
+        DataColumn(Text("Total"), numeric=True),
+        # DataColumn(Text("Cuadre")),
 	],
 	rows=[]
 )
@@ -108,6 +134,21 @@ def add_user(usuario, hashed, nombre):
         values=(f"{usuario}", f"{hashed}", f"{nombre}")
         cursor.execute(sql, values)
         conn.commit()
+
+        user="Admin"
+        sql=f"""SELECT * FROM accesos WHERE usuario = '{user}'"""
+        cursor.execute(sql)
+        registros=cursor.fetchall()
+
+        for registro in registros:
+            acceso_usuario=0
+            programa=registro[2]
+            if programa == "Registro":
+                acceso_usuario=1
+            sql="""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
+            values=(f"{usuario}", f"{programa}", f"{acceso_usuario}")
+            cursor.execute(sql, values)
+            conn.commit()
     except Exception as e:
         print(e)
 
@@ -453,11 +494,11 @@ def showedit(e):
         entrada=registros[0][3]
         salida=registros[0][4]
         vehiculo=registros[0][5]
-        valor=registros[0][6]
-        tiempo=registros[0][7]
-        vlr_total=registros[0][8]
-        entradas=registros[0][11]
-        salidas=registros[0][12]
+        valor=registros[0][7]
+        tiempo=registros[0][8]
+        vlr_total=registros[0][9]
+        entradas=registros[0][12]
+        salidas=registros[0][13]
 
         comentario1="Sin éste recibo no se entrega el automotor."
         comentario2="Después de retirado el automotor no se"
@@ -729,6 +770,138 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
+# def show_edit_access(e):
+#     # data_edit=e.control.data
+#     # id_edit=data_edit["id"]
+#     usuario=e.control.data["usuario"]
+#     try:
+#         cursor=conn.cursor()
+#         sql=f"""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
+#         values=(f"{usuario}",)
+#         cursor.execute(sql, values)
+#         registros=cursor.fetchall()
+        
+#         accesos_usuario=[acceso_usuario for acceso_usuario in registros]
+#         settings.accesos_usuario=accesos_usuario
+#     except Exception as e:
+#         print(e)
+
+def update_access(e):
+    programa=e.control.data
+    chk=e.control
+    programa=programa["programa"]
+    acceso_usuario=0 if chk.value == False else 1
+    usuario=lblAccesos.value
+    usuario=usuario.split(" ")
+    usuario=usuario[1]
+    cursor=conn.cursor()
+    sql=f"""UPDATE accesos SET acceso_usuario = ? WHERE programa = ? AND usuario = ?"""
+    values=(f"{acceso_usuario}", f"{programa}", f"{usuario}")
+    cursor.execute(sql, values)
+    conn.commit()
+
+def show_edit_access(e):
+    usuario=e.control.data["usuario"]
+    cursor=conn.cursor()
+    sql=f"""SELECT programa, acceso_usuario FROM accesos WHERE usuario = '{usuario}'"""
+    cursor.execute(sql)
+    registros=cursor.fetchall()
+
+    if registros != []:
+        # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
+        keys=["programa", "acceso_usuario"]
+        result=[dict(zip(keys, values)) for values in registros]
+
+        tba.rows.clear()
+
+        for x in result:
+            tba.rows.append(
+                DataRow(
+                    selected=False,
+                    # data=x["id"],
+                    data=x,
+                    on_select_changed=do_nothing,
+                    # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
+                    # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
+                    cells=[
+                        DataCell(Text(x["programa"])),
+                        # DataCell(Text(x["acceso_usuario"])),
+                        # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
+                        DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access)),
+                        DataCell(Row([
+                        	# IconButton(icon="create",icon_color="blue",
+                        	# 	data=x,
+                        	# 	on_click=showedit
+                        	# 	),
+                        	# IconButton(icon="delete",icon_color="red",
+                        	# 	data=x["id"],
+                        	# 	on_click=showdelete
+                        	# 	),
+                            # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        	# 	data=x,
+                        	# 	on_click=showedit
+                        	# 	),
+                        	])),
+                    ],
+                ),
+            )
+    lblAccesos.value="Accesos " + usuario
+    lblAccesos.update()
+    tblAccesos.update()
+    # return registros
+
+def selectUsers(search):
+    user="Super Admin"
+    cursor=conn.cursor()
+    if settings.username["username"] == "Super Admin":
+        if search == "":
+            sql=f"""SELECT usuario, nombre FROM usuarios"""
+        else:
+            sql=f"""SELECT usuario, nombre FROM usuarios WHERE usuario LIKE '%{search}%' OR nombre LIKE '%{search}%'"""
+    elif settings.username["username"] == "Admin":
+        if search == "":
+            sql=f"""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> '{user}'"""
+        else:
+            sql=f"""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> '{user}' AND (usuarios.usuario LIKE '%{search}%' OR usuarios.nombre LIKE '%{search}%')"""
+    cursor.execute(sql)
+    registros=cursor.fetchall()
+
+    if registros != []:
+        # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
+        keys=["usuario", "nombre"]
+        result=[dict(zip(keys, values)) for values in registros]
+
+        for x in result:
+            tbu.rows.append(
+                DataRow(
+                    selected=False,
+                    # data=x["id"],
+                    data=x,
+                    on_select_changed=show_edit_access,
+                    # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
+                    # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
+                    cells=[
+                        DataCell(Text(x["usuario"])),
+                        DataCell(Text(x["nombre"])),
+                        DataCell(Row([
+                        	# IconButton(icon="create",icon_color="blue",
+                        	# 	data=x,
+                        	# 	on_click=showedit
+                        	# 	),
+                        	# IconButton(icon="delete",icon_color="red",
+                        	# 	data=x["id"],
+                        	# 	on_click=showdelete
+                        	# 	),
+                            # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        	# 	data=x,
+                        	# 	on_click=showedit
+                        	# 	),
+                        	])),
+                    ],
+                ),
+            )
+    return registros
+
 def selectRegisters(search):
     cuadre=0
     cursor=conn.cursor()
@@ -837,6 +1010,16 @@ def selectCashRegister():
                 ),
             )
     return registros
+
+lblAccesos=Text("Accesos", theme_style=TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=colors.PRIMARY)
+
+tblUsuarios = Column([
+    Row([tbu], scroll="always")
+], height=60)
+
+tblAccesos = Column([
+    Row([tba], scroll="auto")
+], height=274)
 
 tblRegistro = Column([
     Row([tb], scroll="always")

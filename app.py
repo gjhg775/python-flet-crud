@@ -9,7 +9,7 @@ from pages.variables import Variables
 from pages.register import *
 from pages.cash_register import *
 from pages.closing_day import Closing_day
-from pages.developer import developer
+from pages.developer import Developer
 from datatable import get_configuration, selectUser, add_user
 
 # def main(page: ft.Page):
@@ -92,7 +92,7 @@ def main(page: ft.Page):
         if e.control.selected_index == 6:
             hide_drawer(e)
             page.clean()
-            page.add(developer(page))
+            page.add(Developer(page))
         if e.control.selected_index == 7:
             logout()
             hide_drawer(e)
@@ -236,7 +236,7 @@ def main(page: ft.Page):
             contrasena=password.value
             nombre=name.value
             login_user, login_password, bln_login=selectUser(usuario, contrasena)
-            if login_user == "Usuario no registrado" and bln_login == False:
+            if bln_login == False:
                 user.error_text=""
                 # user.focus()
                 # btn_login.focus()

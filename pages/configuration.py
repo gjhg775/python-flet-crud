@@ -1,8 +1,10 @@
 import flet as ft
-from datatable import get_configuration, update_configuration
+import settings
 import sqlite3
+from datatable import get_configuration, update_configuration, tblUsuarios, tbu, selectUsers, tblAccesos, tba, lblAccesos
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+search=""
 message=""
 
 # class Configuration(ft.UserControl):
@@ -198,15 +200,50 @@ def Configuration(page):
                 page.snack_bar.open=True
                 page.update()
 
+    def search_change(e):
+        search=e.control.value
+        if search == "":
+            no_registros.visible=False
+        tbu.rows.clear()
+        selectUsers(search)
+        if tbu.rows != []:
+            tblUsuarios.height=246
+            no_registros.visible=False
+        else:
+            tblUsuarios.height=60
+            no_registros.visible=True
+        tblUsuarios.update()
+        no_registros.update()
+
     configuracion_id=id
     parqueadero=ft.TextField(label="Parqueadero", width=280, value=parqueadero)
     nit=ft.TextField(label="Nit", width=280, value=nit)
-    regimen=ft.TextField(label="Regimen", width=280, value=regimen)
+    regimen=ft.TextField(label="Régimen", width=280, value=regimen)
     direccion=ft.TextField(label="Dirección", width=280, value=direccion)
     telefono=ft.TextField(label="Teléfono", width=280, value=telefono)
     servicio=ft.TextField(label="Servicio", width=280, value=servicio)
     consecutivo=ft.TextField(label="Consecutivo", width=280, value=consecutivo)
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateConfiguration)
+    lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
+    lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
+    # lblAccesos=ft.Text("Accesos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
+    buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    no_registros=ft.Text("No se encontraron registros", visible=True)
+    # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
+
+    tbu.rows.clear()
+    registros=selectUsers(search)
+    if registros != []:
+        tblUsuarios.height=344
+        no_registros.visible=False
+
+    if message != "":
+        page.snack_bar=ft.SnackBar(
+            ft.Text(message, color="white", text_align="center"),
+            bgcolor="green"
+        )
+        page.snack_bar.open=True
+        page.update()
 
     return ft.Column(
         controls=[
@@ -227,6 +264,7 @@ def Configuration(page):
             ft.Container(
                 ft.Row([
                     ft.Column([
+                        lblDatos,
                         parqueadero,
                         nit,
                         regimen,
@@ -240,5 +278,20 @@ def Configuration(page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
+            ft.Container(
+                # bgcolor=ft.colors.PRIMARY_CONTAINER,
+                # border_radius=10,
+                alignment=ft.alignment.center,
+                # padding=ft.padding.only(10, 20, 10, 0),
+                padding=ft.padding.only(10, 25, 10, 0),
+                content=ft.Stack([
+                # content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos]),
+                        ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+                    # ]),
+                ]),
+            ),
+            ft.Container(height=100)
         ]
     )

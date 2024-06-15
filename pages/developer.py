@@ -22,7 +22,9 @@ import flet as ft
 #         horizontal_alignment="center"
 #         )
 
-def developer(page):
+def Developer(page):
+    page.scroll="auto"
+    
     developer_photo=ft.Image(src=f"img/parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     developer_name=ft.Text("Desarrollado por Gareca", theme_style=ft.TextThemeStyle.TITLE_LARGE)
     copyright=ft.Text("Copyright © 2024", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
@@ -34,7 +36,8 @@ def developer(page):
         # ft.Container(height=20),
         developer_name,
         copyright,
-        rights
+        rights,
+        ft.Container(height=50),
     ],
     horizontal_alignment="center"
     )

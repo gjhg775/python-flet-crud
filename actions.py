@@ -9,12 +9,14 @@ load_dotenv()
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
 password=os.getenv("pswsa")
-bytes=password.encode('utf-8')
-hashsa=hashlib.sha256(bytes).hexdigest()
+# bytes=password.encode('utf-8')
+# hashsa=hashlib.sha256(bytes).hexdigest()
+hashsa=password
 
 password=os.getenv("pswa")
-bytes=password.encode('utf-8')
-hasha=hashlib.sha256(bytes).hexdigest()
+# bytes=password.encode('utf-8')
+# hasha=hashlib.sha256(bytes).hexdigest()
+hasha=password
 
 # # salt=bcrypt.gensalt()
 # # hash=bcrypt.hashpw(bytes, salt)
@@ -40,7 +42,7 @@ def create_access():
         usuario TEXT,
         programa TEXT,
         acceso_usuario INTEGER,
-        FOREIGN KEY(acceso_usuario) REFERENCES usuarios(usuario_id))
+        FOREIGN KEY(acceso_id) REFERENCES usuarios(usuario_id))
         """)
     conn.commit()
 
@@ -105,22 +107,22 @@ def drop_regist():
     cursor=conn.cursor()
     cursor.execute("DROP TABLE IF EXISTS registro")
 
-def develop_user():
+def admin_user():
     try:
         cursor=conn.cursor()
         sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
-        values=("Super Admin", f"{hashsa}", "Super Admin")
+        values=("Super Admin", f"{hashsa}", "Super Administrador")
         cursor.execute(sql, values)
         conn.commit()
 
         sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
-        values=("Admin", f"{hasha}", "Admin")
+        values=("Admin", f"{hasha}", "Administrador")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:
         print(e)
 
-def develop_access():
+def admin_access():
     try:
         programs=["Configuración", "Variables", "Registro", "Cuadre", "Cierre"]
 
@@ -128,6 +130,12 @@ def develop_access():
             cursor=conn.cursor()
             sql=f"""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
             values=("Super Admin", f"{x}", 1)
+            cursor.execute(sql, values)
+            conn.commit()
+        for x in programs:
+            cursor=conn.cursor()
+            sql=f"""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
+            values=("Admin", f"{x}", 1)
             cursor.execute(sql, values)
             conn.commit()
     except Exception as e:
@@ -164,8 +172,8 @@ drop_regist()
 # create_configuration()
 # create_variables()
 create_regist()
-# develop_user()
-# develop_access()
+# admin_user()
+# admin_access()
 # add_configuration()
 # add_variables()
 

@@ -377,7 +377,8 @@ def Register(page):
             total.hint_text="Total "+str(vlr_total)
             # card.update()
             total.update()
-            placa.focus()
+            if settings.sw == 0:
+                placa.focus()
             tb.rows.clear()
             selectRegisters(search)
             tb.update()
