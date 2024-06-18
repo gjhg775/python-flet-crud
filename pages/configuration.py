@@ -1,11 +1,12 @@
 import flet as ft
 import settings
 import sqlite3
-from datatable import get_configuration, update_configuration, tblUsuarios, tbu, selectUsers, tblAccesos, tba, lblAccesos
+from datatable import get_configuration, update_configuration, tblUsuarios, tbu, selectUsers, tblAccesos, tba, lblAccesos, lblAccessUpdate
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 search=""
 message=""
+fieldwith=settings.fieldwith
 
 # class Configuration(ft.UserControl):
 #     def __init__(self, page):
@@ -193,12 +194,9 @@ def Configuration(page):
             consecutivo.update()
             message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, configuracion_id)
             if message != "":
-                page.snack_bar=ft.SnackBar(
-                    ft.Text(message, color="white", text_align="center"),
-                    bgcolor="green"
-                )
-                page.snack_bar.open=True
-                page.update()
+                bgcolor="green"
+                settings.message=message
+                settings.showMessage(bgcolor)
 
     def search_change(e):
         search=e.control.value
@@ -215,19 +213,63 @@ def Configuration(page):
         tblUsuarios.update()
         no_registros.update()
 
+    def page_resize(e):
+        if page.window_width <= 425:
+            settings.fieldwith=280
+        elif page.window_width > 425 and page.window_width <= 678:
+            settings.fieldwith=400
+        elif page.window_width >= 768 and page.window_width < 992:
+            settings.fieldwith=600
+        elif page.window_width >= 992 and page.window_width <= 1400:
+            settings.fieldwith=600
+        if settings.sw == 0:
+            parqueadero.width=settings.fieldwith
+            nit.width=settings.fieldwith
+            regimen.width=settings.fieldwith
+            direccion.width=settings.fieldwith
+            telefono.width=settings.fieldwith
+            servicio.width=settings.fieldwith
+            consecutivo.width=settings.fieldwith
+            lblDatos.width=settings.fieldwith
+            lblUsuarios.width=settings.fieldwith
+        else:
+            fieldwith=settings.fieldwith
+            fieldwith=settings.fieldwith
+        parqueadero.update()
+        nit.update()
+        regimen.update()
+        direccion.update()
+        telefono.update()
+        servicio.update()
+        consecutivo.update()
+        lblDatos.update()
+        lblUsuarios.update()
+        page.update()
+
+    page.on_resize=page_resize
+
+    if page.window_width <= 425:
+        fieldwith=280
+    elif page.window_width > 425 and page.window_width <= 678:
+        fieldwith=400
+    elif page.window_width >= 768 and page.window_width < 992:
+        fieldwith=600
+    elif page.window_width >= 992:
+        fieldwith=600
+
     configuracion_id=id
-    parqueadero=ft.TextField(label="Parqueadero", width=280, value=parqueadero)
-    nit=ft.TextField(label="Nit", width=280, value=nit)
-    regimen=ft.TextField(label="Régimen", width=280, value=regimen)
-    direccion=ft.TextField(label="Dirección", width=280, value=direccion)
-    telefono=ft.TextField(label="Teléfono", width=280, value=telefono)
-    servicio=ft.TextField(label="Servicio", width=280, value=servicio)
-    consecutivo=ft.TextField(label="Consecutivo", width=280, value=consecutivo)
+    parqueadero=ft.TextField(label="Parqueadero", width=fieldwith, value=parqueadero)
+    nit=ft.TextField(label="Nit", width=fieldwith, value=nit)
+    regimen=ft.TextField(label="Régimen", width=fieldwith, value=regimen)
+    direccion=ft.TextField(label="Dirección", width=fieldwith, value=direccion)
+    telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono)
+    servicio=ft.TextField(label="Servicio", width=fieldwith, value=servicio)
+    consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo)
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateConfiguration)
-    lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
-    lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
+    lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
+    lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
     # lblAccesos=ft.Text("Accesos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
-    buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
     no_registros=ft.Text("No se encontraron registros", visible=True)
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
 
@@ -238,12 +280,9 @@ def Configuration(page):
         no_registros.visible=False
 
     if message != "":
-        page.snack_bar=ft.SnackBar(
-            ft.Text(message, color="white", text_align="center"),
-            bgcolor="green"
-        )
-        page.snack_bar.open=True
-        page.update()
+        bgcolor="green"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
     return ft.Column(
         controls=[
@@ -272,8 +311,15 @@ def Configuration(page):
                         telefono,
                         servicio,
                         consecutivo,
-                        btn_save
-                    ])
+                        # btn_save
+                    ]),
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ),
+            ft.Container(
+                ft.Row([
+                    btn_save
                 ], 
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
@@ -287,7 +333,7 @@ def Configuration(page):
                 content=ft.Stack([
                 # content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos]),
+                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos, lblAccessUpdate]),
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
                     # ]),
                 ]),

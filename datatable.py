@@ -1,4 +1,5 @@
 import os
+import time
 import locale
 import qrcode
 import subprocess
@@ -32,7 +33,7 @@ tbu = DataTable(
 	columns=[
 		DataColumn(Text("Usuario")),
 		DataColumn(Text("Nombre")),
-		# DataColumn(Text("Acción")),
+		DataColumn(Text("Acción")),
 	],
 	rows=[]
 )
@@ -108,6 +109,7 @@ def selectUser(usuario, contrasena):
 
         login_user=""
         login_password=""
+        login_nombre=""
         bln_login=False
 
         if registros != []:
@@ -116,6 +118,7 @@ def selectUser(usuario, contrasena):
             hashed=registros[0][2]
 
             if hash == hashed:
+                login_nombre=registros[0][3]
                 bln_login=True
             else:
                 bln_login=False
@@ -123,7 +126,7 @@ def selectUser(usuario, contrasena):
             login_user="Usuario no registrado"
         if bln_login == False:
             login_password="Contraseña inválida"
-        return login_user, login_password, bln_login
+        return login_user, login_password, login_nombre, bln_login
     except Exception as e:
         print(e)
 
@@ -224,7 +227,8 @@ def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_ca
         print(e)
 
 def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro):
-    usuario=settings.username["username"]
+    # usuario=settings.username["username"]
+    usuario=settings.username
     
     try:
         salida=datetime.datetime.now()
@@ -386,7 +390,8 @@ def add_register(vehiculo, placa):
     tiempo=0
     total=0
     cuadre=0
-    usuario=settings.username["username"]
+    # usuario=settings.username["username"]
+    usuario=settings.username
 
     try:
         cursor=conn.cursor()
@@ -435,9 +440,9 @@ def selectRegister(vehiculo, placa):
     try:
         total=0
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = {total}"""
+        sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = ?"""
         # sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
-        values=(f"{placa}",)
+        values=(f"{placa}", f"{total}")
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
@@ -513,14 +518,32 @@ def showedit(e):
 
 def showdelete(e):
     try:
-        values=e.control.data
+        usuario=e.control.data
+        if usuario == "Super Admin" or usuario == "Admin":
+            settings.message=f"El usuario {usuario} no puede ser eliminado"
+            settings.showMessage("red")
+            return False
+        
         cursor=conn.cursor()
-        sql=f"""DELETE FROM registro WHERE registro_id = ?"""
+        sql=f"""DELETE FROM accesos WHERE usuario = ?"""
+        values=(f"{usuario}",)
         cursor.execute(sql, values)
         conn.commit()
-        tb.rows.clear()
-        selectRegisters()
-        tb.update()
+
+        sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
+        values=(f"{usuario}",)
+        cursor.execute(sql, values)
+        conn.commit()
+        tbu.rows.clear()
+        tba.rows.clear()
+        search=""
+        selectUsers(search)
+        lblAccesos.value="Accesos"
+        lblAccesos.update()
+        tblUsuarios.update()
+        tblAccesos.update()
+        settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
+        settings.showMessage("green")
     except Exception as e:
         print(e)
 
@@ -787,9 +810,9 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
 #         print(e)
 
 def update_access(e):
-    programa=e.control.data
+    acceso=e.control.data
     chk=e.control
-    programa=programa["programa"]
+    programa=acceso["programa"]
     acceso_usuario=0 if chk.value == False else 1
     usuario=lblAccesos.value
     usuario=usuario.split(" ")
@@ -799,6 +822,12 @@ def update_access(e):
     values=(f"{acceso_usuario}", f"{programa}", f"{usuario}")
     cursor.execute(sql, values)
     conn.commit()
+
+    lblAccessUpdate.visible=True
+    lblAccessUpdate.update()
+    time.sleep(2)
+    lblAccessUpdate.visible=False
+    lblAccessUpdate.update()
 
 def show_edit_access(e):
     usuario=e.control.data["usuario"]
@@ -820,7 +849,7 @@ def show_edit_access(e):
                     selected=False,
                     # data=x["id"],
                     data=x,
-                    on_select_changed=do_nothing,
+                    on_select_changed=lambda _: None,
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
@@ -841,7 +870,7 @@ def show_edit_access(e):
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	])),
+                        ])),
                     ],
                 ),
             )
@@ -853,12 +882,14 @@ def show_edit_access(e):
 def selectUsers(search):
     user="Super Admin"
     cursor=conn.cursor()
-    if settings.username["username"] == "Super Admin":
+    # if settings.username["username"] == "Super Admin":
+    if settings.username == "Super Admin":
         if search == "":
             sql=f"""SELECT usuario, nombre FROM usuarios"""
         else:
             sql=f"""SELECT usuario, nombre FROM usuarios WHERE usuario LIKE '%{search}%' OR nombre LIKE '%{search}%'"""
-    elif settings.username["username"] == "Admin":
+    # elif settings.username["username"] == "Admin":
+    elif settings.username == "Admin":
         if search == "":
             sql=f"""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> '{user}'"""
         else:
@@ -888,19 +919,33 @@ def selectUsers(search):
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	# IconButton(icon="delete",icon_color="red",
-                        	# 	data=x["id"],
-                        	# 	on_click=showdelete
-                        	# 	),
+                        	IconButton(icon="delete",icon_color="red",
+                        		# data=x["id"],
+                        		data=x["usuario"],
+                        		on_click=showdelete
+                        		),
                             # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	])),
+                        ])),
                     ],
                 ),
             )
     return registros
+
+def selectAccess(username):
+    cursor=conn.cursor()
+    sql=f"""SELECT programa, acceso_usuario FROM accesos WHERE usuario = '{username}'"""
+    cursor.execute(sql)
+    registros=cursor.fetchall()
+
+    if registros != []:
+        settings.acceso_configuracion=registros[0][1]
+        settings.acceso_variables=registros[1][1]
+        settings.acceso_registro=registros[2][1]
+        settings.acceso_cuadre=registros[3][1]
+        settings.acceso_cierre=registros[4][1]
 
 def selectRegisters(search):
     cuadre=0
@@ -952,14 +997,11 @@ def selectRegisters(search):
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	])),
+                        ])),
                     ],
                 ),
             )
     return registros
-
-def do_nothing(e):
-    pass
 
 def selectCashRegister():
     cuadre=0
@@ -979,7 +1021,7 @@ def selectCashRegister():
                     selected=False,
                     # data=x["id"],
                     data=x,
-                    on_select_changed=do_nothing,
+                    on_select_changed=lambda _: None,
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
@@ -1005,21 +1047,22 @@ def selectCashRegister():
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	])),
+                        ])),
                     ],
                 ),
             )
     return registros
 
-lblAccesos=Text("Accesos", theme_style=TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=colors.PRIMARY)
+lblAccesos=Text("Accesos", theme_style=TextThemeStyle.HEADLINE_SMALL, text_align="left", color=colors.PRIMARY)
+lblAccessUpdate=Text("Registro actualizado satisfactoriamente", text_align="left", visible=False)
 
 tblUsuarios = Column([
     Row([tbu], scroll="always")
 ], height=60)
 
 tblAccesos = Column([
-    Row([tba], scroll="auto")
-], height=274)
+    Row([tba], scroll="always")
+], height=300)
 
 tblRegistro = Column([
     Row([tb], scroll="always")

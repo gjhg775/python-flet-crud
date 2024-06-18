@@ -3,6 +3,7 @@ import flet as ft
 import settings
 import hashlib
 from pages.login import Login
+from pages.profile import Profile
 from pages.home import home
 from pages.configuration import Configuration
 from pages.variables import Variables
@@ -10,7 +11,7 @@ from pages.register import *
 from pages.cash_register import *
 from pages.closing_day import Closing_day
 from pages.developer import Developer
-from datatable import get_configuration, selectUser, add_user
+from datatable import get_configuration, selectUser, selectAccess, add_user
 
 # def main(page: ft.Page):
 #     page.drawer = ft.NavigationDrawer(
@@ -55,40 +56,65 @@ if configuracion != None:
     servicio=configuracion[0][6]
     consecutivo=configuracion[0][7]
 
-def main(page: ft.Page):
+def main(page:ft.Page):
+
+    user_photo=ft.Image(src=f"img/parqueadero.jpeg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    user_auth=ft.Text("")
+
+    def profile(e):
+        hide_drawer(e)
+        page.clean()
+        page.add(Profile(page))
     
     def change_navigation_destination(e):
+        acceso=0
         if e.control.selected_index == 0:
             hide_drawer(e)
             page.clean()
             page.add(home(page))
         if e.control.selected_index == 1:
             hide_drawer(e)
-            page.clean()
-            page.add(Configuration(page))
+            if settings.acceso_configuracion == 1:
+                page.clean()
+                page.add(Configuration(page))
+                page.update()
+            else:
+                acceso=1
         if e.control.selected_index == 2:
             hide_drawer(e)
-            page.clean()
-            page.add(Variables(page))
-            page.update()
+            if settings.acceso_variables == 1:
+                page.clean()
+                page.add(Variables(page))
+                page.update()
+            else:
+                acceso=1
         if e.control.selected_index == 3:
             hide_drawer(e)
-            page.clean()
-            page.add(Register(page))
-            tblRegistro.scroll="auto"
-            tblRegistro.update()
-            page.update()
+            if settings.acceso_registro == 1:
+                page.clean()
+                page.add(Register(page))
+                tblRegistro.scroll="auto"
+                tblRegistro.update()
+                page.update()
+            else:
+                acceso=1
         if e.control.selected_index == 4:
             hide_drawer(e)
-            page.clean()
-            page.add(Cash_register(page))
-            tblCuadre.scroll="auto"
-            tblCuadre.update()
-            page.update()
+            if settings.acceso_cuadre == 1:
+                page.clean()
+                page.add(Cash_register(page))
+                tblCuadre.scroll="auto"
+                tblCuadre.update()
+                page.update()
+            else:
+                acceso=1
         if e.control.selected_index == 5:
             hide_drawer(e)
-            page.clean()
-            page.add(Closing_day(page))
+            if settings.acceso_cierre == 1:
+                page.clean()
+                page.add(Closing_day(page))
+            else:
+                acceso=1
         if e.control.selected_index == 6:
             hide_drawer(e)
             page.clean()
@@ -98,9 +124,14 @@ def main(page: ft.Page):
             hide_drawer(e)
             page.clean()
             page.add(container)
-
+        if acceso == 1:
+            message="Acceso no permitido"
+            bgcolor="orange"
+            settings.message=message
+            settings.showMessage(bgcolor)
+            
     def show_drawer(e):
-        if page.session.get("Loginme") != None:
+        if page.session.get("username") != None:
             page.drawer.open = True
             page.drawer.update()
 
@@ -157,6 +188,7 @@ def main(page: ft.Page):
         lbl_login.value="Iniciar sesión"
         btn_login.text="Iniciar sesión"
         btn_login.on_click=login
+        confirm_password.visible=False
         name.visible=False
         lbl_cuenta.value="¿No tiene una cuenta?"
         btn_cuenta.visible=True
@@ -175,7 +207,7 @@ def main(page: ft.Page):
         if user.value != "" and password.value != "":
             usuario=user.value
             contrasena=password.value
-            login_user, login_password, bln_login=selectUser(usuario, contrasena)
+            login_user, login_password, login_nombre, bln_login=selectUser(usuario, contrasena)
             if login_user != "" and bln_login == False:
                 user.error_text=login_user
                 # user.focus()
@@ -193,28 +225,26 @@ def main(page: ft.Page):
                 password.error_text=""
                 password.update()
             if bln_login == True:
-                datalogin={"value":True, "username":user.value}
-                page.session.set("Loginme", datalogin)
-                settings.username=page.session.get('Loginme')
+                datalogin={"logged":True, "username":user.value}
+                page.session.set("username", datalogin['username'])
+                settings.username=page.session.get('username')
+                username=settings.username
+                selectAccess(username)
                 # page.go("/register")
                 page.clean()
                 # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
                 page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
                 page.add(home(page))
                 page.update()
-                # page.snack_bar=ft.SnackBar(
-                #     ft.Text(f"Bienvenido {username['username']}", size=30, text_align="center"),
-                #     bgcolor="green"
-                # )
-                # page.snack_bar.open=True
-                # page.update()
-            # else:
-            #     page.snack_bar=ft.SnackBar(
-            #         ft.Text("Acceso denegado", size=30, text_align="center"),
-            #         bgcolor="red"
-            #     )
-            #     page.snack_bar.open=True
-            #     page.update()
+                settings.login_nombre=login_nombre
+                user_auth.value=settings.login_nombre
+                user_auth.update()
+                settings.message=f"Bienvenido {login_nombre}"
+                bgcolor="blue"
+            else:
+                settings.message="Acceso denegado"
+                bgcolor="red"
+            settings.showMessage(bgcolor)
         else:
             if user.value == "":
                 user.error_text="Digite el usuario"
@@ -229,34 +259,39 @@ def main(page: ft.Page):
         message=""
         user.error_text=""
         password.error_text=""
+        confirm_password.error_text=""
         name.error_text=""
         bln_login=False
-        if user.value != "" and password.value != "" and name.value != "":
+        if user.value != "" and password.value != "" and confirm_password.value != "" and name.value != "":
             usuario=user.value
             contrasena=password.value
+            confirm_contrasena=confirm_password.value
             nombre=name.value
-            login_user, login_password, bln_login=selectUser(usuario, contrasena)
+            login_user, login_password, login_nombre, bln_login=selectUser(usuario, contrasena)
             if bln_login == False:
                 user.error_text=""
                 # user.focus()
                 # btn_login.focus()
                 # user.update()
                 hash=hashlib.sha256(contrasena.encode()).hexdigest()
-                add_user(usuario, hash, nombre)
-                user.value=""
-                password.value=""
-                name.value=""
-                message="Cuenta creada satisfactoriamente"
+                hash2=hashlib.sha256(confirm_contrasena.encode()).hexdigest()
+                if hash == hash2:
+                    add_user(usuario, hash, nombre)
+                    user.value=""
+                    password.value=""
+                    confirm_password.value=""
+                    name.value=""
+                    message="Cuenta creada satisfactoriamente"
+                    bgcolor="green"
+                else:
+                    confirm_password.error_text="Las contraseñas no coinciden"
+                    confirm_password.update()
             else:
                 user.error_text="Usuario ya registrado"
                 user.update()
         if message != "":
-            page.snack_bar=ft.SnackBar(
-                ft.Text(message, color="white", text_align="center"),
-                bgcolor="green"
-            )
-            page.snack_bar.open=True
-            page.update()
+            settings.message=message
+            settings.showMessage(bgcolor)
                 
             # if login_password != "" and bln_login == False:
             #     password.error_text=login_password
@@ -296,19 +331,24 @@ def main(page: ft.Page):
             if password.value == "":
                 password.error_text="Digite la contraseña"
                 btn_login.focus()
+            if confirm_password.value == "":
+                confirm_password.error_text="Confirme la contraseña"
+                btn_login.focus()
             if name.value == "":
                 name.error_text="Digite el nombre"
                 btn_login.focus()
             user.update()
             password.update()
+            confirm_password.update()
             name.update()
 
     def sign_up(e):
         lbl_login.value="Crear cuenta"
         btn_login.text="Crear cuenta"
         btn_login.on_click=signUp
+        confirm_password.visible=True
         name.visible=True
-        lbl_cuenta.value="Ya tengo una cuenta"
+        lbl_cuenta.value="Ya tiene una cuenta"
         btn_cuenta.visible=False
         btn_loginme.visible=True
         user.value=""
@@ -316,6 +356,7 @@ def main(page: ft.Page):
         name.value=""
         user.error_text=""
         password.error_text=""
+        confirm_password.error_text=""
         name.error_text=""
         page.update()
     
@@ -336,13 +377,22 @@ def main(page: ft.Page):
 
     page.drawer = ft.NavigationDrawer(
         controls=[
-            ft.Container(height=12),
+            # ft.Container(height=12),
+            ft.Container(
+                padding=ft.padding.only(10, 10, 10, 10),
+                on_click=lambda e: profile(e),
+                content=ft.Row([
+                    user_photo,
+                    user_auth
+                ]),
+            ),
+            ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
                 label="Inicio",
                 icon=ft.icons.HOME_OUTLINED,
                 selected_icon_content=ft.Icon(ft.icons.HOME),
             ),
-            ft.Divider(thickness=2),
+            # ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
                 icon_content=ft.Icon(ft.icons.SETTINGS_OUTLINED),
                 label="Configuración",
@@ -393,6 +443,7 @@ def main(page: ft.Page):
         )
     )
 
+    settings.page=page
     page.title="Parqueadero"
     page.scroll="auto"
     page.theme_mode="light"
@@ -444,6 +495,7 @@ def main(page: ft.Page):
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
     user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
+    confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=False)
     name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
     lbl_cuenta=ft.Text("¿No tiene una cuenta?")
@@ -451,8 +503,9 @@ def main(page: ft.Page):
     btn_loginme=ft.TextButton("Iniciar sesión", visible=False, on_click=loginMe)
 
     container=ft.Column(
-            controls=[        
+            controls=[
                 ft.Container(
+                    
                     ft.Column([
                         ft.Container(
                             # ft.Text(
@@ -473,6 +526,10 @@ def main(page: ft.Page):
                         ),
                         ft.Container(
                             password,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            confirm_password,
                             padding=ft.padding.only(20,20)
                         ),
                         ft.Container(
@@ -526,10 +583,11 @@ def main(page: ft.Page):
     # page.add(Home(page))
     page.add(container)
 
-if settings.sw == 0:
-    ft.app(target=main)
-else:
-    ft.app(target=main, port=9000, assets_dir="assets", view=ft.AppView.WEB_BROWSER)
+if __name__ == "__main__":
+    if settings.sw == 0:
+        ft.app(target=main)
+    else:
+        ft.app(target=main, port=9000, assets_dir="assets", view=ft.AppView.WEB_BROWSER)
 
 
 # import flet as ft

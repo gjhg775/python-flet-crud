@@ -384,12 +384,9 @@ def Register(page):
             tb.update()
             tblRegistro.update()
 
-            page.snack_bar=ft.SnackBar(
-                ft.Text(message, color="white", text_align="center"),
-                bgcolor="green"
-            )
-            page.snack_bar.open=True
-            page.update()
+            bgcolor="green"
+            settings.message=message
+            settings.showMessage(bgcolor)
 
             time.sleep(4)
 

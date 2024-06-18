@@ -1,6 +1,7 @@
 import flet as ft
-from datatable import get_variables, update_variables
+import settings
 import sqlite3
+from datatable import get_variables, update_variables
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 message=""
@@ -165,12 +166,9 @@ def Variables(page):
             vlr_turno_otro.update()
             message=update_variables(vlr_hora_moto.value, vlr_turno_moto.value, vlr_hora_carro.value, vlr_turno_carro.value, vlr_hora_otro.value, vlr_turno_otro.value, variable_id)
             if message != "":
-                page.snack_bar=ft.SnackBar(
-                    ft.Text(message, color="white", text_align="center"),
-                    bgcolor="green"
-                )
-                page.snack_bar.open=True
-                page.update()
+                bgcolor="green"
+                settings.message=message
+                settings.showMessage(bgcolor)
 
     variable_id=id
     vlr_hora_moto=ft.TextField(label="Hora Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_hora_moto)
