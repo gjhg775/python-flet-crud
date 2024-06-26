@@ -1,8 +1,10 @@
+import os
 import locale
 import qrcode
 import datetime
+import settings
 import subprocess
-# import webbrowser
+import webbrowser
 import pywhatkit
 import win32api
 import win32print
@@ -14,9 +16,10 @@ title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
-path="receipt.pdf"
-path2="cash_register.pdf"
-path3="cash_register2.pdf"
+if settings.sw == 0:
+    path=os.path.join(os.getcwd(), "upload\\receipt\\")
+else:
+    path=os.path.join(os.getcwd(), "assets\\receipt\\")
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
@@ -90,9 +93,11 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
-    pdf.output(path)
-    subprocess.Popen([path], shell=True)
-    # webbrowser.open_new(path)
+    pdf.output(path+"receipt.pdf")
+    if settings.sw == 0:
+        subprocess.Popen([path+"receipt.pdf"], shell=True)
+    else:
+        webbrowser.open_new(path+"receipt.pdf")
 
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
@@ -238,9 +243,11 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.cell(vlr_total_w, 212, vlr_total, align="C")
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
-    pdf.output(path)
-    subprocess.Popen([path], shell=True)
-    # webbrowser.open_new(path)
+    pdf.output(path+"receipt.pdf")
+    if settings.sw == 0:
+        subprocess.Popen([path+"receipt.pdf"], shell=True)
+    else:
+        webbrowser.open_new(path+"receipt.pdf")
 
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
@@ -366,14 +373,16 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     # pdf.set_x((doc_w - efectivo_w) / 2)
     # pdf.cell(efectivo_w, pos, efectivo, align="C")
     pdf.cell(1, pos, efectivo, align="R")
-    pdf.output(path2)
-    subprocess.Popen([path2], shell=True)
-    # webbrowser.open_new(path2)
+    pdf.output(path+"cash_register.pdf")
+    if settings.sw == 0:
+        subprocess.Popen([path+"cash_register.pdf"], shell=True)
+    else:
+        webbrowser.open_new(path+"cash_register.pdf")
 
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
     cPrinter=win32print.GetDefaultPrinter()
-    pdfFile=path2
+    pdfFile=path
     win32api.ShellExecute(
         0,
         "open",
@@ -468,14 +477,16 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pendiente_w=pdf.get_string_width(pendiente)
     pdf.set_x((doc_w - pendiente_w) / 2)
     pdf.cell(pendiente_w, pos, pendiente, align="C")
-    pdf.output(path3)
-    subprocess.Popen([path3], shell=True)
-    # webbrowser.open_new(path3)
+    pdf.output(path+"cash_register2.pdf")
+    if settings.sw == 0:
+        subprocess.Popen([path+"cash_register2.pdf"], shell=True)
+    else:
+        webbrowser.open_new(path+"cash_register2.pdf")
 
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
     cPrinter=win32print.GetDefaultPrinter()
-    pdfFile=path3
+    pdfFile=path
     win32api.ShellExecute(
         0,
         "open",

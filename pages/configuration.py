@@ -1,7 +1,8 @@
+import time
 import flet as ft
 import settings
 import sqlite3
-from datatable import get_configuration, update_configuration, tblUsuarios, tbu, selectUsers, tblAccesos, tba, lblAccesos, lblAccessUpdate
+from datatable import get_configuration, update_configuration, tblUsuarios, tbu, selectUsers, tblAccesos, tba, lblAccesos
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 search=""
@@ -200,28 +201,52 @@ def Configuration(page):
 
     def search_change(e):
         search=e.control.value
-        if search == "":
-            no_registros.visible=False
+        # if search == "":
+        #     no_registros.visible=False
         tbu.rows.clear()
+        tba.rows.clear()
         selectUsers(search)
         if tbu.rows != []:
             tblUsuarios.height=246
-            no_registros.visible=False
+            # no_registros.visible=False
         else:
             tblUsuarios.height=60
-            no_registros.visible=True
+            # no_registros.visible=True
+            lblAccesos.value="Accesos"
+            bgcolor="blue"
+            message="No se encontraron registros"
+            settings.message=message
+            settings.showMessage(bgcolor)
         tblUsuarios.update()
-        no_registros.update()
+        tblAccesos.update()
+        # no_registros.update()
 
     def page_resize(e):
-        if page.window_width <= 425:
-            settings.fieldwith=280
-        elif page.window_width > 425 and page.window_width <= 678:
-            settings.fieldwith=400
-        elif page.window_width >= 768 and page.window_width < 992:
-            settings.fieldwith=600
-        elif page.window_width >= 992 and page.window_width <= 1400:
-            settings.fieldwith=600
+        # if page.window_width <= 425:
+        #     settings.fieldwith=page.window_width - 40
+        # elif page.window_width > 425 and page.window_width <= 678:
+        #     settings.fieldwith=page.window_width - 40
+        # elif page.window_width >= 768 and page.window_width < 992:
+        #     settings.fieldwith=page.window_width - 40
+        # elif page.window_width >= 992 and page.window_width <= 1400:
+        #     settings.fieldwith=800
+        # elif page.window_width >= 1200:
+        #     settings.fieldwith=900
+        # elif page.window_width >= 1400:
+        #     settings.fieldwith=1000
+        if page.window_width < 576:
+            settings.fieldwith=page.window_width - 40
+        elif page.window_width >= 576 and page.window_width < 768:
+            settings.fieldwith=page.window_width - 40
+        elif page.window_width >= 768:
+            # settings.fieldwith=page.window_width - 40
+            settings.fieldwith=700
+        elif page.window_width >= 992:
+            settings.fieldwith=900
+        elif page.window_width >= 1200:
+            settings.fieldwith=1100
+        elif page.window_width >= 1400:
+            settings.fieldwith=1300
         if settings.sw == 0:
             parqueadero.width=settings.fieldwith
             nit.width=settings.fieldwith
@@ -230,8 +255,8 @@ def Configuration(page):
             telefono.width=settings.fieldwith
             servicio.width=settings.fieldwith
             consecutivo.width=settings.fieldwith
-            lblDatos.width=settings.fieldwith
-            lblUsuarios.width=settings.fieldwith
+            # lblDatos.width=settings.fieldwith
+            # lblUsuarios.width=settings.fieldwith
         else:
             fieldwith=settings.fieldwith
             fieldwith=settings.fieldwith
@@ -248,14 +273,31 @@ def Configuration(page):
 
     page.on_resize=page_resize
 
-    if page.window_width <= 425:
-        fieldwith=280
-    elif page.window_width > 425 and page.window_width <= 678:
-        fieldwith=400
-    elif page.window_width >= 768 and page.window_width < 992:
-        fieldwith=600
+    # if page.window_width <= 425:
+    #     fieldwith=page.window_width - 40
+    # elif page.window_width > 425 and page.window_width <= 678:
+    #     fieldwith=page.window_width - 40
+    # elif page.window_width >= 768 and page.window_width < 992:
+    #     fieldwith=page.window_width - 40
+    # elif page.window_width >= 992:
+    #     fieldwith=800
+    # elif page.window_width >= 1200:
+    #     fieldwith=900
+    # elif page.window_width >= 1400:
+    #     fieldwith=1000
+    if page.window_width < 576:
+        fieldwith=page.window_width - 40
+    elif page.window_width >= 576 and page.window_width < 768:
+        fieldwith=page.window_width - 40
+    elif page.window_width >= 768:
+        # fieldwith=page.window_width - 40
+        fieldwith=700
     elif page.window_width >= 992:
-        fieldwith=600
+        fieldwith=900
+    elif page.window_width >= 1200:
+        fieldwith=1100
+    elif page.window_width >= 1400:
+        fieldwith=1300
 
     configuracion_id=id
     parqueadero=ft.TextField(label="Parqueadero", width=fieldwith, value=parqueadero)
@@ -265,24 +307,30 @@ def Configuration(page):
     telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono)
     servicio=ft.TextField(label="Servicio", width=fieldwith, value=servicio)
     consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo)
-    btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateConfiguration)
-    lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
-    lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
+    btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=validateConfiguration)
+    # lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
+    # lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
+    lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
+    lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     # lblAccesos=ft.Text("Accesos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=300, text_align="left", color=ft.colors.PRIMARY)
-    buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
-    no_registros=ft.Text("No se encontraron registros", visible=True)
+    buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    # no_registros=ft.Text("No se encontraron registros", visible=True)
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
 
-    tbu.rows.clear()
     registros=selectUsers(search)
     if registros != []:
         tblUsuarios.height=344
-        no_registros.visible=False
-
-    if message != "":
-        bgcolor="green"
+        # no_registros.visible=False
+    else:
+        bgcolor="blue"
+        message="No se encontraron registros"
         settings.message=message
         settings.showMessage(bgcolor)
+
+    # if message != "":
+    #     bgcolor="green"
+    #     settings.message=message
+    #     settings.showMessage(bgcolor)
 
     return ft.Column(
         controls=[
@@ -290,10 +338,17 @@ def Configuration(page):
             ft.Container(
                 alignment=ft.alignment.center,
                 content=ft.Stack([
+                    # ft.Row([
+                    #     ft.Column([
+                    #         settings.progressRing
+                    #     ]),
+                    # ], 
+                    # alignment=ft.MainAxisAlignment.CENTER,
+                    # ),
                     ft.Row([
                         ft.Column([
                             ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
-                        ])
+                        ]),
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER,
                     ),
@@ -324,19 +379,41 @@ def Configuration(page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
+            # ft.Container(
+            #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
+            #     # border_radius=10,
+            #     alignment=ft.alignment.center,
+            #     # padding=ft.padding.only(10, 20, 10, 0),
+            #     padding=ft.padding.only(10, 25, 10, 0),
+            #     content=ft.Stack([
+            #     # content=ft.ResponsiveRow([
+            #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+            #             ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos]),
+            #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+            #         # ]),
+            #     ]),
+            # ),
             ft.Container(
                 # bgcolor=ft.colors.PRIMARY_CONTAINER,
                 # border_radius=10,
-                alignment=ft.alignment.center,
+                # alignment=ft.alignment.center,
                 # padding=ft.padding.only(10, 20, 10, 0),
-                padding=ft.padding.only(10, 25, 10, 0),
-                content=ft.Stack([
-                # content=ft.ResponsiveRow([
-                        ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos, lblAccessUpdate]),
-                        ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-                    # ]),
-                ]),
+                # content=ft.Stack([
+                ft.ResponsiveRow([
+                    # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                    # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
+                    # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
+                    # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                    ft.Column(col={"xs":0, "sm":0, "md":3, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":12, "sm":12, "md":4, "lg":4, "xl":4, "xxl":2}, controls=[lblUsuarios, buscar, tblUsuarios]),
+                    ft.Column(col={"xs":12, "sm":12, "md":3, "lg":3, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
+                    ft.Column(col={"xs":0, "sm":0, "md":2, "lg":2, "xl":2, "xxl":4}),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER
+                ),
+                #     ],
+                # alignment=ft.MainAxisAlignment.CENTER
+                # ),
             ),
             ft.Container(height=100)
         ]

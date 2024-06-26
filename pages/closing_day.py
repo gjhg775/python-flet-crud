@@ -24,7 +24,7 @@ def Closing_day(page):
         servicio=configuracion[0][6]
         # consecutivo=configuracion[0][7]
 
-    def do_nothing(e):
+    def cancel(e):
         close_dlg(e)
         fecha.value="dd/mm/aaaa"
         fecha.update()
@@ -67,7 +67,7 @@ def Closing_day(page):
                     # fecha.value=""
                     # fecha.update()
 
-                    message="Proceso realizado satisfactoriamente"
+                    message="Cierre de día realizado satisfactoriamente"
                     bg_color="green"
                     tblRegistro.height=60
                     tblCuadre.height=60
@@ -171,7 +171,7 @@ def Closing_day(page):
         # content=ft.Text(message, text_align="center"),
         actions=[
             ft.TextButton("Sí", on_click=closing_day),
-            ft.TextButton("No", autofocus=True, on_click=do_nothing)
+            ft.TextButton("No", autofocus=True, on_click=cancel)
         ],
         actions_alignment=ft.MainAxisAlignment.END,
         on_dismiss=lambda _: date_button.focus(),

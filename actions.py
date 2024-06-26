@@ -27,7 +27,8 @@ def create_users():
         usuario_id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario TEXT,
         clave TEXT,
-        nombre TEXT)
+        nombre TEXT,
+        foto TEXT)
         """)
     conn.commit()
 
@@ -110,13 +111,13 @@ def drop_regist():
 def admin_user():
     try:
         cursor=conn.cursor()
-        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
-        values=("Super Admin", f"{hashsa}", "Super Administrador")
+        sql="""INSERT INTO usuarios (usuario, clave, nombre, foto) VALUES (?, ?, ?, ?)"""
+        values=("Super Admin", f"{hashsa}", "Super Administrador", "default.jpg")
         cursor.execute(sql, values)
         conn.commit()
 
-        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
-        values=("Admin", f"{hasha}", "Administrador")
+        sql="""INSERT INTO usuarios (usuario, clave, nombre, foto) VALUES (?, ?, ?, ?)"""
+        values=("Admin", f"{hasha}", "Administrador", "default.jpg")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

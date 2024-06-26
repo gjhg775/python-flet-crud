@@ -185,6 +185,13 @@ def Variables(page):
             ft.Container(
                 alignment=ft.alignment.center,
                 content=ft.Stack([
+                    # ft.Row([
+                    #     ft.Column([
+                    #         settings.progressRing
+                    #     ]),
+                    # ], 
+                    # alignment=ft.MainAxisAlignment.CENTER,
+                    # ),
                     ft.Row([
                         ft.Column([
                             ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)

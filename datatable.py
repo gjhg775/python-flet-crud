@@ -3,7 +3,7 @@ import time
 import locale
 import qrcode
 import subprocess
-# import webbrowser
+import webbrowser
 import bcrypt
 import datetime
 import settings
@@ -22,8 +22,10 @@ title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
-path="receipt.pdf"
-# path="/receipt/receipt.pdf"
+if settings.sw == 0:
+    path=os.path.join(os.getcwd(), "upload\\receipt\\")
+else:
+    path=os.path.join(os.getcwd(), "assets\\receipt\\")
 
 tbu = DataTable(
     bgcolor=colors.PRIMARY_CONTAINER,
@@ -64,7 +66,7 @@ tb = DataTable(
         # DataColumn(Text("Vehiculo")),
         # DataColumn(Text("Valor")),
         # DataColumn(Text("Tiempo")),
-        # DataColumn(Text("Total")),
+        DataColumn(Text("Total"), visible=False),
         # DataColumn(Text("Cuadre")),
         # DataColumn(Text("Usuario")),
 		# DataColumn(Text("Acción")),
@@ -110,6 +112,7 @@ def selectUser(usuario, contrasena):
         login_user=""
         login_password=""
         login_nombre=""
+        login_photo=""
         bln_login=False
 
         if registros != []:
@@ -119,6 +122,7 @@ def selectUser(usuario, contrasena):
 
             if hash == hashed:
                 login_nombre=registros[0][3]
+                login_photo=registros[0][4]
                 bln_login=True
             else:
                 bln_login=False
@@ -126,7 +130,7 @@ def selectUser(usuario, contrasena):
             login_user="Usuario no registrado"
         if bln_login == False:
             login_password="Contraseña inválida"
-        return login_user, login_password, login_nombre, bln_login
+        return login_user, login_password, login_nombre, login_photo, bln_login
     except Exception as e:
         print(e)
 
@@ -152,6 +156,40 @@ def add_user(usuario, hashed, nombre):
             values=(f"{usuario}", f"{programa}", f"{acceso_usuario}")
             cursor.execute(sql, values)
             conn.commit()
+    except Exception as e:
+        print(e)
+
+def update_user(usuario, foto):
+    try:
+        cursor=conn.cursor()
+        sql="""UPDATE usuarios SET foto = ? WHERE usuario = ?"""
+        values=(f"{foto}", f"{usuario}")
+        cursor.execute(sql, values)
+        conn.commit()
+
+        bgcolor="green"
+        settings.message="Perfíl actualizado satisfactoriamente"
+        settings.showMessage(bgcolor)
+    except Exception as e:
+        print(e)
+
+def get_user(usuario):
+    try:
+        cursor=conn.cursor()
+        sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
+        values=(usuario,)
+        cursor.execute(sql, values)
+        registros=cursor.fetchall()
+
+        if registros != []:
+            photo=registros[0][4]
+            # settings.photo=photo
+            # settings.user_avatar.src=f"upload\\img\\{photo}"
+            # settings.user_photo.src=f"upload\\img\\{photo}"
+            # settings.user_avatar.update()
+            # settings.user_photo.update()
+            # settings.page.update()
+            return photo
     except Exception as e:
         print(e)
 
@@ -520,8 +558,9 @@ def showdelete(e):
     try:
         usuario=e.control.data
         if usuario == "Super Admin" or usuario == "Admin":
+            bgcolor="red"
             settings.message=f"El usuario {usuario} no puede ser eliminado"
-            settings.showMessage("red")
+            settings.showMessage(bgcolor)
             return False
         
         cursor=conn.cursor()
@@ -542,8 +581,9 @@ def showdelete(e):
         lblAccesos.update()
         tblUsuarios.update()
         tblAccesos.update()
+        bgcolor="green"
         settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
-        settings.showMessage("green")
+        settings.showMessage(bgcolor)
     except Exception as e:
         print(e)
 
@@ -619,9 +659,11 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
         pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
-    pdf.output(path)
-    subprocess.Popen([path], shell=True)
-    # webbrowser.open_new(path)
+    pdf.output(path+"receipt.pdf")
+    if settings.sw == 0:
+        subprocess.Popen([path+"receipt.pdf"], shell=True)
+    else:
+        webbrowser.open_new(path+"receipt.pdf")
 
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
@@ -767,9 +809,11 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.cell(vlr_total_w, 212, vlr_total, align="C")
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
-    pdf.output(path)
-    subprocess.Popen([path], shell=True)
-    # webbrowser.open_new(path)
+    pdf.output(path+"receipt.pdf")
+    if settings.sw == 0:
+        subprocess.Popen([path+"receipt.pdf"], shell=True)
+    else:
+        webbrowser.open_new(path+"receipt.pdf")
 
     ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
     gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
@@ -812,22 +856,34 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
 def update_access(e):
     acceso=e.control.data
     chk=e.control
-    programa=acceso["programa"]
-    acceso_usuario=0 if chk.value == False else 1
     usuario=lblAccesos.value
-    usuario=usuario.split(" ")
+    usuario=usuario.split("Accesos ")
     usuario=usuario[1]
-    cursor=conn.cursor()
-    sql=f"""UPDATE accesos SET acceso_usuario = ? WHERE programa = ? AND usuario = ?"""
-    values=(f"{acceso_usuario}", f"{programa}", f"{usuario}")
-    cursor.execute(sql, values)
-    conn.commit()
+    if usuario != "Super Admin" and usuario != "Admin":
+        programa=acceso["programa"]
+        acceso_usuario=0 if chk.value == False else 1
+        cursor=conn.cursor()
+        sql=f"""UPDATE accesos SET acceso_usuario = ? WHERE programa = ? AND usuario = ?"""
+        values=(f"{acceso_usuario}", f"{programa}", f"{usuario}")
+        cursor.execute(sql, values)
+        conn.commit()
 
-    lblAccessUpdate.visible=True
-    lblAccessUpdate.update()
-    time.sleep(2)
-    lblAccessUpdate.visible=False
-    lblAccessUpdate.update()
+        # lblAccessUpdate.visible=True
+        # lblAccessUpdate.update()
+        # time.sleep(2)
+        # lblAccessUpdate.visible=False
+        # lblAccessUpdate.update()
+
+        bgcolor="green"
+        message="Registro actualizado satisfactoriamente"
+        settings.message=message
+        settings.showMessage(bgcolor)
+    else:
+        chk.value=not chk.value
+        bgcolor="red"
+        message=f"Los accesos del usuario {usuario} no pueden ser modificados"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
 def show_edit_access(e):
     usuario=e.control.data["usuario"]
@@ -858,18 +914,18 @@ def show_edit_access(e):
                         # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
                         DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access)),
                         DataCell(Row([
-                        	# IconButton(icon="create",icon_color="blue",
-                        	# 	data=x,
-                        	# 	on_click=showedit
-                        	# 	),
-                        	# IconButton(icon="delete",icon_color="red",
-                        	# 	data=x["id"],
-                        	# 	on_click=showdelete
-                        	# 	),
+                            # IconButton(icon="create",icon_color="blue",
+                            # 	data=x,
+                            # 	on_click=showedit
+                            # 	),
+                            # IconButton(icon="delete",icon_color="red",
+                            # 	data=x["id"],
+                            # 	on_click=showdelete
+                            # 	),
                             # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
-                        	# 	data=x,
-                        	# 	on_click=showedit
-                        	# 	),
+                            # 	data=x,
+                            # 	on_click=showedit
+                            # 	),
                         ])),
                     ],
                 ),
@@ -901,6 +957,8 @@ def selectUsers(search):
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
         keys=["usuario", "nombre"]
         result=[dict(zip(keys, values)) for values in registros]
+
+        tbu.rows.clear()
 
         for x in result:
             tbu.rows.append(
@@ -952,21 +1010,24 @@ def selectRegisters(search):
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE cuadre = {cuadre}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE cuadre = {cuadre}"""
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida) FROM registro WHERE (consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%') AND cuadre = {cuadre}"""
-
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE (consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%') AND cuadre = {cuadre}"""
     cursor.execute(sql)
     registros=cursor.fetchall()
 
+    tb.rows.clear()
+
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
-        keys=["consecutivo", "placa", "entrada", "salida"]
+        keys=["consecutivo", "placa", "entrada", "salida", "total"]
         result=[dict(zip(keys, values)) for values in registros]
 
         for x in result:
+            color=colors.GREEN_700 if x["total"] != 0 else None
             tb.rows.append(
                 DataRow(
+                    # color=colors.GREEN_100 if x["total"] != 0 else None,
                     selected=False,
                     # data=x["id"],
                     data=x,
@@ -974,14 +1035,14 @@ def selectRegisters(search):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["consecutivo"])),
-                        DataCell(Text(x["placa"])),
-                        DataCell(Text(x["entrada"])),
-                        DataCell(Text(x["salida"])),
+                        DataCell(Text(x["consecutivo"], color=color)),
+                        DataCell(Text(x["placa"], color=color)),
+                        DataCell(Text(x["entrada"], color=color)),
+                        DataCell(Text(x["salida"], color=color)),
                         # DataCell(Text(x["vehiculo"])),
                         # DataCell(Text(x["valor"])),
                         # DataCell(Text(x["tiempo"])),
-                        # DataCell(Text(x["total"])),
+                        DataCell(Text(x["total"], color=color)),
                         # DataCell(Text(x["cuadre"])),
                         # DataCell(Text(x["usuario"])),
                         DataCell(Row([
@@ -1001,6 +1062,11 @@ def selectRegisters(search):
                     ],
                 ),
             )
+    else:
+        bgcolor="blue"
+        message="No se encontraron registros"
+        settings.message=message
+        settings.showMessage(bgcolor)
     return registros
 
 def selectCashRegister():
@@ -1011,11 +1077,14 @@ def selectCashRegister():
     cursor.execute(sql)
     registros=cursor.fetchall()
 
+    tbc.rows.clear()
+
     if registros != []:
         keys=["consecutivo", "placa", "entrada", "salida", "vehiculo", "facturacion", "valor", "tiempo", "total", "cuadre"]
         result=[dict(zip(keys, values)) for values in registros]
 
         for x in result:
+            color=colors.GREEN_700 if x["total"] != 0 else None
             tbc.rows.append(
                 DataRow(
                     selected=False,
@@ -1025,14 +1094,14 @@ def selectCashRegister():
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["consecutivo"])),
-                        DataCell(Text(x["placa"])),
-                        DataCell(Text(x["entrada"])),
-                        DataCell(Text(x["salida"])),
-                        DataCell(Text(x["vehiculo"])),
-                        DataCell(Text("Horas" if x["facturacion"] == 0 else "Turnos")),
-                        DataCell(Text(locale.currency(x["valor"], grouping=True))),
-                        DataCell(Text(locale.currency(x["total"], grouping=True))),
+                        DataCell(Text(x["consecutivo"], color=color)),
+                        DataCell(Text(x["placa"], color=color)),
+                        DataCell(Text(x["entrada"], color=color)),
+                        DataCell(Text(x["salida"], color=color)),
+                        DataCell(Text(x["vehiculo"], color=color)),
+                        DataCell(Text("Horas" if x["facturacion"] == 0 else "Turnos", color=color)),
+                        DataCell(Text(locale.currency(x["valor"], grouping=True), color=color)),
+                        DataCell(Text(locale.currency(x["total"], grouping=True), color=color)),
                         # DataCell(Text(x["cuadre"])),
                         DataCell(Row([
                         	# IconButton(icon="create",icon_color="blue",
@@ -1051,10 +1120,14 @@ def selectCashRegister():
                     ],
                 ),
             )
+    else:
+        bgcolor="blue"
+        message="No se encontraron registros"
+        settings.message=message
+        settings.showMessage(bgcolor)
     return registros
 
 lblAccesos=Text("Accesos", theme_style=TextThemeStyle.HEADLINE_SMALL, text_align="left", color=colors.PRIMARY)
-lblAccessUpdate=Text("Registro actualizado satisfactoriamente", text_align="left", visible=False)
 
 tblUsuarios = Column([
     Row([tbu], scroll="always")

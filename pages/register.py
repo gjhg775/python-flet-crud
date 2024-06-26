@@ -368,7 +368,6 @@ def Register(page):
             if vlr_total == 0:
                 message="Registro creado satisfactoriamente"
                 tblRegistro.height=246
-                no_registros.visible=False
             else:
                 message="Registro actualizado satisfactoriamente"
 
@@ -429,18 +428,22 @@ def Register(page):
     
     def search_change(e):
         search=e.control.value
-        if search == "":
-            no_registros.visible=False
+        # if search == "":
+        #     no_registros.visible=False
         tb.rows.clear()
         selectRegisters(search)
         if tb.rows != []:
             tblRegistro.height=246
-            no_registros.visible=False
+            # no_registros.visible=False
         else:
             tblRegistro.height=60
-            no_registros.visible=True
+            # no_registros.visible=True
+            bgcolor="blue"
+            message="No se encontraron registros"
+            settings.message=message
+            settings.showMessage(bgcolor)
         tblRegistro.update()
-        no_registros.update()
+        # no_registros.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -483,16 +486,14 @@ def Register(page):
     elif page.window_width >= 992:
         textsize=90
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", capitalization="CHARACTERS", autofocus=True, prefix_icon=ft.icons.SEARCH, on_change=search_change)
-    no_registros=ft.Text("No se encontraron registros", visible=True)
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, on_change=search_change)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", on_blur=register)
-    total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", read_only=True)
+    total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
 
-    tb.rows.clear()
     registros=selectRegisters(search)
     if registros != []:
         tblRegistro.height=246
-        no_registros.visible=False
+        # no_registros.visible=False
 
     # card=ft.Card(
     #     margin=ft.margin.only(0, 50, 0, 0),
@@ -594,7 +595,7 @@ def Register(page):
                 # content=ft.Stack([
                 content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[buscar, tblRegistro, no_registros]),
+                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[buscar, tblRegistro]),
                         ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                     ]),
