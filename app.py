@@ -11,7 +11,7 @@ from pages.register import *
 from pages.cash_register import *
 from pages.closing_day import Closing_day
 from pages.developer import Developer
-from datatable import get_configuration, selectUser, selectAccess, add_user
+from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, lblAccesos, tba
 
 # def main(page: ft.Page):
 #     page.drawer = ft.NavigationDrawer(
@@ -57,8 +57,20 @@ if configuracion != None:
     consecutivo=configuracion[0][7]
 
 def main(page:ft.Page):
+    
+    # username=settings.username
+    # get_user(username)
+    # photo=settings.photo
+    # settings.user_avatar.src=f"upload\\img\\{photo}"
+    # settings.user_photo.src=f"upload\\img\\{photo}"
+    # page.update()
 
-    user_photo=ft.Image(src=f"img/parqueadero.jpeg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    # if settings.sw == 0:
+    #     avatar=ft.Image(src=os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}") if settings.photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    # else:
+    #     avatar=ft.Image(src=f"img/{settings.photo}" if settings.photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    user_avatar=ft.Image(src=f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    # settings.user_photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     user_auth=ft.Text("")
 
     def profile(e):
@@ -67,6 +79,7 @@ def main(page:ft.Page):
         page.add(Profile(page))
     
     def change_navigation_destination(e):
+        # settings.progressRing.visible=True
         acceso=0
         if e.control.selected_index == 0:
             hide_drawer(e)
@@ -77,6 +90,8 @@ def main(page:ft.Page):
             if settings.acceso_configuracion == 1:
                 page.clean()
                 page.add(Configuration(page))
+                lblAccesos.value="Accesos"
+                tba.rows.clear()
                 page.update()
             else:
                 acceso=1
@@ -85,7 +100,7 @@ def main(page:ft.Page):
             if settings.acceso_variables == 1:
                 page.clean()
                 page.add(Variables(page))
-                page.update()
+                # page.update()
             else:
                 acceso=1
         if e.control.selected_index == 3:
@@ -120,15 +135,23 @@ def main(page:ft.Page):
             page.clean()
             page.add(Developer(page))
         if e.control.selected_index == 7:
-            logout()
-            hide_drawer(e)
-            page.clean()
-            page.add(container)
+            if settings.sw == 0:
+                title="Salir"
+                message="Desea salir de la aplicación ?"
+                open_dlg_modal(e, title, message)
+            else:
+                logout()
+                hide_drawer(e)
+                page.clean()
+                page.add(container)
         if acceso == 1:
             message="Acceso no permitido"
             bgcolor="orange"
             settings.message=message
             settings.showMessage(bgcolor)
+        # time.sleep(1)
+        # settings.progressRing.visible=False
+        # page.update()
             
     def show_drawer(e):
         if page.session.get("username") != None:
@@ -207,7 +230,7 @@ def main(page:ft.Page):
         if user.value != "" and password.value != "":
             usuario=user.value
             contrasena=password.value
-            login_user, login_password, login_nombre, bln_login=selectUser(usuario, contrasena)
+            login_user, login_password, login_nombre, login_photo, bln_login=selectUser(usuario, contrasena)
             if login_user != "" and bln_login == False:
                 user.error_text=login_user
                 # user.focus()
@@ -225,9 +248,9 @@ def main(page:ft.Page):
                 password.error_text=""
                 password.update()
             if bln_login == True:
-                datalogin={"logged":True, "username":user.value}
-                page.session.set("username", datalogin['username'])
-                settings.username=page.session.get('username')
+                datalogin={"logged":bln_login, "username":user.value}
+                page.session.set("username", datalogin["username"])
+                settings.username=page.session.get("username")
                 username=settings.username
                 selectAccess(username)
                 # page.go("/register")
@@ -236,6 +259,8 @@ def main(page:ft.Page):
                 page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
                 page.add(home(page))
                 page.update()
+                user_avatar.src=f"upload\\img\\{login_photo}"
+                # settings.user_photo.src=f"upload\\img\\{login_photo}"
                 settings.login_nombre=login_nombre
                 user_auth.value=settings.login_nombre
                 user_auth.update()
@@ -365,6 +390,34 @@ def main(page:ft.Page):
         password.value=""
         page.session.clear()
 
+    def exit(e):
+        page.window_close()
+
+    def close_dlg(e):
+        dlg_modal.open=False
+        page.update()
+
+    def open_dlg_modal(e, title, message):
+        dlg_modal.title=ft.Text(title, text_align="center")
+        dlg_modal.content=ft.Text(message, text_align="center")
+        page.dialog=dlg_modal
+        dlg_modal.open=True
+        page.update()
+
+    dlg_modal=ft.AlertDialog(
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+        modal=True,
+        icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+        # title=ft.Text(title, text_align="center"),
+        # content=ft.Text(message, text_align="center"),
+        actions=[
+            ft.TextButton("Sí", on_click=exit),
+            ft.TextButton("No", autofocus=True, on_click=close_dlg)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        # on_dismiss=lambda _: date_button.focus(),
+    )
+
     mode_switch=ft.Switch(
         value=False,
         on_change=change_mode_theme,
@@ -382,7 +435,7 @@ def main(page:ft.Page):
                 padding=ft.padding.only(10, 10, 10, 10),
                 on_click=lambda e: profile(e),
                 content=ft.Row([
-                    user_photo,
+                    user_avatar,
                     user_auth
                 ]),
             ),
@@ -426,9 +479,9 @@ def main(page:ft.Page):
             ),
             ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.POWER_SETTINGS_NEW_OUTLINED),
-                label="Cerrar sesión",
-                selected_icon=ft.icons.POWER_SETTINGS_NEW,
+                icon_content=ft.Icon(ft.icons.POWER_SETTINGS_NEW_OUTLINED if settings.sw == 1 else ft.icons.EXIT_TO_APP_OUTLINED),
+                label="Cerrar sesión" if settings.sw == 1 else "Salir",
+                selected_icon=ft.icons.POWER_SETTINGS_NEW if settings.sw == 1 else ft.icons.EXIT_TO_APP_ROUNDED,
             )
         ],
         on_change=lambda e: change_navigation_destination(e),
@@ -583,11 +636,10 @@ def main(page:ft.Page):
     # page.add(Home(page))
     page.add(container)
 
-if __name__ == "__main__":
-    if settings.sw == 0:
-        ft.app(target=main)
-    else:
-        ft.app(target=main, port=9000, assets_dir="assets", view=ft.AppView.WEB_BROWSER)
+if settings.sw == 0:
+    ft.app(target=main, assets_dir="assets", upload_dir="upload")
+else:
+    ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)
 
 
 # import flet as ft

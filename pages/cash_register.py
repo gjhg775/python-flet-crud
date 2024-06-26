@@ -1,6 +1,7 @@
 import time
 import locale
 import flet as ft
+import settings
 import sqlite3
 from pages.receipt import show_cash_register, show_cash_register2
 from datatable import tblCuadre, tbc, get_configuration, get_variables, selectCashRegister
@@ -44,17 +45,17 @@ def Cash_register(page):
         if registros != []:
             show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros)
 
-    # tbc.rows.clear()
-    # selectCashRegister()
+        if registros != []:
+            bgcolor="green"
+            message="Cuadre de caja realizado satisfactoriamente"
+            settings.message=message
+            settings.showMessage(bgcolor)
 
-    no_registros=ft.Text("No se encontraron registros", visible=True)
-    btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
+    btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=cash_register)
 
-    tbc.rows.clear()
     registros=selectCashRegister()
     if registros != []:
         tblCuadre.height=344
-        no_registros.visible=False
     
     return ft.Column(
         controls=[
@@ -83,7 +84,7 @@ def Cash_register(page):
                 content=ft.Stack([
                 # content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[tblCuadre, no_registros]),
+                        ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[tblCuadre]),
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
                     # ]),
                 ]),
