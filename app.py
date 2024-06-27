@@ -60,16 +60,16 @@ def main(page:ft.Page):
     
     # username=settings.username
     # get_user(username)
-    # photo=settings.photo
     # settings.user_avatar.src=f"upload\\img\\{photo}"
     # settings.user_photo.src=f"upload\\img\\{photo}"
     # page.update()
 
-    # if settings.sw == 0:
+    if settings.sw == 0:
     #     avatar=ft.Image(src=os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}") if settings.photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-    # else:
+        settings.user_avatar=ft.Image(src=f"upload\\img\\{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    else:
     #     avatar=ft.Image(src=f"img/{settings.photo}" if settings.photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-    user_avatar=ft.Image(src=f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+        settings.user_avatar=ft.Image(src=f"img/{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
     # settings.user_photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     user_auth=ft.Text("")
 
@@ -252,6 +252,7 @@ def main(page:ft.Page):
                 page.session.set("username", datalogin["username"])
                 settings.username=page.session.get("username")
                 username=settings.username
+                settings.photo=login_photo
                 selectAccess(username)
                 # page.go("/register")
                 page.clean()
@@ -259,8 +260,12 @@ def main(page:ft.Page):
                 page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
                 page.add(home(page))
                 page.update()
-                user_avatar.src=f"upload\\img\\{login_photo}"
-                # settings.user_photo.src=f"upload\\img\\{login_photo}"
+                if settings.sw == 0:
+                    settings.user_avatar.src=f"upload\\img\\{login_photo}"
+                    settings.user_photo.src=f"upload\\img\\{login_photo}"
+                else:
+                    settings.user_avatar.src=f"img/{login_photo}"
+                    settings.user_photo.src=f"img/{login_photo}"
                 settings.login_nombre=login_nombre
                 user_auth.value=settings.login_nombre
                 user_auth.update()
@@ -435,7 +440,7 @@ def main(page:ft.Page):
                 padding=ft.padding.only(10, 10, 10, 10),
                 on_click=lambda e: profile(e),
                 content=ft.Row([
-                    user_avatar,
+                    settings.user_avatar,
                     user_auth
                 ]),
             ),

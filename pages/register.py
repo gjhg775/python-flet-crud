@@ -428,22 +428,22 @@ def Register(page):
     
     def search_change(e):
         search=e.control.value
-        # if search == "":
-        #     no_registros.visible=False
-        tb.rows.clear()
-        selectRegisters(search)
-        if tb.rows != []:
-            tblRegistro.height=246
+        if search != "":
             # no_registros.visible=False
-        else:
-            tblRegistro.height=60
-            # no_registros.visible=True
-            bgcolor="blue"
-            message="No se encontraron registros"
-            settings.message=message
-            settings.showMessage(bgcolor)
-        tblRegistro.update()
-        # no_registros.update()
+            tb.rows.clear()
+            selectRegisters(search)
+            if tb.rows != []:
+                tblRegistro.height=246
+                # no_registros.visible=False
+            else:
+                tblRegistro.height=60
+                # no_registros.visible=True
+                bgcolor="blue"
+                message="No se encontraron registros"
+                settings.message=message
+                settings.showMessage(bgcolor)
+            tblRegistro.update()
+            # no_registros.update()
 
     def radiogroup_changed(e):
         placa.focus()

@@ -177,19 +177,18 @@ def get_user(usuario):
     try:
         cursor=conn.cursor()
         sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
-        values=(usuario,)
+        values=(f"{usuario}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         if registros != []:
-            photo=registros[0][4]
+            settings.photo=registros[0][4]
             # settings.photo=photo
             # settings.user_avatar.src=f"upload\\img\\{photo}"
             # settings.user_photo.src=f"upload\\img\\{photo}"
             # settings.user_avatar.update()
             # settings.user_photo.update()
             # settings.page.update()
-            return photo
     except Exception as e:
         print(e)
 
@@ -1025,6 +1024,7 @@ def selectRegisters(search):
 
         for x in result:
             color=colors.GREEN_700 if x["total"] != 0 else None
+            weight="bold" if x["total"] != 0 else None
             tb.rows.append(
                 DataRow(
                     # color=colors.GREEN_100 if x["total"] != 0 else None,
@@ -1035,14 +1035,14 @@ def selectRegisters(search):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["consecutivo"], color=color)),
-                        DataCell(Text(x["placa"], color=color)),
-                        DataCell(Text(x["entrada"], color=color)),
-                        DataCell(Text(x["salida"], color=color)),
+                        DataCell(Text(x["consecutivo"], color=color, weight=weight)),
+                        DataCell(Text(x["placa"], color=color, weight=weight)),
+                        DataCell(Text(x["entrada"], color=color, weight=weight)),
+                        DataCell(Text(x["salida"], color=color, weight=weight)),
                         # DataCell(Text(x["vehiculo"])),
                         # DataCell(Text(x["valor"])),
                         # DataCell(Text(x["tiempo"])),
-                        DataCell(Text(x["total"], color=color)),
+                        DataCell(Text(x["total"], color=color, weight=weight)),
                         # DataCell(Text(x["cuadre"])),
                         # DataCell(Text(x["usuario"])),
                         DataCell(Row([
@@ -1085,6 +1085,7 @@ def selectCashRegister():
 
         for x in result:
             color=colors.GREEN_700 if x["total"] != 0 else None
+            weight="bold" if x["total"] != 0 else None
             tbc.rows.append(
                 DataRow(
                     selected=False,
@@ -1094,14 +1095,14 @@ def selectCashRegister():
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["consecutivo"], color=color)),
-                        DataCell(Text(x["placa"], color=color)),
-                        DataCell(Text(x["entrada"], color=color)),
-                        DataCell(Text(x["salida"], color=color)),
-                        DataCell(Text(x["vehiculo"], color=color)),
-                        DataCell(Text("Horas" if x["facturacion"] == 0 else "Turnos", color=color)),
-                        DataCell(Text(locale.currency(x["valor"], grouping=True), color=color)),
-                        DataCell(Text(locale.currency(x["total"], grouping=True), color=color)),
+                        DataCell(Text(x["consecutivo"], color=color, weight=weight)),
+                        DataCell(Text(x["placa"], color=color, weight=weight)),
+                        DataCell(Text(x["entrada"], color=color, weight=weight)),
+                        DataCell(Text(x["salida"], color=color, weight=weight)),
+                        DataCell(Text(x["vehiculo"], color=color, weight=weight)),
+                        DataCell(Text("Horas" if x["facturacion"] == 0 else "Turnos", color=color, weight=weight)),
+                        DataCell(Text(locale.currency(x["valor"], grouping=True), color=color, weight=weight)),
+                        DataCell(Text(locale.currency(x["total"], grouping=True), color=color, weight=weight)),
                         # DataCell(Text(x["cuadre"])),
                         DataCell(Row([
                         	# IconButton(icon="create",icon_color="blue",

@@ -1,9 +1,10 @@
 import flet as ft
 
-global username, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, sw, progressRing
+global username, photo, user_avatar, user_photo, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, sw, progressRing
 
 username=""
 login_nombre=""
+photo=""
 message=""
 acceso_configuracion=0
 acceso_variables=0
@@ -23,12 +24,12 @@ progressRing=ft.ProgressRing()
 #     user_avatar=ft.Image(src=f"img/{photo}" if photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
 #     user_photo=ft.Image(src=f"img/{photo}" if photo != "" else f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
-# if sw == 0:
-# user_avatar=ft.Image(src=f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-# user_photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
-# else:
-#     user_avatar=ft.Image(src=f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-#     user_photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+if sw == 0:
+    user_avatar=ft.Image(src=f"upload\\img\\{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    user_photo=ft.Image(src=f"upload\\img\\{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+else:
+    user_avatar=ft.Image(src=f"img/{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    user_photo=ft.Image(src=f"img/{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
 def showMessage(bgcolor):
     page.snack_bar=ft.SnackBar(
