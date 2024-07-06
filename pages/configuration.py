@@ -139,6 +139,8 @@ def Configuration(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         consecutivo=configuracion[0][7]
+        settings.preview=configuracion[0][8]
+        vista_previa=False if configuracion[0][8] == 0 else True
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -193,7 +195,7 @@ def Configuration(page):
             telefono.update()
             servicio.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, settings.preview, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -257,9 +259,9 @@ def Configuration(page):
             consecutivo.width=settings.fieldwith
             # lblDatos.width=settings.fieldwith
             # lblUsuarios.width=settings.fieldwith
-        else:
-            fieldwith=settings.fieldwith
-            fieldwith=settings.fieldwith
+        # else:
+        #     fieldwith=settings.fieldwith
+        #     fieldwith=settings.fieldwith
         parqueadero.update()
         nit.update()
         regimen.update()
@@ -270,6 +272,9 @@ def Configuration(page):
         lblDatos.update()
         lblUsuarios.update()
         page.update()
+
+    def preview_change(e):
+        settings.preview=0 if preview_switch.value == False else 1
 
     page.on_resize=page_resize
 
@@ -316,6 +321,8 @@ def Configuration(page):
     buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)
     # no_registros=ft.Text("No se encontraron registros", visible=True)
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
+    lblAjustes=ft.Text("Ajustes", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
+    preview_switch=ft.Switch(label="Vista previa", label_position=ft.LabelPosition.LEFT, value=vista_previa, on_change=preview_change)
 
     registros=selectUsers(search)
     if registros != []:
@@ -397,9 +404,9 @@ def Configuration(page):
                 # bgcolor=ft.colors.PRIMARY_CONTAINER,
                 # border_radius=10,
                 # alignment=ft.alignment.center,
-                # padding=ft.padding.only(10, 20, 10, 0),
+                padding=ft.padding.only(10, 0, 10, 0),
                 # content=ft.Stack([
-                ft.ResponsiveRow([
+                content=ft.ResponsiveRow([
                     # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                     # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
                     # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
@@ -414,6 +421,17 @@ def Configuration(page):
                 #     ],
                 # alignment=ft.MainAxisAlignment.CENTER
                 # ),
+            ),
+            ft.Container(height=10),
+            ft.Container(
+                ft.Row([
+                    ft.Column([
+                        lblAjustes,
+                        preview_switch
+                    ]),
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
             ),
             ft.Container(height=100)
         ]

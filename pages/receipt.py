@@ -94,23 +94,25 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     pdf.output(path+"receipt.pdf")
+
     if settings.sw == 0:
-        subprocess.Popen([path+"receipt.pdf"], shell=True)
+        if settings.preview == 1:
+            subprocess.Popen([path+"receipt.pdf"], shell=True)
+
+        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+        cPrinter=win32print.GetDefaultPrinter()
+        pdfFile=path
+        win32api.ShellExecute(
+            0,
+            "open",
+            gsprint,
+            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+            '.',
+            0
+        )
     else:
         webbrowser.open_new(path+"receipt.pdf")
-
-    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-    cPrinter=win32print.GetDefaultPrinter()
-    pdfFile=path
-    win32api.ShellExecute(
-        0,
-        "open",
-        gsprint,
-        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-        '.',
-        0
-    )
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -244,23 +246,25 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
     pdf.output(path+"receipt.pdf")
+
     if settings.sw == 0:
-        subprocess.Popen([path+"receipt.pdf"], shell=True)
+        if settings.preview == 1:
+            subprocess.Popen([path+"receipt.pdf"], shell=True)
+
+        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+        cPrinter=win32print.GetDefaultPrinter()
+        pdfFile=path
+        win32api.ShellExecute(
+            0,
+            "open",
+            gsprint,
+            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+            '.',
+            0
+        )
     else:
         webbrowser.open_new(path+"receipt.pdf")
-
-    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-    cPrinter=win32print.GetDefaultPrinter()
-    pdfFile=path
-    win32api.ShellExecute(
-        0,
-        "open",
-        gsprint,
-        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-        '.',
-        0
-    )
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -372,25 +376,27 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     # efectivo_w=pdf.get_string_width(efectivo)
     # pdf.set_x((doc_w - efectivo_w) / 2)
     # pdf.cell(efectivo_w, pos, efectivo, align="C")
-    pdf.cell(1, pos, efectivo, align="R")
+    pdf.cell(0, pos, efectivo, align="R")
     pdf.output(path+"cash_register.pdf")
+
     if settings.sw == 0:
-        subprocess.Popen([path+"cash_register.pdf"], shell=True)
+        if settings.preview == 1:
+            subprocess.Popen([path+"cash_register.pdf"], shell=True)
+
+        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+        cPrinter=win32print.GetDefaultPrinter()
+        pdfFile=path
+        win32api.ShellExecute(
+            0,
+            "open",
+            gsprint,
+            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+            '.',
+            0
+        )
     else:
         webbrowser.open_new(path+"cash_register.pdf")
-
-    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-    cPrinter=win32print.GetDefaultPrinter()
-    pdfFile=path
-    win32api.ShellExecute(
-        0,
-        "open",
-        gsprint,
-        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-        '.',
-        0
-    )
 
 def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
     nit="Nit " + nit
@@ -478,20 +484,22 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf.set_x((doc_w - pendiente_w) / 2)
     pdf.cell(pendiente_w, pos, pendiente, align="C")
     pdf.output(path+"cash_register2.pdf")
+
     if settings.sw == 0:
-        subprocess.Popen([path+"cash_register2.pdf"], shell=True)
+        if settings.preview == 1:
+            subprocess.Popen([path+"cash_register2.pdf"], shell=True)
+        
+        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+        cPrinter=win32print.GetDefaultPrinter()
+        pdfFile=path
+        win32api.ShellExecute(
+            0,
+            "open",
+            gsprint,
+            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+            '.',
+            0
+        )
     else:
         webbrowser.open_new(path+"cash_register2.pdf")
-
-    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-    cPrinter=win32print.GetDefaultPrinter()
-    pdfFile=path
-    win32api.ShellExecute(
-        0,
-        "open",
-        gsprint,
-        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-        '.',
-        0
-    )

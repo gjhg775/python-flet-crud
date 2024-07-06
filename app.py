@@ -423,15 +423,15 @@ def main(page:ft.Page):
         # on_dismiss=lambda _: date_button.focus(),
     )
 
-    mode_switch=ft.Switch(
-        value=False,
-        on_change=change_mode_theme,
-        thumb_color="black",
-        thumb_icon={
-            ft.MaterialState.DEFAULT: ft.icons.LIGHT_MODE,
-            ft.MaterialState.SELECTED: ft.icons.DARK_MODE,
-        }
-    )
+    # mode_switch=ft.Switch(
+    #     value=False,
+    #     on_change=change_mode_theme,
+    #     thumb_color="black",
+    #     thumb_icon={
+    #         ft.MaterialState.DEFAULT: ft.icons.LIGHT_MODE,
+    #         ft.MaterialState.SELECTED: ft.icons.DARK_MODE,
+    #     }
+    # )
 
     page.drawer = ft.NavigationDrawer(
         controls=[

@@ -27,6 +27,8 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     consecutivo=configuracion[0][7]
+    settings.preview=configuracion[0][8]
+    vista_previa=False if configuracion[0][8] == 0 else True
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -428,22 +430,21 @@ def Register(page):
     
     def search_change(e):
         search=e.control.value
-        if search != "":
+        # no_registros.visible=False
+        tb.rows.clear()
+        registros=selectRegisters(search)
+        if registros != []:
+            tblRegistro.height=246
             # no_registros.visible=False
-            tb.rows.clear()
-            selectRegisters(search)
-            if tb.rows != []:
-                tblRegistro.height=246
-                # no_registros.visible=False
-            else:
-                tblRegistro.height=60
-                # no_registros.visible=True
-                bgcolor="blue"
-                message="No se encontraron registros"
-                settings.message=message
-                settings.showMessage(bgcolor)
-            tblRegistro.update()
-            # no_registros.update()
+        if registros == [] and search != "":
+            tblRegistro.height=60
+            # no_registros.visible=True
+            bgcolor="blue"
+            message="No se encontraron registros"
+            settings.message=message
+            settings.showMessage(bgcolor)
+        tblRegistro.update()
+        # no_registros.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -494,6 +495,13 @@ def Register(page):
     if registros != []:
         tblRegistro.height=246
         # no_registros.visible=False
+    else:
+        tblRegistro.height=60
+        # no_registros.visible=True
+        bgcolor="blue"
+        message="No se encontraron registros"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
     # card=ft.Card(
     #     margin=ft.margin.only(0, 50, 0, 0),

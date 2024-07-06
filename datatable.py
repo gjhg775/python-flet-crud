@@ -214,12 +214,13 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     consecutivo=configuracion[0][7]
+    vista_previa=False if configuracion[0][8] == 0 else True
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vista_previa, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ?, vista_previa = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{vista_previa}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -299,6 +300,15 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         entrada=registros[0][3]
         valor=registros[0][7]
         tiempo=((registros[0][12])/60)/60
+        # segundos=registros[0][12]
+        # dias=segundos//(24*60*60)
+        # segundos=segundos % (24*60*60)
+        # horas=segundos//(60*60)
+        # segundos=segundos % (60*60)
+        # minutos=segundos//60
+        # segundos=segundos % 60
+
+        # print("Días: {} Horas: {} Minutos: {} Segundos: {}".format(dias, horas, minutos, segundos))
 
         if int(tiempo) <= 4:
             if int(tiempo) == 0:
@@ -309,7 +319,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                     valor_fraccion=0
                 if ((registros[0][12])/60) % 60 > 0 and ((registros[0][12])/60) % 60 <= 15:
                     valor_fraccion=valor/2
-                if (((registros[0][12])/60) % 60 > 15 and ((registros[0][12])/60) % 60 <= 30) or ((registros[0][12])/60) % 60 > 30:
+                if ((registros[0][12])/60) % 60 > 15:
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
             if vehiculo == "Moto":
@@ -329,7 +339,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 total=valor_turno_carro
             if vehiculo == "Otro":
                 total=valor_turno_otro
-            if tiempo > 12:
+            if tiempo >= 12:
                 turno=tiempo/12
                 turno=int(turno)
                 horas=tiempo-(turno*12)
@@ -339,41 +349,59 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 if horas > 4:
                     turno=turno+1
                 if vehiculo == "Moto":
-                    if int(round(horas)) <= 4:
+                    if int(tiempo) > 12 and int(round(horas)) <= 4:
                         total=int(round(horas))*valor_hora_moto
-                        if ((int(round(horas))/60) % 60) == 0:
+                        if (((registros[0][12])//60) % 60) == 0:
                             valor_fraccion=0
-                        if ((int(round(horas))/60) % 60) > 0 and ((int(round(horas))/60) % 60) <= 15:
+                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
                             valor_fraccion=valor/2
-                        if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
+                        if ((registros[0][12])//60) % 60 > 15:
                             valor_fraccion=valor
                         total=total+valor_fraccion+(valor_turno_moto*turno)
                     else:
-                        total=valor_turno_moto*turno
-                if vehiculo == "Carro":
-                    if int(round(horas)) <= 4:
-                        total=int(round(horas))*valor_hora_carro
-                        if ((int(round(horas))/60) % 60) == 0:
+                        if (((registros[0][12])//60) % 60) == 0:
                             valor_fraccion=0
-                        if ((int(round(horas))/60) % 60) > 0 and ((int(round(horas))/60) % 60) <= 15:
+                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
                             valor_fraccion=valor/2
-                        if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
+                        if ((registros[0][12])//60) % 60 > 15:
+                            valor_fraccion=valor
+                        total=valor_fraccion+(valor_turno_moto*turno)
+                if vehiculo == "Carro":
+                    if int(tiempo) > 12 and int(round(horas)) <= 4:
+                        total=int(round(horas))*valor_hora_carro
+                        if (((registros[0][12])//60) % 60) == 0:
+                            valor_fraccion=0
+                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                            valor_fraccion=valor/2
+                        if ((registros[0][12])//60) % 60 > 15:
                             valor_fraccion=valor
                         total=total+valor_fraccion+(valor_turno_carro*turno)
                     else:
-                        total=valor_turno_carro*turno
-                if vehiculo == "Otro":
-                    if int(round(horas)) <= 4:
-                        total=int(round(horas))*valor_hora_otro
-                        if ((int(round(horas))/60) % 60) == 0:
+                        if (((registros[0][12])//60) % 60) == 0:
                             valor_fraccion=0
-                        if ((int(round(horas))/60) % 60) > 0 and ((int(round(horas))/60) % 60) <= 15:
+                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
                             valor_fraccion=valor/2
-                        if (((int(round(horas))/60) % 60) > 15 and ((int(round(horas))/60) % 60) <= 30) or ((int(round(horas))/60) % 60) > 30:
+                        if ((registros[0][12])//60) % 60 > 15:
+                            valor_fraccion=valor
+                        total=valor_fraccion+(valor_turno_carro*turno)
+                if vehiculo == "Otro":
+                    if int(tiempo) > 12 and int(round(horas)) <= 4:
+                        total=int(round(horas))*valor_hora_otro
+                        if (((registros[0][12])//60) % 60) == 0:
+                            valor_fraccion=0
+                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                            valor_fraccion=valor/2
+                        if ((registros[0][12])//60) % 60 > 15:
                             valor_fraccion=valor
                         total=total+valor_fraccion+(valor_turno_otro*turno)
                     else:
-                        total=valor_turno_otro*turno
+                        if (((registros[0][12])//60) % 60) == 0:
+                            valor_fraccion=0
+                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                            valor_fraccion=valor/2
+                        if ((registros[0][12])//60) % 60 > 15:
+                            valor_fraccion=valor
+                        total=valor_fraccion+(valor_turno_otro*turno)
             facturacion=1
 
         tiempo=int(tiempo)
@@ -659,23 +687,25 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     pdf.output(path+"receipt.pdf")
+
     if settings.sw == 0:
-        subprocess.Popen([path+"receipt.pdf"], shell=True)
+        if settings.preview == 1:
+            subprocess.Popen([path+"receipt.pdf"], shell=True)
+
+        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+        cPrinter=win32print.GetDefaultPrinter()
+        pdfFile="C:/receipt/receipt.pdf"
+        win32api.ShellExecute(
+            0,
+            "open",
+            gsprint,
+            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+            '.',
+            0
+        )
     else:
         webbrowser.open_new(path+"receipt.pdf")
-
-    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-    cPrinter=win32print.GetDefaultPrinter()
-    pdfFile="C:/receipt/receipt.pdf"
-    win32api.ShellExecute(
-        0,
-        "open",
-        gsprint,
-        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-        '.',
-        0
-    )
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -809,24 +839,26 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
     pdf.output(path+"receipt.pdf")
+
     if settings.sw == 0:
-        subprocess.Popen([path+"receipt.pdf"], shell=True)
+        if settings.preview == 1:
+            subprocess.Popen([path+"receipt.pdf"], shell=True)
+
+        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+        cPrinter=win32print.GetDefaultPrinter()
+        pdfFile="C:/receipt/receipt.pdf"
+        win32api.ShellExecute(
+            0,
+            "open",
+            gsprint,
+            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+            '.',
+            0
+        )
     else:
         webbrowser.open_new(path+"receipt.pdf")
-
-    ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-    gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-    cPrinter=win32print.GetDefaultPrinter()
-    pdfFile="C:/receipt/receipt.pdf"
-    win32api.ShellExecute(
-        0,
-        "open",
-        gsprint,
-        '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-        '.',
-        0
-    )
-
+    
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
     # ahora=ahora[1]
@@ -1062,11 +1094,11 @@ def selectRegisters(search):
                     ],
                 ),
             )
-    else:
-        bgcolor="blue"
-        message="No se encontraron registros"
-        settings.message=message
-        settings.showMessage(bgcolor)
+    # else:
+    #     bgcolor="blue"
+    #     message="No se encontraron registros"
+    #     settings.message=message
+    #     settings.showMessage(bgcolor)
     return registros
 
 def selectCashRegister():

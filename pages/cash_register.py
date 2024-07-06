@@ -33,8 +33,11 @@ def Cash_register(page):
         cursor.execute(sql)
         registros=cursor.fetchall()
 
+        sw=0
+
         if registros != []:
             show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio, registros)
+            sw=1
 
         time.sleep(0.1)
         
@@ -44,8 +47,9 @@ def Cash_register(page):
 
         if registros != []:
             show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros)
+            sw=1
 
-        if registros != []:
+        if sw == 1:
             bgcolor="green"
             message="Cuadre de caja realizado satisfactoriamente"
             settings.message=message

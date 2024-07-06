@@ -61,7 +61,8 @@ def create_configuration():
         direccion TEXT,
         telefono TEXT,
         servicio TEXT,
-        consecutivo TEXT)
+        consecutivo TEXT,
+        vista_previa INTEGER)
         """)
     conn.commit()
 
@@ -145,8 +146,8 @@ def admin_access():
 def add_configuration():
     try:
         cursor=conn.cursor()
-        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo) VALUES (?, ?, ?, ?, ?, ?, ?)"""
-        values=("", "", "", "", "", "", "")
+        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vista_previa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+        values=("", "", "", "", "", "", "", "0")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:
