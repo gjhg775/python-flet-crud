@@ -98,19 +98,19 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     if settings.sw == 0:
         if settings.preview == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
-
-        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-        cPrinter=win32print.GetDefaultPrinter()
-        pdfFile=path
-        win32api.ShellExecute(
-            0,
-            "open",
-            gsprint,
-            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-            '.',
-            0
-        )
+        if settings.print_receipt == 1:
+            ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+            gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+            cPrinter=win32print.GetDefaultPrinter()
+            pdfFile=path
+            win32api.ShellExecute(
+                0,
+                "open",
+                gsprint,
+                '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+                '.',
+                0
+            )
     else:
         webbrowser.open_new(path+"receipt.pdf")
 
@@ -250,19 +250,19 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     if settings.sw == 0:
         if settings.preview == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
-
-        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-        cPrinter=win32print.GetDefaultPrinter()
-        pdfFile=path
-        win32api.ShellExecute(
-            0,
-            "open",
-            gsprint,
-            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-            '.',
-            0
-        )
+        if settings.print_receipt == 1:
+            ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+            gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+            cPrinter=win32print.GetDefaultPrinter()
+            pdfFile=path
+            win32api.ShellExecute(
+                0,
+                "open",
+                gsprint,
+                '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+                '.',
+                0
+            )
     else:
         webbrowser.open_new(path+"receipt.pdf")
 
@@ -382,19 +382,19 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     if settings.sw == 0:
         if settings.preview == 1:
             subprocess.Popen([path+"cash_register.pdf"], shell=True)
-
-        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-        cPrinter=win32print.GetDefaultPrinter()
-        pdfFile=path
-        win32api.ShellExecute(
-            0,
-            "open",
-            gsprint,
-            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-            '.',
-            0
-        )
+        if settings.print_receipt == 1:
+            ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+            gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+            cPrinter=win32print.GetDefaultPrinter()
+            pdfFile=path
+            win32api.ShellExecute(
+                0,
+                "open",
+                gsprint,
+                '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+                '.',
+                0
+            )
     else:
         webbrowser.open_new(path+"cash_register.pdf")
 
@@ -488,18 +488,18 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     if settings.sw == 0:
         if settings.preview == 1:
             subprocess.Popen([path+"cash_register2.pdf"], shell=True)
-        
-        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-        cPrinter=win32print.GetDefaultPrinter()
-        pdfFile=path
-        win32api.ShellExecute(
-            0,
-            "open",
-            gsprint,
-            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-            '.',
-            0
-        )
+        if settings.print_receipt == 1:
+            ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+            gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+            cPrinter=win32print.GetDefaultPrinter()
+            pdfFile=path
+            win32api.ShellExecute(
+                0,
+                "open",
+                gsprint,
+                '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+                '.',
+                0
+            )
     else:
         webbrowser.open_new(path+"cash_register2.pdf")

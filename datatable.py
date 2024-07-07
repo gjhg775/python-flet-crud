@@ -93,6 +93,25 @@ tbc = DataTable(
 	rows=[]
 )
 
+# tbe = DataTable(
+#     bgcolor=colors.PRIMARY_CONTAINER,
+#     # bgcolor="#FFFFFF",
+#     # border_radius=10,
+#     # data_row_color={"hovered": "#e5eff5"},
+# 	columns=[
+# 		DataColumn(Text("Consecutivo")),
+# 		DataColumn(Text("Placa")),
+# 		DataColumn(Text("Entrada")),
+# 		DataColumn(Text("Salida")),
+#         DataColumn(Text("Vehículo")),
+#         DataColumn(Text("Valor"), numeric=True),
+#         DataColumn(Text("Tiempo"), numeric=True),
+#         DataColumn(Text("Total"), numeric=True),
+#         # DataColumn(Text("Cuadre")),
+# 	],
+# 	rows=[]
+# )
+
 id_edit=Text()
 vehiculo_edit=RadioGroup(content=Row([
     Radio(label="Moto", value="Moto"),
@@ -215,12 +234,13 @@ if configuracion != None:
     servicio=configuracion[0][6]
     consecutivo=configuracion[0][7]
     vista_previa=False if configuracion[0][8] == 0 else True
+    imprimir=False if configuracion[0][9] == 0 else True
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vista_previa, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vista_previa, imprimir, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ?, vista_previa = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{vista_previa}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ?, vista_previa = ?, imprimir = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{vista_previa}", f"{imprimir}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -299,7 +319,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         placa=registros[0][2]
         entrada=registros[0][3]
         valor=registros[0][7]
-        tiempo=((registros[0][12])/60)/60
+        # tiempo=((registros[0][12])/60)/60
+        tiempo=registros[0][12]
         # segundos=registros[0][12]
         # dias=segundos//(24*60*60)
         # segundos=segundos % (24*60*60)
@@ -310,16 +331,16 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
         # print("Días: {} Horas: {} Minutos: {} Segundos: {}".format(dias, horas, minutos, segundos))
 
-        if int(tiempo) <= 4:
-            if int(tiempo) == 0:
+        if int(tiempo/60/60) <= 4:
+            if int(tiempo/60/60) == 0:
                 total=valor
             else:
-                valor_horas=valor*int(tiempo)
-                if (((registros[0][12])/60) % 60) == 0:
+                valor_horas=valor*int(tiempo/60/60)
+                if (((registros[0][12])//60) % 60) == 0:
                     valor_fraccion=0
-                if ((registros[0][12])/60) % 60 > 0 and ((registros[0][12])/60) % 60 <= 15:
+                if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
                     valor_fraccion=valor/2
-                if ((registros[0][12])/60) % 60 > 15:
+                if ((registros[0][12])//60) % 60 > 15:
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
             if vehiculo == "Moto":
@@ -340,17 +361,17 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             if vehiculo == "Otro":
                 total=valor_turno_otro
             if tiempo >= 12:
-                turno=tiempo/12
+                turno=int(tiempo/60/60)/12
                 turno=int(turno)
-                horas=tiempo-(turno*12)
-                horas=int(round(horas))
+                horas=int(tiempo/60/60)-(turno*12)
+                horas=int(horas)
                 if horas < 0:
                     horas=horas*(-1)
                 if horas > 4:
                     turno=turno+1
                 if vehiculo == "Moto":
-                    if int(tiempo) > 12 and int(round(horas)) <= 4:
-                        total=int(round(horas))*valor_hora_moto
+                    if int(tiempo/60/60) > 12 and int(horas) <= 4:
+                        total=int(horas)*valor_hora_moto
                         if (((registros[0][12])//60) % 60) == 0:
                             valor_fraccion=0
                         if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
@@ -367,8 +388,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                             valor_fraccion=valor
                         total=valor_fraccion+(valor_turno_moto*turno)
                 if vehiculo == "Carro":
-                    if int(tiempo) > 12 and int(round(horas)) <= 4:
-                        total=int(round(horas))*valor_hora_carro
+                    if int(tiempo/60/60) > 12 and int(horas) <= 4:
+                        total=int(horas)*valor_hora_carro
                         if (((registros[0][12])//60) % 60) == 0:
                             valor_fraccion=0
                         if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
@@ -385,8 +406,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                             valor_fraccion=valor
                         total=valor_fraccion+(valor_turno_carro*turno)
                 if vehiculo == "Otro":
-                    if int(tiempo) > 12 and int(round(horas)) <= 4:
-                        total=int(round(horas))*valor_hora_otro
+                    if int(tiempo/60/60) > 12 and int(horas) <= 4:
+                        total=int(horas)*valor_hora_otro
                         if (((registros[0][12])//60) % 60) == 0:
                             valor_fraccion=0
                         if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
@@ -404,7 +425,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                         total=valor_fraccion+(valor_turno_otro*turno)
             facturacion=1
 
-        tiempo=int(tiempo)
+        # tiempo=int(tiempo)
         sql=f"""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
         values=(f"{salida}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
         cursor.execute(sql, values)
@@ -691,19 +712,19 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     if settings.sw == 0:
         if settings.preview == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
-
-        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-        cPrinter=win32print.GetDefaultPrinter()
-        pdfFile="C:/receipt/receipt.pdf"
-        win32api.ShellExecute(
-            0,
-            "open",
-            gsprint,
-            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-            '.',
-            0
-        )
+        if settings.print_receipt == 1:
+            ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+            gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+            cPrinter=win32print.GetDefaultPrinter()
+            pdfFile="C:/receipt/receipt.pdf"
+            win32api.ShellExecute(
+                0,
+                "open",
+                gsprint,
+                '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+                '.',
+                0
+            )
     else:
         webbrowser.open_new(path+"receipt.pdf")
 
@@ -843,19 +864,19 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     if settings.sw == 0:
         if settings.preview == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
-
-        ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
-        gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-        cPrinter=win32print.GetDefaultPrinter()
-        pdfFile="C:/receipt/receipt.pdf"
-        win32api.ShellExecute(
-            0,
-            "open",
-            gsprint,
-            '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
-            '.',
-            0
-        )
+        if settings.print_receipt == 1:
+            ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
+            gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
+            cPrinter=win32print.GetDefaultPrinter()
+            pdfFile="C:/receipt/receipt.pdf"
+            win32api.ShellExecute(
+                0,
+                "open",
+                gsprint,
+                '-ghostscript "' + ghostscript + '" -printer "' + cPrinter + '" ' + pdfFile,
+                '.',
+                0
+            )
     else:
         webbrowser.open_new(path+"receipt.pdf")
     
@@ -1099,6 +1120,42 @@ def selectRegisters(search):
     #     message="No se encontraron registros"
     #     settings.message=message
     #     settings.showMessage(bgcolor)
+    return registros
+
+def exportRegister(fecha_desde, fecha_hasta):
+    cuadre=1
+    cursor=conn.cursor()
+    if fecha_desde == "" and fecha_hasta == "":
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y', entrada), strftime('%d/%m/%Y', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
+    else:
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y', entrada), strftime('%d/%m/%Y', salida), vehiculo, valor, tiempo, total FROM registro WHERE salida BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
+    cursor.execute(sql)
+    registros=cursor.fetchall()
+
+    # tbe.rows.clear()
+
+    # if registros != []:
+    #     keys=["consecutivo", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total"]
+    #     result=[dict(zip(keys, values)) for values in registros]
+
+    #     for x in result:
+    #         tbe.rows.append(
+    #             DataRow(
+    #                 selected=False,
+    #                 data=x,
+    #                 on_select_changed=None,
+    #                 cells=[
+    #                     DataCell(Text(x["consecutivo"])),
+    #                     DataCell(Text(x["placa"])),
+    #                     DataCell(Text(x["entrada"])),
+    #                     DataCell(Text(x["salida"])),
+    #                     DataCell(Text(x["vehiculo"])),
+    #                     DataCell(Text(x["valor"])),
+    #                     DataCell(Text(x["tiempo"])),
+    #                     DataCell(Text(x["total"])),
+    #                 ],
+    #             ),
+    #         )
     return registros
 
 def selectCashRegister():

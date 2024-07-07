@@ -1,16 +1,24 @@
+import os
+import datetime
 import time
 import locale
 import flet as ft
 import settings
 import sqlite3
+import pandas as pd
 # from flet import Page
 # from app import page
 from pages.receipt import show_input, show_output
-from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister
+from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
+
+if settings.sw == 0:
+    path=os.path.join(os.getcwd(), "upload\\xls\\")
+else:
+    path=os.path.join(os.getcwd(), "assets\\xls\\")
 
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
@@ -427,6 +435,27 @@ def Register(page):
         page.dialog=dlg_modal
         dlg_modal.open=True
         page.update()
+
+    def export_excel(e):
+        file_name="register.xlsx"
+        data=exportRegister(fecha_desde.value, fecha_hasta.value)
+        df=pd.DataFrame(data, columns=["Consecutivo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
+        df.to_excel(path+file_name, index=False)
+        dlg_modal2.open=False
+        page.update()
+        os.system("start " + path+file_name)
+
+    def close_dlg2(e):
+        dlg_modal2.open=False
+        page.update()
+        total.update()
+
+    def open_dlg_modal2(e):
+        # dlg_modal2.title=ft.Text(title, text_align="center")
+        # dlg_modal2.content=ft.Text(message, text_align="center")
+        page.dialog=dlg_modal2
+        dlg_modal2.open=True
+        page.update()
     
     def search_change(e):
         search=e.control.value
@@ -476,6 +505,59 @@ def Register(page):
         on_dismiss=lambda _: placa.focus(),
     )
 
+    def change_date_from(e):
+        fecha_cierre=str(date_picker_from.value)
+        fecha_cierre=fecha_cierre.split(" ")
+        fecha_cierre=fecha_cierre[0]
+        fecha_cierre=fecha_cierre.split("-")
+        ano=fecha_cierre[0]
+        mes=fecha_cierre[1]
+        dia=fecha_cierre[2]
+        fecha_desde.value=dia + "/" + mes + "/" + ano
+        fecha_desde.update()
+        # fecha.value=dia + "/" + mes + "/" + ano
+        # fecha.focus()
+        if settings.sw == 1:
+            date_button_from.focus()
+        # print(f"Date picker changed, value is {date_picker.value}")
+
+    def change_date_to(e):
+        fecha_cierre=str(date_picker_to.value)
+        fecha_cierre=fecha_cierre.split(" ")
+        fecha_cierre=fecha_cierre[0]
+        fecha_cierre=fecha_cierre.split("-")
+        ano=fecha_cierre[0]
+        mes=fecha_cierre[1]
+        dia=fecha_cierre[2]
+        fecha_hasta.value=dia + "/" + mes + "/" + ano
+        fecha_hasta.update()
+        # fecha.value=dia + "/" + mes + "/" + ano
+        # fecha.focus()
+        if settings.sw == 1:
+            date_button_to.focus()
+        # print(f"Date picker changed, value is {date_picker.value}")
+
+    date_picker_from=ft.DatePicker(
+        confirm_text="Aceptar",
+        field_label_text="Ingresa una fecha",
+        on_change=change_date_from,
+        # on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2023, 10, 1),
+        last_date=datetime.datetime(2024, 10, 1),
+    )
+
+    date_picker_to=ft.DatePicker(
+        confirm_text="Aceptar",
+        field_label_text="Ingresa una fecha",
+        on_change=change_date_to,
+        # on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2023, 10, 1),
+        last_date=datetime.datetime(2024, 10, 1),
+    )
+
+    page.overlay.append(date_picker_from)
+    page.overlay.append(date_picker_to)
+
     page.on_resize=page_resize
 
     if page.window_width <= 425:
@@ -487,9 +569,48 @@ def Register(page):
     elif page.window_width >= 992:
         textsize=90
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=260, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
+    fecha_desde=ft.Text("dd/mm/aaaa", text_align="center")
+    fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
+    
+    date_button_from=ft.ElevatedButton(
+        "Desde",
+        icon=ft.icons.CALENDAR_MONTH,
+        # width=280,
+        bgcolor=ft.colors.BLUE_900,
+        color="white",
+        on_click=lambda _: date_picker_from.pick_date(),
+    )
+
+    date_button_to=ft.ElevatedButton(
+        "Hasta",
+        icon=ft.icons.CALENDAR_MONTH,
+        # width=280,
+        bgcolor=ft.colors.BLUE_900,
+        color="white",
+        on_click=lambda _: date_picker_to.pick_date(),
+    )
+
+    dlg_modal2=ft.AlertDialog(
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+        modal=True,
+        title=ft.Row([fecha_desde, date_button_from]),
+        content=ft.Container(
+            ft.Row([fecha_hasta, date_button_to])
+        ),
+        # icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
+        # title=ft.Text(title, text_align="center"),
+        # content=ft.Text(message, text_align="center"),
+        actions=[
+            ft.TextButton("Aceptar", on_click=export_excel),
+            ft.TextButton("Cancelar", autofocus=True, on_click=close_dlg2)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        on_dismiss=lambda _: placa.focus(),
+    )
 
     registros=selectRegisters(search)
     if registros != []:
@@ -603,7 +724,7 @@ def Register(page):
                 # content=ft.Stack([
                 content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[buscar, tblRegistro]),
+                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[ft.Container(ft.Row([buscar, export])), tblRegistro]),
                         ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
                         ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                     ]),

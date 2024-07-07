@@ -141,6 +141,8 @@ def Configuration(page):
         consecutivo=configuracion[0][7]
         settings.preview=configuracion[0][8]
         vista_previa=False if configuracion[0][8] == 0 else True
+        settings.print_receipt=configuracion[0][9]
+        imprimir=False if configuracion[0][9] == 0 else True
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -195,7 +197,7 @@ def Configuration(page):
             telefono.update()
             servicio.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, settings.preview, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, settings.preview, settings.print_receipt, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -275,6 +277,9 @@ def Configuration(page):
 
     def preview_change(e):
         settings.preview=0 if preview_switch.value == False else 1
+    
+    def print_change(e):
+        settings.print_receipt=0 if print_receipt_switch.value == False else 1
 
     page.on_resize=page_resize
 
@@ -323,6 +328,7 @@ def Configuration(page):
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
     lblAjustes=ft.Text("Ajustes", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     preview_switch=ft.Switch(label="Vista previa", label_position=ft.LabelPosition.LEFT, value=vista_previa, on_change=preview_change)
+    print_receipt_switch=ft.Switch(label="Imprimir", label_position=ft.LabelPosition.LEFT, value=imprimir, on_change=print_change)
 
     registros=selectUsers(search)
     if registros != []:
@@ -411,12 +417,12 @@ def Configuration(page):
                     # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
                     # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
                     # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                    ft.Column(col={"xs":0, "sm":0, "md":3, "lg":3, "xl":3, "xxl":4}),
-                    ft.Column(col={"xs":12, "sm":12, "md":4, "lg":4, "xl":4, "xxl":2}, controls=[lblUsuarios, buscar, tblUsuarios]),
-                    ft.Column(col={"xs":12, "sm":12, "md":3, "lg":3, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
-                    ft.Column(col={"xs":0, "sm":0, "md":2, "lg":2, "xl":2, "xxl":4}),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":12, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lblUsuarios, buscar, tblUsuarios]),
+                    ft.Column(col={"xs":12, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ],
-                alignment=ft.MainAxisAlignment.CENTER
+                alignment=ft.MainAxisAlignment.CENTER,
                 ),
                 #     ],
                 # alignment=ft.MainAxisAlignment.CENTER
@@ -427,7 +433,8 @@ def Configuration(page):
                 ft.Row([
                     ft.Column([
                         lblAjustes,
-                        preview_switch
+                        preview_switch,
+                        print_receipt_switch
                     ]),
                 ], 
                 alignment=ft.MainAxisAlignment.CENTER,
