@@ -80,7 +80,7 @@ def main(page:ft.Page):
     
     def change_navigation_destination(e):
         # settings.progressRing.visible=True
-        acceso=0
+        acceso=1
         if e.control.selected_index == 0:
             hide_drawer(e)
             page.clean()
@@ -94,7 +94,7 @@ def main(page:ft.Page):
                 tba.rows.clear()
                 page.update()
             else:
-                acceso=1
+                acceso=0
         if e.control.selected_index == 2:
             hide_drawer(e)
             if settings.acceso_variables == 1:
@@ -102,7 +102,7 @@ def main(page:ft.Page):
                 page.add(Variables(page))
                 # page.update()
             else:
-                acceso=1
+                acceso=0
         if e.control.selected_index == 3:
             hide_drawer(e)
             if settings.acceso_registro == 1:
@@ -112,7 +112,7 @@ def main(page:ft.Page):
                 tblRegistro.update()
                 page.update()
             else:
-                acceso=1
+                acceso=0
         if e.control.selected_index == 4:
             hide_drawer(e)
             if settings.acceso_cuadre == 1:
@@ -122,14 +122,14 @@ def main(page:ft.Page):
                 tblCuadre.update()
                 page.update()
             else:
-                acceso=1
+                acceso=0
         if e.control.selected_index == 5:
             hide_drawer(e)
             if settings.acceso_cierre == 1:
                 page.clean()
                 page.add(Closing_day(page))
             else:
-                acceso=1
+                acceso=0
         if e.control.selected_index == 6:
             hide_drawer(e)
             page.clean()
@@ -144,7 +144,7 @@ def main(page:ft.Page):
                 hide_drawer(e)
                 page.clean()
                 page.add(container)
-        if acceso == 1:
+        if acceso == 0:
             message="Acceso no permitido"
             bgcolor="orange"
             settings.message=message
@@ -297,16 +297,12 @@ def main(page:ft.Page):
             contrasena=password.value
             confirm_contrasena=confirm_password.value
             nombre=name.value
-            login_user, login_password, login_nombre, bln_login=selectUser(usuario, contrasena)
-            if bln_login == False:
-                user.error_text=""
-                # user.focus()
-                # btn_login.focus()
-                # user.update()
-                hash=hashlib.sha256(contrasena.encode()).hexdigest()
-                hash2=hashlib.sha256(confirm_contrasena.encode()).hexdigest()
-                if hash == hash2:
-                    add_user(usuario, hash, nombre)
+            hash=hashlib.sha256(contrasena.encode()).hexdigest()
+            hash2=hashlib.sha256(confirm_contrasena.encode()).hexdigest()
+            if hash == hash2:
+                foto="default.jpg"
+                bln_login=add_user(usuario, hash, nombre, foto)
+                if bln_login != False:
                     user.value=""
                     password.value=""
                     confirm_password.value=""
@@ -314,46 +310,14 @@ def main(page:ft.Page):
                     message="Cuenta creada satisfactoriamente"
                     bgcolor="green"
                 else:
-                    confirm_password.error_text="Las contraseñas no coinciden"
-                    confirm_password.update()
+                    user.error_text="Usuario ya registrado"
+                    user.update()
             else:
-                user.error_text="Usuario ya registrado"
-                user.update()
+                confirm_password.error_text="Las contraseñas no coinciden"
+                confirm_password.update()
         if message != "":
             settings.message=message
             settings.showMessage(bgcolor)
-                
-            # if login_password != "" and bln_login == False:
-            #     password.error_text=login_password
-            #     # password.focus()
-            #     btn_login.focus()
-            #     password.update()
-            # else:
-            #     password.error_text=""
-            #     password.update()
-            # if bln_login == True:
-            #     datalogin={"value":True, "username":user.value}
-            #     page.session.set("Loginme", datalogin)
-            #     settings.username=page.session.get('Loginme')
-            #     # page.go("/register")
-            #     page.clean()
-            #     # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
-            #     page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
-            #     page.add(home(page))
-            #     page.update()
-            #     # page.snack_bar=ft.SnackBar(
-            #     #     ft.Text(f"Bienvenido {username['username']}", size=30, text_align="center"),
-            #     #     bgcolor="green"
-            #     # )
-            #     # page.snack_bar.open=True
-            #     # page.update()
-            # # else:
-            # #     page.snack_bar=ft.SnackBar(
-            # #         ft.Text("Acceso denegado", size=30, text_align="center"),
-            # #         bgcolor="red"
-            # #     )
-            # #     page.snack_bar.open=True
-            # #     page.update()
         else:
             if user.value == "":
                 user.error_text="Digite el usuario"
@@ -396,6 +360,7 @@ def main(page:ft.Page):
         page.session.clear()
 
     def exit(e):
+        logout()
         page.window_close()
 
     def close_dlg(e):

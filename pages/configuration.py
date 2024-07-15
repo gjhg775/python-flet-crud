@@ -2,7 +2,7 @@ import time
 import flet as ft
 import settings
 import sqlite3
-from datatable import get_configuration, update_configuration, tblUsuarios, tbu, selectUsers, tblAccesos, tba, lblAccesos
+from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, lblAccesos, tba, tblAccesos
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 search=""
@@ -326,13 +326,17 @@ def Configuration(page):
     buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)
     # no_registros=ft.Text("No se encontraron registros", visible=True)
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
-    lblAjustes=ft.Text("Ajustes", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
-    preview_switch=ft.Switch(label="Vista previa", label_position=ft.LabelPosition.LEFT, value=vista_previa, on_change=preview_change)
-    print_receipt_switch=ft.Switch(label="Imprimir", label_position=ft.LabelPosition.LEFT, value=imprimir, on_change=print_change)
+    lblRecibos=ft.Text("Recibos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
+    # preview_switch=ft.Switch(label="Vista previa", label_position=ft.LabelPosition.LEFT, value=vista_previa, on_change=preview_change)
+    # print_receipt_switch=ft.Switch(label="Imprimir", label_position=ft.LabelPosition.LEFT, value=imprimir, on_change=print_change)
+    lbl_preview=ft.Text("Vista previa", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    preview_switch=ft.Switch(value=vista_previa, on_change=preview_change)
+    lbl_print=ft.Text("Imprimir", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    print_receipt_switch=ft.Switch(value=imprimir, on_change=print_change)
 
     registros=selectUsers(search)
     if registros != []:
-        tblUsuarios.height=344
+        tblUsuarios.height=246
         # no_registros.visible=False
     else:
         bgcolor="blue"
@@ -406,10 +410,11 @@ def Configuration(page):
             #         # ]),
             #     ]),
             # ),
+            ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
             ft.Container(
                 # bgcolor=ft.colors.PRIMARY_CONTAINER,
                 # border_radius=10,
-                # alignment=ft.alignment.center,
+                alignment=ft.alignment.center,
                 padding=ft.padding.only(10, 0, 10, 0),
                 # content=ft.Stack([
                 content=ft.ResponsiveRow([
@@ -417,29 +422,57 @@ def Configuration(page):
                     # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
                     # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
                     # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-                    ft.Column(col={"xs":12, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lblUsuarios, buscar, tblUsuarios]),
-                    ft.Column(col={"xs":12, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                ),
-                #     ],
-                # alignment=ft.MainAxisAlignment.CENTER
-                # ),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":12, "sm":5, "md":5, "lg":5, "xl":5, "xxl":3}, controls=[lblUsuarios, buscar, tblUsuarios], alignment=ft.alignment.center_right),
+                    ft.Column(col={"xs":12, "sm":5, "md":5, "lg":5, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":3}),
+                ]),
+                # ]),
             ),
-            ft.Container(height=10),
+            ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
+            # ft.Container(
+            #     ft.Row([
+            #         ft.Column([
+            #             lblAjustes,
+            #             ft.Row([
+            #                 preview_switch,
+            #                 lbl_preview,
+            #             ]),
+            #             ft.Row([
+            #                 print_receipt_switch,
+            #                 lbl_print,
+            #             ]),
+            #         ]),
+            #     ],
+            #     alignment=ft.MainAxisAlignment.CENTER,
+            #     ),
+            # ),
             ft.Container(
-                ft.Row([
-                    ft.Column([
-                        lblAjustes,
-                        preview_switch,
-                        print_receipt_switch
-                    ]),
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
-                ),
+                padding=ft.padding.only(0, 0, 10, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblRecibos]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                ]),
             ),
-            ft.Container(height=100)
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview]),
+                    ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                ]),
+            ),
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print]),
+                    ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                ]),
+            ),
+            ft.Container(height=100),
         ]
     )

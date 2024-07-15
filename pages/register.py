@@ -437,25 +437,49 @@ def Register(page):
         page.update()
 
     def export_excel(e):
-        file_name="register.xlsx"
-        data=exportRegister(fecha_desde.value, fecha_hasta.value)
-        df=pd.DataFrame(data, columns=["Consecutivo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
-        df.to_excel(path+file_name, index=False)
         dlg_modal2.open=False
         page.update()
-        os.system("start " + path+file_name)
+        data=exportRegister(fecha_desde.value, fecha_hasta.value)
+        if data != []:
+            message="Exportando registros"
+            bgcolor="blue"
+            settings.message=message
+            settings.showMessage(bgcolor)
+            file_name="register.xlsx"
+            df=pd.DataFrame(data, columns=["Recibo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
+            df.to_excel(path+file_name, index=False)
+            message="Registros exportados satisfactoriamente"
+            bgcolor="green"
+            settings.message=message
+            settings.showMessage(bgcolor)
+            os.system("start " + path+file_name)
+        else:
+            message="No hay registros para exportar"
+            bgcolor="blue"
+            settings.message=message
+            settings.showMessage(bgcolor)
+        fecha_desde.value="dd/mm/aaaa"
+        fecha_hasta.value="dd/mm/aaaa"
 
     def close_dlg2(e):
         dlg_modal2.open=False
         page.update()
         total.update()
+        fecha_desde.value="dd/mm/aaaa"
+        fecha_hasta.value="dd/mm/aaaa"
 
     def open_dlg_modal2(e):
-        # dlg_modal2.title=ft.Text(title, text_align="center")
-        # dlg_modal2.content=ft.Text(message, text_align="center")
-        page.dialog=dlg_modal2
-        dlg_modal2.open=True
-        page.update()
+        if settings.username == "Super Admin" or settings.username == "Admin":
+            # dlg_modal2.title=ft.Text(title, text_align="center")
+            # dlg_modal2.content=ft.Text(message, text_align="center")
+            page.dialog=dlg_modal2
+            dlg_modal2.open=True
+            page.update()
+        else:
+            message="Acceso no permitido"
+            bgcolor="orange"
+            settings.message=message
+            settings.showMessage(bgcolor)
     
     def search_change(e):
         search=e.control.value
@@ -477,33 +501,6 @@ def Register(page):
 
     def radiogroup_changed(e):
         placa.focus()
-
-    rdbVehiculo=ft.RadioGroup(
-        content=ft.Row([
-            # ft.Text("Vehículo", size=20),
-            ft.Radio(label="Moto", value="Moto"),
-            ft.Radio(label="Carro", value="Carro"),
-            ft.Radio(label="Otro", value="Otro")
-        ]),
-        value="Moto",
-        on_change=radiogroup_changed
-    )
-
-    # tb.rows.clear()
-    # selectRegisters(search)
-
-    dlg_modal=ft.AlertDialog(
-        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
-        modal=True,
-        icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
-        # title=ft.Text(title, text_align="center"),
-        # content=ft.Text(message, text_align="center"),
-        actions=[
-            ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
-        ],
-        actions_alignment=ft.MainAxisAlignment.END,
-        on_dismiss=lambda _: placa.focus(),
-    )
 
     def change_date_from(e):
         fecha_cierre=str(date_picker_from.value)
@@ -536,6 +533,17 @@ def Register(page):
         if settings.sw == 1:
             date_button_to.focus()
         # print(f"Date picker changed, value is {date_picker.value}")
+
+    rdbVehiculo=ft.RadioGroup(
+        content=ft.Row([
+            # ft.Text("Vehículo", size=20),
+            ft.Radio(label="Moto", value="Moto"),
+            ft.Radio(label="Carro", value="Carro"),
+            ft.Radio(label="Otro", value="Otro")
+        ]),
+        value="Moto",
+        on_change=radiogroup_changed
+    )
 
     date_picker_from=ft.DatePicker(
         confirm_text="Aceptar",
@@ -575,23 +583,20 @@ def Register(page):
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
-    
-    date_button_from=ft.ElevatedButton(
-        "Desde",
-        icon=ft.icons.CALENDAR_MONTH,
-        # width=280,
-        bgcolor=ft.colors.BLUE_900,
-        color="white",
-        on_click=lambda _: date_picker_from.pick_date(),
-    )
+    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_from.pick_date())
+    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_to.pick_date())
 
-    date_button_to=ft.ElevatedButton(
-        "Hasta",
-        icon=ft.icons.CALENDAR_MONTH,
-        # width=280,
-        bgcolor=ft.colors.BLUE_900,
-        color="white",
-        on_click=lambda _: date_picker_to.pick_date(),
+    dlg_modal=ft.AlertDialog(
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+        modal=True,
+        icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
+        # title=ft.Text(title, text_align="center"),
+        # content=ft.Text(message, text_align="center"),
+        actions=[
+            ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        on_dismiss=lambda _: placa.focus(),
     )
 
     dlg_modal2=ft.AlertDialog(
@@ -723,11 +728,11 @@ def Register(page):
                 padding=ft.padding.only(10, 20, 10, 0),
                 # content=ft.Stack([
                 content=ft.ResponsiveRow([
-                        ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[ft.Container(ft.Row([buscar, export])), tblRegistro]),
-                        ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
-                        ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-                    ]),
+                    ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                    ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[ft.Container(ft.Row([buscar, export])), tblRegistro]),
+                    ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[rdbVehiculo, placa]),
+                    ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                ]),
                 # ]),
             ),
             ft.Container(

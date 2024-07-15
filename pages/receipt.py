@@ -142,7 +142,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     # print(tiempos)
     dias=tiempos.days*24
     horas=tiempos.seconds//3600
-    horas+=dias
+    # horas+=dias
     # print(horas)
     sobrante=tiempos.seconds%3600
     minutos=sobrante//60
@@ -163,26 +163,73 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         valor_turno_otro=variables[0][6]
     
     if vehiculo == "Moto":
-        if int(tiempo) <= 4:
+        if int(horas) <= 4:
             tarifa="Tarifa Horas-Moto"
             valor=valor_hora_moto
+            if int(horas) == 0:
+                vlr_total=valor_hora_moto
+            else:
+                if int(minutos) == 0:
+                    valor_fraccion=0
+                if int(minutos) > 0 and int(minutos) <= 15:
+                    valor_fraccion=valor_hora_moto/2
+                if int(minutos) > 15:
+                    valor_fraccion=valor_hora_moto
+                vlr_total=valor_fraccion+(int(horas)*valor_hora_moto)
         else:
             tarifa="Tarifa Turno-Moto"
             valor=valor_turno_moto
+            if int(minutos) == 0:
+                valor_fraccion=0
+            if int(minutos) > 0 and int(minutos) <= 15:
+                valor_fraccion=valor_hora_moto/2
+            if int(minutos) > 15:
+                valor_fraccion=valor_hora_moto
+            vlr_total=valor_fraccion+valor_turno_moto
     if vehiculo == "Carro":
-        if int(tiempo) <= 4:
+        if int(horas) <= 4:
             tarifa="Tarifa Horas-Carro"
-            valor=valor_hora_carro
+            if int(horas) == 0:
+                vlr_total=valor_hora_carro
+            else:
+                if int(minutos) == 0:
+                    valor_fraccion=0
+                if int(minutos) > 0 and int(minutos) <= 15:
+                    valor_fraccion=valor_hora_carro/2
+                if int(minutos) > 15:
+                    valor_fraccion=valor_hora_carro
+                vlr_total=valor_fraccion+(int(horas)*valor_hora_carro)
         else:
             tarifa="Tarifa Turno-Carro"
-            valor=valor_turno_carro
+            if int(minutos) == 0:
+                valor_fraccion=0
+            if int(minutos) > 0 and int(minutos) <= 15:
+                valor_fraccion=valor_hora_carro/2
+            if int(minutos) > 15:
+                valor_fraccion=valor_hora_carro
+            vlr_total=valor_fraccion+valor_turno_carro
     if vehiculo == "Otro":
-        if int(tiempo) <= 4:
+        if int(horas) <= 4:
             tarifa="Tarifa Horas-Otro"
-            valor=valor_hora_otro
+            if int(horas) == 0:
+                vlr_total=valor_hora_otro
+            else:
+                if int(minutos) == 0:
+                    valor_fraccion=0
+                if int(minutos) > 0 and int(minutos) <= 15:
+                    valor_fraccion=valor_hora_otro/2
+                if int(minutos) > 15:
+                    valor_fraccion=valor_hora_otro
+                vlr_total=valor_fraccion+(int(horas)*valor_hora_otro)
         else:
             tarifa="Tarifa Turno-Otro"
-            valor=valor_turno_otro
+            if int(minutos) == 0:
+                valor_fraccion=0
+            if int(minutos) > 0 and int(minutos) <= 15:
+                valor_fraccion=valor_hora_otro/2
+            if int(minutos) > 15:
+                valor_fraccion=valor_hora_otro
+            vlr_total=valor_fraccion+valor_turno_otro
 
     pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
@@ -380,8 +427,8 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     pdf.output(path+"cash_register.pdf")
 
     if settings.sw == 0:
-        if settings.preview == 1:
-            subprocess.Popen([path+"cash_register.pdf"], shell=True)
+        # if settings.preview == 1:
+        subprocess.Popen([path+"cash_register.pdf"], shell=True)
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
@@ -486,8 +533,8 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf.output(path+"cash_register2.pdf")
 
     if settings.sw == 0:
-        if settings.preview == 1:
-            subprocess.Popen([path+"cash_register2.pdf"], shell=True)
+        # if settings.preview == 1:
+        subprocess.Popen([path+"cash_register2.pdf"], shell=True)
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"

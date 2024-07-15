@@ -13,6 +13,7 @@ import win32api
 import win32print
 from flet import *
 from fpdf import FPDF
+from pathlib import Path
 
 conn=sqlite3.connect('database/parqueadero.db',check_same_thread=False)
 
@@ -124,7 +125,7 @@ def selectUser(usuario, contrasena):
     try:
         cursor=conn.cursor()
         sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
-        values=(usuario,)
+        values=(f'{usuario}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
@@ -153,11 +154,20 @@ def selectUser(usuario, contrasena):
     except Exception as e:
         print(e)
 
-def add_user(usuario, hashed, nombre):
+def add_user(usuario, hashed, nombre, foto):
     try:
         cursor=conn.cursor()
-        sql="""INSERT INTO usuarios (usuario, clave, nombre) VALUES (?, ?, ?)"""
-        values=(f"{usuario}", f"{hashed}", f"{nombre}")
+        sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
+        values=(usuario,)
+        cursor.execute(sql, values)
+        registros=cursor.fetchall()
+
+        if registros != []:
+            bln_login=False
+            return bln_login
+
+        sql="""INSERT INTO usuarios (usuario, clave, nombre, foto) VALUES (?, ?, ?, ?)"""
+        values=(f"{usuario}", f"{hashed}", f"{nombre}", f"{foto}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -318,9 +328,24 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         id=registros[0][0]
         placa=registros[0][2]
         entrada=registros[0][3]
+        salida=registros[0][4]
         valor=registros[0][7]
         # tiempo=((registros[0][12])/60)/60
         tiempo=registros[0][12]
+
+        formato=f"%Y-%m-%d %H:%M"
+        entrada=str(entrada)
+        salida=str(salida)
+        entrada=str(entrada[0:16])
+        salida=str(salida[0:16])
+        entrada=datetime.datetime.strptime(entrada, formato)
+        salida=datetime.datetime.strptime(salida, formato)
+        tiempos=salida - entrada
+        dias=tiempos.days*24
+        horas=tiempos.seconds//3600
+        sobrante=tiempos.seconds%3600
+        minutos=sobrante//60
+
         # segundos=registros[0][12]
         # dias=segundos//(24*60*60)
         # segundos=segundos % (24*60*60)
@@ -331,27 +356,27 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
         # print("Días: {} Horas: {} Minutos: {} Segundos: {}".format(dias, horas, minutos, segundos))
 
-        if int(tiempo/60/60) <= 4:
-            if int(tiempo/60/60) == 0:
+        if int(horas) <= 4:
+            if int(horas) == 0:
                 total=valor
             else:
-                valor_horas=valor*int(tiempo/60/60)
-                if (((registros[0][12])//60) % 60) == 0:
+                valor_horas=valor*int(horas)
+                if minutos == 0:
                     valor_fraccion=0
-                if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor/2
-                if ((registros[0][12])//60) % 60 > 15:
+                if minutos > 15:
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
-            if vehiculo == "Moto":
-                if total > valor_turno_moto:
-                    total=valor_turno_moto
-            if vehiculo == "Carro":
-                if total > valor_turno_carro:
-                    total=valor_turno_carro
-            if vehiculo == "Otro":
-                if total > valor_turno_otro:
-                    total=valor_turno_otro
+                # if vehiculo == "Moto":
+                #     if total > valor_turno_moto:
+                #         total=valor_turno_moto
+                # if vehiculo == "Carro":
+                #     if total > valor_turno_carro:
+                #         total=valor_turno_carro
+                # if vehiculo == "Otro":
+                #     if total > valor_turno_otro:
+                #         total=valor_turno_otro
             facturacion=0
         else:
             if vehiculo == "Moto":
@@ -364,63 +389,63 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 turno=int(tiempo/60/60)/12
                 turno=int(turno)
                 horas=int(tiempo/60/60)-(turno*12)
-                horas=int(horas)
-                if horas < 0:
+                # horas=int(horas)
+                if int(horas) < 0:
                     horas=horas*(-1)
-                if horas > 4:
+                if int(horas) > 4:
                     turno=turno+1
                 if vehiculo == "Moto":
                     if int(tiempo/60/60) > 12 and int(horas) <= 4:
                         total=int(horas)*valor_hora_moto
-                        if (((registros[0][12])//60) % 60) == 0:
+                        if minutos == 0:
                             valor_fraccion=0
-                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
-                            valor_fraccion=valor/2
-                        if ((registros[0][12])//60) % 60 > 15:
-                            valor_fraccion=valor
+                        if minutos > 0 and minutos <= 15:
+                            valor_fraccion=valor_hora_moto/2
+                        if minutos > 15:
+                            valor_fraccion=valor_hora_moto
                         total=total+valor_fraccion+(valor_turno_moto*turno)
                     else:
-                        if (((registros[0][12])//60) % 60) == 0:
+                        if minutos == 0:
                             valor_fraccion=0
-                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
-                            valor_fraccion=valor/2
-                        if ((registros[0][12])//60) % 60 > 15:
-                            valor_fraccion=valor
+                        if minutos > 0 and minutos <= 15:
+                            valor_fraccion=valor_hora_moto/2
+                        if minutos > 15:
+                            valor_fraccion=valor_hora_moto
                         total=valor_fraccion+(valor_turno_moto*turno)
                 if vehiculo == "Carro":
                     if int(tiempo/60/60) > 12 and int(horas) <= 4:
                         total=int(horas)*valor_hora_carro
-                        if (((registros[0][12])//60) % 60) == 0:
+                        if minutos == 0:
                             valor_fraccion=0
-                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                        if minutos > 0 and minutos <= 15:
                             valor_fraccion=valor/2
-                        if ((registros[0][12])//60) % 60 > 15:
+                        if minutos > 15:
                             valor_fraccion=valor
                         total=total+valor_fraccion+(valor_turno_carro*turno)
                     else:
-                        if (((registros[0][12])//60) % 60) == 0:
+                        if minutos == 0:
                             valor_fraccion=0
-                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                        if minutos > 0 and minutos <= 15:
                             valor_fraccion=valor/2
-                        if ((registros[0][12])//60) % 60 > 15:
+                        if minutos > 15:
                             valor_fraccion=valor
                         total=valor_fraccion+(valor_turno_carro*turno)
                 if vehiculo == "Otro":
                     if int(tiempo/60/60) > 12 and int(horas) <= 4:
                         total=int(horas)*valor_hora_otro
-                        if (((registros[0][12])//60) % 60) == 0:
+                        if minutos == 0:
                             valor_fraccion=0
-                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                        if minutos > 0 and minutos <= 15:
                             valor_fraccion=valor/2
-                        if ((registros[0][12])//60) % 60 > 15:
+                        if minutos > 15:
                             valor_fraccion=valor
                         total=total+valor_fraccion+(valor_turno_otro*turno)
                     else:
-                        if (((registros[0][12])//60) % 60) == 0:
+                        if minutos == 0:
                             valor_fraccion=0
-                        if ((registros[0][12])//60) % 60 > 0 and ((registros[0][12])//60) % 60 <= 15:
+                        if minutos > 0 and minutos <= 15:
                             valor_fraccion=valor/2
-                        if ((registros[0][12])//60) % 60 > 15:
+                        if minutos > 15:
                             valor_fraccion=valor
                         total=valor_fraccion+(valor_turno_otro*turno)
             facturacion=1
@@ -602,39 +627,6 @@ def showedit(e):
     except Exception as e:
         print(e)
 
-def showdelete(e):
-    try:
-        usuario=e.control.data
-        if usuario == "Super Admin" or usuario == "Admin":
-            bgcolor="red"
-            settings.message=f"El usuario {usuario} no puede ser eliminado"
-            settings.showMessage(bgcolor)
-            return False
-        
-        cursor=conn.cursor()
-        sql=f"""DELETE FROM accesos WHERE usuario = ?"""
-        values=(f"{usuario}",)
-        cursor.execute(sql, values)
-        conn.commit()
-
-        sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
-        values=(f"{usuario}",)
-        cursor.execute(sql, values)
-        conn.commit()
-        tbu.rows.clear()
-        tba.rows.clear()
-        search=""
-        selectUsers(search)
-        lblAccesos.value="Accesos"
-        lblAccesos.update()
-        tblUsuarios.update()
-        tblAccesos.update()
-        bgcolor="green"
-        settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
-        settings.showMessage(bgcolor)
-    except Exception as e:
-        print(e)
-
 def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
@@ -756,7 +748,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # print(tiempos)
     dias=tiempos.days*24
     horas=tiempos.seconds//3600
-    horas+=dias
+    # horas+=dias
     # print(horas)
     sobrante=tiempos.seconds%3600
     minutos=sobrante//60
@@ -777,26 +769,73 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         valor_turno_otro=variables[0][6]
     
     if vehiculo == "Moto":
-        if int(tiempo) <= 4:
+        if int(horas) <= 4:
             tarifa="Tarifa Horas-Moto"
             valor=valor_hora_moto
+            if int(horas) == 0:
+                vlr_total=valor_hora_moto
+            else:
+                if int(minutos) == 0:
+                    valor_fraccion=0
+                if int(minutos) > 0 and int(minutos) <= 15:
+                    valor_fraccion=valor_hora_moto/2
+                if int(minutos) > 15:
+                    valor_fraccion=valor_hora_moto
+                vlr_total=valor_fraccion+(int(horas)*valor_hora_moto)
         else:
             tarifa="Tarifa Turno-Moto"
             valor=valor_turno_moto
+            if int(minutos) == 0:
+                valor_fraccion=0
+            if int(minutos) > 0 and int(minutos) <= 15:
+                valor_fraccion=valor_hora_moto/2
+            if int(minutos) > 15:
+                valor_fraccion=valor_hora_moto
+            vlr_total=valor_fraccion+valor_turno_moto
     if vehiculo == "Carro":
-        if int(tiempo) <= 4:
+        if int(horas) <= 4:
             tarifa="Tarifa Horas-Carro"
-            valor=valor_hora_carro
+            if int(horas) == 0:
+                vlr_total=valor_hora_carro
+            else:
+                if int(minutos) == 0:
+                    valor_fraccion=0
+                if int(minutos) > 0 and int(minutos) <= 15:
+                    valor_fraccion=valor_hora_carro/2
+                if int(minutos) > 15:
+                    valor_fraccion=valor_hora_carro
+                vlr_total=valor_fraccion+(int(horas)*valor_hora_carro)
         else:
             tarifa="Tarifa Turno-Carro"
-            valor=valor_turno_carro
+            if int(minutos) == 0:
+                valor_fraccion=0
+            if int(minutos) > 0 and int(minutos) <= 15:
+                valor_fraccion=valor_hora_carro/2
+            if int(minutos) > 15:
+                valor_fraccion=valor_hora_carro
+            vlr_total=valor_fraccion+valor_turno_carro
     if vehiculo == "Otro":
-        if int(tiempo) <= 4:
+        if int(horas) <= 4:
             tarifa="Tarifa Horas-Otro"
-            valor=valor_hora_otro
+            if int(horas) == 0:
+                vlr_total=valor_hora_otro
+            else:
+                if int(minutos) == 0:
+                    valor_fraccion=0
+                if int(minutos) > 0 and int(minutos) <= 15:
+                    valor_fraccion=valor_hora_otro/2
+                if int(minutos) > 15:
+                    valor_fraccion=valor_hora_otro
+                vlr_total=valor_fraccion+(int(horas)*valor_hora_otro)
         else:
             tarifa="Tarifa Turno-Otro"
-            valor=valor_turno_otro
+            if int(minutos) == 0:
+                valor_fraccion=0
+            if int(minutos) > 0 and int(minutos) <= 15:
+                valor_fraccion=valor_hora_otro/2
+            if int(minutos) > 15:
+                valor_fraccion=valor_hora_otro
+            vlr_total=valor_fraccion+valor_turno_otro
 
     pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
@@ -932,7 +971,7 @@ def update_access(e):
         settings.showMessage(bgcolor)
     else:
         chk.value=not chk.value
-        bgcolor="red"
+        bgcolor="orange"
         message=f"Los accesos del usuario {usuario} no pueden ser modificados"
         settings.message=message
         settings.showMessage(bgcolor)
@@ -965,20 +1004,20 @@ def show_edit_access(e):
                         # DataCell(Text(x["acceso_usuario"])),
                         # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
                         DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access)),
-                        DataCell(Row([
-                            # IconButton(icon="create",icon_color="blue",
-                            # 	data=x,
-                            # 	on_click=showedit
-                            # 	),
-                            # IconButton(icon="delete",icon_color="red",
-                            # 	data=x["id"],
-                            # 	on_click=showdelete
-                            # 	),
-                            # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
-                            # 	data=x,
-                            # 	on_click=showedit
-                            # 	),
-                        ])),
+                        # DataCell(Row([
+                        #     # IconButton(icon="create",icon_color="blue",
+                        #     # 	data=x,
+                        #     # 	on_click=showedit
+                        #     # 	),
+                        #     # IconButton(icon="delete",icon_color="red",
+                        #     # 	data=x["id"],
+                        #     # 	on_click=showdelete
+                        #     # 	),
+                        #     # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        #     # 	data=x,
+                        #     # 	on_click=showedit
+                        #     # 	),
+                        # ])),
                     ],
                 ),
             )
@@ -986,6 +1025,64 @@ def show_edit_access(e):
     lblAccesos.update()
     tblAccesos.update()
     # return registros
+
+def show_delete(e):
+    settings.usuario=e.control.data
+    usuario=settings.usuario
+    title="Eliminar"
+    message=f"Desea eliminar el usuario {usuario} ?"
+    open_dlg_modal(e, title, message)        
+
+def close_dlg(e):
+    dlg_modal.open=False
+    settings.page.update()
+
+def open_dlg_modal(e, title, message):
+    dlg_modal.title=Text(title, text_align="center")
+    dlg_modal.content=Text(message, text_align="center")
+    settings.page.dialog=dlg_modal
+    dlg_modal.open=True
+    settings.page.update()
+
+def user_delete(usuario):
+    dlg_modal.open=False
+    settings.page.update()
+    try:
+        # usuario=e.control.data
+        if usuario == "Super Admin" or usuario == "Admin":
+            bgcolor="orange"
+            settings.message=f"El usuario {usuario} no puede ser eliminado"
+            settings.showMessage(bgcolor)
+            return False
+        
+        get_user(usuario)
+        
+        cursor=conn.cursor()
+        sql=f"""DELETE FROM accesos WHERE usuario = ?"""
+        values=(f"{usuario}",)
+        cursor.execute(sql, values)
+        conn.commit()
+
+        sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
+        values=(f"{usuario}",)
+        cursor.execute(sql, values)
+        conn.commit()
+        tbu.rows.clear()
+        tba.rows.clear()
+        search=""
+        selectUsers(search)
+        lblAccesos.value="Accesos"
+        lblAccesos.update()
+        tblUsuarios.update()
+        tblAccesos.update()
+
+        if settings.photo != "default.jpg":
+            os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
+        bgcolor="green"
+        settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
+        settings.showMessage(bgcolor)
+    except Exception as e:
+        print(e)
 
 def selectUsers(search):
     user="Super Admin"
@@ -1029,11 +1126,11 @@ def selectUsers(search):
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	IconButton(icon="delete",icon_color="red",
+                        	IconButton(icon="delete", icon_color="red",
                         		# data=x["id"],
                         		data=x["usuario"],
-                        		on_click=showdelete
-                        		),
+                        		on_click=show_delete
+                        	),
                             # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
                         	# 	data=x,
                         	# 	on_click=showedit
@@ -1125,37 +1222,12 @@ def selectRegisters(search):
 def exportRegister(fecha_desde, fecha_hasta):
     cuadre=1
     cursor=conn.cursor()
-    if fecha_desde == "" and fecha_hasta == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y', entrada), strftime('%d/%m/%Y', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
+    if fecha_desde == "dd/mm/aaaa" and fecha_hasta == "dd/mm/aaaa":
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y', entrada), strftime('%d/%m/%Y', salida), vehiculo, valor, tiempo, total FROM registro WHERE salida BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE salida BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
     cursor.execute(sql)
     registros=cursor.fetchall()
-
-    # tbe.rows.clear()
-
-    # if registros != []:
-    #     keys=["consecutivo", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total"]
-    #     result=[dict(zip(keys, values)) for values in registros]
-
-    #     for x in result:
-    #         tbe.rows.append(
-    #             DataRow(
-    #                 selected=False,
-    #                 data=x,
-    #                 on_select_changed=None,
-    #                 cells=[
-    #                     DataCell(Text(x["consecutivo"])),
-    #                     DataCell(Text(x["placa"])),
-    #                     DataCell(Text(x["entrada"])),
-    #                     DataCell(Text(x["salida"])),
-    #                     DataCell(Text(x["vehiculo"])),
-    #                     DataCell(Text(x["valor"])),
-    #                     DataCell(Text(x["tiempo"])),
-    #                     DataCell(Text(x["total"])),
-    #                 ],
-    #             ),
-    #         )
     return registros
 
 def selectCashRegister():
@@ -1221,7 +1293,7 @@ lblAccesos=Text("Accesos", theme_style=TextThemeStyle.HEADLINE_SMALL, text_align
 
 tblUsuarios = Column([
     Row([tbu], scroll="always")
-], height=60)
+], height=60, scroll="always")
 
 tblAccesos = Column([
     Row([tba], scroll="always")
@@ -1234,3 +1306,17 @@ tblRegistro = Column([
 tblCuadre = Column([
     Row([tbc], scroll="always")
 ], height=60)
+
+dlg_modal=AlertDialog(
+    bgcolor=colors.with_opacity(opacity=0.8, color=colors.PRIMARY_CONTAINER),
+    modal=True,
+    icon=Icon(name=icons.QUESTION_MARK, color=colors.with_opacity(opacity=0.8, color=colors.BLUE_900), size=50),
+    # title=Text(title, text_align="center"),
+    # content=Text(message, text_align="center"),
+    actions=[
+        TextButton("Sí", on_click=lambda _: user_delete(settings.usuario)),
+        TextButton("No", autofocus=True, on_click=close_dlg)
+    ],
+    actions_alignment=MainAxisAlignment.END,
+    # on_dismiss=lambda _: date_button.focus(),
+)
