@@ -37,6 +37,9 @@ if configuracion != None:
     consecutivo=configuracion[0][7]
     settings.preview=configuracion[0][8]
     vista_previa=False if configuracion[0][8] == 0 else True
+    imprimir=False if configuracion[0][9] == 0 else True
+    impresora=configuracion[0][10]
+    settings.printer=configuracion[0][10]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -331,6 +334,12 @@ def Register(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         # consecutivo=configuracion[0][7]
+        settings.preview=configuracion[0][8]
+        vista_previa=False if configuracion[0][8] == 0 else True
+        settings.print_receipt=configuracion[0][9]
+        imprimir=False if configuracion[0][9] == 0 else True
+        settings.printer=configuracion[0][10]
+        impresora=configuracion[0][10]
     
     def register(e):
         if placa.value != "":

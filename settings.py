@@ -1,12 +1,13 @@
 import flet as ft
 
-global username, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, sw, preview, print_receipt, progressRing
+global username, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, sw, preview, print_receipt, printer, progressRing
 
 username=""
 login_nombre=""
 photo=""
 message=""
 usuario=""
+printer=""
 acceso_configuracion=0
 acceso_variables=0
 acceso_registro=0
@@ -15,8 +16,8 @@ acceso_cierre=0
 textsize=30
 fieldwith=280
 sw=0 # sw=0 Escritorio sw=1 Web
-preview=0
-print_receipt=0
+preview=1
+print_receipt=1
 page:ft.Page
 progressRing=ft.ProgressRing()
 

@@ -2,6 +2,7 @@ import time
 import flet as ft
 import settings
 import sqlite3
+import win32print
 from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, lblAccesos, tba, tblAccesos
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
@@ -143,6 +144,8 @@ def Configuration(page):
         vista_previa=False if configuracion[0][8] == 0 else True
         settings.print_receipt=configuracion[0][9]
         imprimir=False if configuracion[0][9] == 0 else True
+        settings.printer=configuracion[0][10]
+        impresora=configuracion[0][10]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -197,7 +200,7 @@ def Configuration(page):
             telefono.update()
             servicio.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, settings.preview, settings.print_receipt, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, settings.preview, settings.print_receipt, printer.value, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -280,6 +283,8 @@ def Configuration(page):
     
     def print_change(e):
         settings.print_receipt=0 if print_receipt_switch.value == False else 1
+        printer.disabled=True if settings.print_receipt == 0 else False
+        printer.update()
 
     page.on_resize=page_resize
 
@@ -333,6 +338,13 @@ def Configuration(page):
     preview_switch=ft.Switch(value=vista_previa, on_change=preview_change)
     lbl_print=ft.Text("Imprimir", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     print_receipt_switch=ft.Switch(value=imprimir, on_change=print_change)
+
+    printers_list=[]
+    printers=[printer[2] for printer in win32print.EnumPrinters(2)]
+    for p in printers:
+        printers_list.append(ft.dropdown.Option(p),)
+
+    printer=ft.Dropdown(hint_text="Seleccione una impresora", options=printers_list, value=impresora, disabled=False)
 
     registros=selectUsers(search)
     if registros != []:
@@ -470,6 +482,16 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                     ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print]),
                     ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                ]),
+            ),
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
+                    # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
+                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[printer]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),

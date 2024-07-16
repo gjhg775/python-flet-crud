@@ -10,7 +10,7 @@ import win32api
 import win32print
 from fpdf import FPDF
 # from datatable import valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro
-from datatable import get_variables
+from datatable import get_configuration, get_variables
 
 title="Parqueadero"
 
@@ -20,6 +20,24 @@ if settings.sw == 0:
     path=os.path.join(os.getcwd(), "upload\\receipt\\")
 else:
     path=os.path.join(os.getcwd(), "assets\\receipt\\")
+
+configuracion=get_configuration()
+
+if configuracion != None:
+    id=configuracion[0][0]
+    parqueadero=configuracion[0][1]
+    nit=configuracion[0][2]
+    regimen=configuracion[0][3]
+    direccion=configuracion[0][4]
+    telefono=configuracion[0][5]
+    servicio=configuracion[0][6]
+    consecutivo=configuracion[0][7]
+    settings.preview=configuracion[0][8]
+    vista_previa=False if configuracion[0][8] == 0 else True
+    settings.print_receipt=configuracion[0][9]
+    imprimir=False if configuracion[0][9] == 0 else True
+    settings.printer=configuracion[0][10]
+    impresora=configuracion[0][10]
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
@@ -101,7 +119,8 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-            cPrinter=win32print.GetDefaultPrinter()
+            # cPrinter=win32print.GetDefaultPrinter()
+            cPrinter=settings.printer
             pdfFile=path
             win32api.ShellExecute(
                 0,
@@ -300,7 +319,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-            cPrinter=win32print.GetDefaultPrinter()
+            # cPrinter=win32print.GetDefaultPrinter()
+            cPrinter=settings.printer
             pdfFile=path
             win32api.ShellExecute(
                 0,
@@ -432,7 +452,8 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-            cPrinter=win32print.GetDefaultPrinter()
+            # cPrinter=win32print.GetDefaultPrinter()
+            cPrinter=settings.printer
             pdfFile=path
             win32api.ShellExecute(
                 0,
@@ -538,7 +559,8 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-            cPrinter=win32print.GetDefaultPrinter()
+            # cPrinter=win32print.GetDefaultPrinter()
+            cPrinter=settings.printer
             pdfFile=path
             win32api.ShellExecute(
                 0,

@@ -243,17 +243,21 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     consecutivo=configuracion[0][7]
+    settings.preview=configuracion[0][8]
     vista_previa=False if configuracion[0][8] == 0 else True
+    settings.print_receipt=configuracion[0][9]
     imprimir=False if configuracion[0][9] == 0 else True
+    settings.printer=configuracion[0][10]
+    impresora=configuracion[0][10]
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vista_previa, imprimir, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vista_previa, imprimir, impresora, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ?, vista_previa = ?, imprimir = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{vista_previa}", f"{imprimir}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, consecutivo = ?, vista_previa = ?, imprimir = ?, impresora = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{consecutivo}", f"{vista_previa}", f"{imprimir}", f"{impresora}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
-
+        
         message="Configuración actualizada satisfactoriamente"
         return message
     except Exception as e:
@@ -707,7 +711,8 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-            cPrinter=win32print.GetDefaultPrinter()
+            # cPrinter=win32print.GetDefaultPrinter()
+            cPrinter=settings.printer
             pdfFile="C:/receipt/receipt.pdf"
             win32api.ShellExecute(
                 0,
@@ -906,7 +911,8 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         if settings.print_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
-            cPrinter=win32print.GetDefaultPrinter()
+            # cPrinter=win32print.GetDefaultPrinter()
+            cPrinter=settings.printer
             pdfFile="C:/receipt/receipt.pdf"
             win32api.ShellExecute(
                 0,
