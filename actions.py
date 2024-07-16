@@ -103,7 +103,8 @@ def create_regist():
         tiempo INTEGER,
         total INTEGER,
         cuadre INTEGER,
-        usuario TEXT)
+        ingreso TEXT,
+        retiro TEXT)
         """)
     conn.commit()
 

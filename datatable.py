@@ -304,6 +304,10 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
     
     try:
         salida=datetime.datetime.now()
+        formato=f"%Y-%m-%d %H:%M"
+        salida=str(salida)
+        salida=str(salida[0:16])
+        salida=datetime.datetime.strptime(salida, formato)
 
         if vehiculo == "Moto":
             valor=valor_hora_moto
@@ -320,7 +324,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
         usuario=registros[0][3]
 
-        sql=f"""UPDATE registro SET salida = ?, valor = ?, usuario = ? WHERE registro_id = ?"""
+        sql=f"""UPDATE registro SET salida = ?, valor = ?, retiro = ? WHERE registro_id = ?"""
         values=(f"{salida}", f"{valor}", f"{usuario}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
@@ -334,8 +338,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         entrada=registros[0][3]
         salida=registros[0][4]
         valor=registros[0][7]
-        # tiempo=((registros[0][12])/60)/60
-        tiempo=registros[0][12]
+        # tiempo=((registros[0][13])/60)/60
+        tiempo=registros[0][13]
 
         formato=f"%Y-%m-%d %H:%M"
         entrada=str(entrada)
@@ -350,7 +354,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         sobrante=tiempos.seconds%3600
         minutos=sobrante//60
 
-        # segundos=registros[0][12]
+        # segundos=registros[0][13]
         # dias=segundos//(24*60*60)
         # segundos=segundos % (24*60*60)
         # horas=segundos//(60*60)
@@ -372,15 +376,6 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 if minutos > 15:
                     valor_fraccion=valor
                 total=valor_horas+valor_fraccion
-                # if vehiculo == "Moto":
-                #     if total > valor_turno_moto:
-                #         total=valor_turno_moto
-                # if vehiculo == "Carro":
-                #     if total > valor_turno_carro:
-                #         total=valor_turno_carro
-                # if vehiculo == "Otro":
-                #     if total > valor_turno_otro:
-                #         total=valor_turno_otro
             facturacion=0
         else:
             if vehiculo == "Moto":
@@ -464,8 +459,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         cursor.execute(sql)
         registros=cursor.fetchall()
 
-        entradas=registros[0][12]
-        salidas=registros[0][13]
+        entradas=registros[0][13]
+        salidas=registros[0][14]
 
         # sql="SELECT consecutivo FROM configuracion"
         # cursor.execute(sql)
@@ -491,6 +486,10 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
 def add_register(vehiculo, placa):
     entrada=datetime.datetime.now()
+    formato=f"%Y-%m-%d %H:%M"
+    entrada=str(entrada)
+    entrada=str(entrada[0:16])
+    entrada=datetime.datetime.strptime(entrada, formato)
     salida=entrada
     vehiculo=vehiculo
 
@@ -524,7 +523,7 @@ def add_register(vehiculo, placa):
 
         consecutivo=registros[0][0]
 
-        sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, facturacion, valor, tiempo, total, cuadre, usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, facturacion, valor, tiempo, total, cuadre, ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
@@ -533,8 +532,8 @@ def add_register(vehiculo, placa):
         cursor.execute(sql)
         registros=cursor.fetchall()
 
-        entradas=registros[0][12]
-        salidas=registros[0][13]
+        entradas=registros[0][13]
+        salidas=registros[0][14]
 
         id=1
         consecutivos=int(consecutivo)+1
@@ -617,8 +616,8 @@ def showedit(e):
         valor=registros[0][7]
         tiempo=registros[0][8]
         vlr_total=registros[0][9]
-        entradas=registros[0][12]
-        salidas=registros[0][13]
+        entradas=registros[0][13]
+        salidas=registros[0][14]
 
         comentario1="Sin éste recibo no se entrega el automotor."
         comentario2="Después de retirado el automotor no se"
@@ -774,73 +773,170 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         valor_turno_otro=variables[0][6]
     
     if vehiculo == "Moto":
-        if int(horas) <= 4:
-            tarifa="Tarifa Horas-Moto"
-            valor=valor_hora_moto
-            if int(horas) == 0:
-                vlr_total=valor_hora_moto
-            else:
-                if int(minutos) == 0:
-                    valor_fraccion=0
-                if int(minutos) > 0 and int(minutos) <= 15:
-                    valor_fraccion=valor_hora_moto/2
-                if int(minutos) > 15:
-                    valor_fraccion=valor_hora_moto
-                vlr_total=valor_fraccion+(int(horas)*valor_hora_moto)
-        else:
-            tarifa="Tarifa Turno-Moto"
-            valor=valor_turno_moto
-            if int(minutos) == 0:
-                valor_fraccion=0
-            if int(minutos) > 0 and int(minutos) <= 15:
-                valor_fraccion=valor_hora_moto/2
-            if int(minutos) > 15:
-                valor_fraccion=valor_hora_moto
-            vlr_total=valor_fraccion+valor_turno_moto
+        valor=valor_hora_moto
+        tarifa="Tarifa Horas-Moto"
     if vehiculo == "Carro":
-        if int(horas) <= 4:
-            tarifa="Tarifa Horas-Carro"
-            if int(horas) == 0:
-                vlr_total=valor_hora_carro
-            else:
-                if int(minutos) == 0:
-                    valor_fraccion=0
-                if int(minutos) > 0 and int(minutos) <= 15:
-                    valor_fraccion=valor_hora_carro/2
-                if int(minutos) > 15:
-                    valor_fraccion=valor_hora_carro
-                vlr_total=valor_fraccion+(int(horas)*valor_hora_carro)
-        else:
-            tarifa="Tarifa Turno-Carro"
-            if int(minutos) == 0:
-                valor_fraccion=0
-            if int(minutos) > 0 and int(minutos) <= 15:
-                valor_fraccion=valor_hora_carro/2
-            if int(minutos) > 15:
-                valor_fraccion=valor_hora_carro
-            vlr_total=valor_fraccion+valor_turno_carro
+        valor=valor_hora_carro
+        tarifa="Tarifa Horas-Carro"
     if vehiculo == "Otro":
-        if int(horas) <= 4:
-            tarifa="Tarifa Horas-Otro"
-            if int(horas) == 0:
-                vlr_total=valor_hora_otro
-            else:
-                if int(minutos) == 0:
-                    valor_fraccion=0
-                if int(minutos) > 0 and int(minutos) <= 15:
-                    valor_fraccion=valor_hora_otro/2
-                if int(minutos) > 15:
-                    valor_fraccion=valor_hora_otro
-                vlr_total=valor_fraccion+(int(horas)*valor_hora_otro)
+        valor=valor_hora_otro
+        tarifa="Tarifa Horas-Otro"
+
+    if int(horas) <= 4:
+        if int(horas) == 0:
+            total=valor
         else:
-            tarifa="Tarifa Turno-Otro"
-            if int(minutos) == 0:
+            valor_horas=valor*int(horas)
+            if minutos == 0:
                 valor_fraccion=0
-            if int(minutos) > 0 and int(minutos) <= 15:
-                valor_fraccion=valor_hora_otro/2
-            if int(minutos) > 15:
-                valor_fraccion=valor_hora_otro
-            vlr_total=valor_fraccion+valor_turno_otro
+            if minutos > 0 and minutos <= 15:
+                valor_fraccion=valor/2
+            if minutos > 15:
+                valor_fraccion=valor
+            total=valor_horas+valor_fraccion
+    else:
+        if vehiculo == "Moto":
+            valor=valor_turno_moto
+            tarifa="Tarifa Turno-Moto"
+        if vehiculo == "Carro":
+            valor=valor_turno_carro
+            tarifa="Tarifa Turno-Carro"
+        if vehiculo == "Otro":
+            valor=valor_turno_otro
+            tarifa="Tarifa Turno-Otro"
+        if tiempo >= 12:
+            turno=int(tiempo/60/60)/12
+            turno=int(turno)
+            horas=int(tiempo/60/60)-(turno*12)
+            # horas=int(horas)
+            if int(horas) < 0:
+                horas=horas*(-1)
+            if int(horas) > 4:
+                turno=turno+1
+            if vehiculo == "Moto":
+                if int(tiempo/60/60) > 12 and int(horas) <= 4:
+                    total=int(horas)*valor_hora_moto
+                    if minutos == 0:
+                        valor_fraccion=0
+                    if minutos > 0 and minutos <= 15:
+                        valor_fraccion=valor_hora_moto/2
+                    if minutos > 15:
+                        valor_fraccion=valor_hora_moto
+                    total=total+valor_fraccion+(valor_turno_moto*turno)
+                else:
+                    if minutos == 0:
+                        valor_fraccion=0
+                    if minutos > 0 and minutos <= 15:
+                        valor_fraccion=valor_hora_moto/2
+                    if minutos > 15:
+                        valor_fraccion=valor_hora_moto
+                    total=valor_fraccion+(valor_turno_moto*turno)
+            if vehiculo == "Carro":
+                if int(tiempo/60/60) > 12 and int(horas) <= 4:
+                    total=int(horas)*valor_hora_carro
+                    if minutos == 0:
+                        valor_fraccion=0
+                    if minutos > 0 and minutos <= 15:
+                        valor_fraccion=valor/2
+                    if minutos > 15:
+                        valor_fraccion=valor
+                    total=total+valor_fraccion+(valor_turno_carro*turno)
+                else:
+                    if minutos == 0:
+                        valor_fraccion=0
+                    if minutos > 0 and minutos <= 15:
+                        valor_fraccion=valor/2
+                    if minutos > 15:
+                        valor_fraccion=valor
+                    total=valor_fraccion+(valor_turno_carro*turno)
+            if vehiculo == "Otro":
+                if int(tiempo/60/60) > 12 and int(horas) <= 4:
+                    total=int(horas)*valor_hora_otro
+                    if minutos == 0:
+                        valor_fraccion=0
+                    if minutos > 0 and minutos <= 15:
+                        valor_fraccion=valor/2
+                    if minutos > 15:
+                        valor_fraccion=valor
+                    total=total+valor_fraccion+(valor_turno_otro*turno)
+                else:
+                    if minutos == 0:
+                        valor_fraccion=0
+                    if minutos > 0 and minutos <= 15:
+                        valor_fraccion=valor/2
+                    if minutos > 15:
+                        valor_fraccion=valor
+                    total=valor_fraccion+(valor_turno_otro*turno)
+    
+    # if vehiculo == "Moto":
+    #     if int(tiempo/60/60) > 12 and int(horas) <= 4:
+    #         tarifa="Tarifa Horas-Moto"
+    #         valor=valor_hora_moto
+    #         if int(horas) == 0:
+    #             vlr_total=valor_hora_moto
+    #         else:
+    #             if minutos == 0:
+    #                 valor_fraccion=0
+    #             if minutos > 0 and minutos <= 15:
+    #                 valor_fraccion=valor_hora_moto/2
+    #             if minutos > 15:
+    #                 valor_fraccion=valor_hora_moto
+    #             vlr_total=valor_fraccion+(int(horas)*valor_hora_moto)
+    #     else:
+    #         print("datatable - showOutput")
+    #         tarifa="Tarifa Turno-Moto"
+    #         valor=valor_turno_moto
+    #         if minutos == 0:
+    #             valor_fraccion=0
+    #         if minutos > 0 and minutos <= 15:
+    #             valor_fraccion=valor_hora_moto/2
+    #         if minutos > 15:
+    #             valor_fraccion=valor_hora_moto
+    #         vlr_total=valor_fraccion+valor_turno_moto
+    # if vehiculo == "Carro":
+    #     if int(tiempo/60/60) > 12 and int(horas) <= 4:
+    #         tarifa="Tarifa Horas-Carro"
+    #         if int(horas) == 0:
+    #             vlr_total=valor_hora_carro
+    #         else:
+    #             if minutos == 0:
+    #                 valor_fraccion=0
+    #             if minutos > 0 and minutos <= 15:
+    #                 valor_fraccion=valor_hora_carro/2
+    #             if minutos > 15:
+    #                 valor_fraccion=valor_hora_carro
+    #             vlr_total=valor_fraccion+(int(horas)*valor_hora_carro)
+    #     else:
+    #         tarifa="Tarifa Turno-Carro"
+    #         if minutos == 0:
+    #             valor_fraccion=0
+    #         if minutos > 0 and minutos <= 15:
+    #             valor_fraccion=valor_hora_carro/2
+    #         if minutos > 15:
+    #             valor_fraccion=valor_hora_carro
+    #         vlr_total=valor_fraccion+valor_turno_carro
+    # if vehiculo == "Otro":
+    #     if int(tiempo/60/60) > 12 and int(horas) <= 4:
+    #         tarifa="Tarifa Horas-Otro"
+    #         if int(horas) == 0:
+    #             vlr_total=valor_hora_otro
+    #         else:
+    #             if minutos == 0:
+    #                 valor_fraccion=0
+    #             if minutos > 0 and minutos <= 15:
+    #                 valor_fraccion=valor_hora_otro/2
+    #             if minutos > 15:
+    #                 valor_fraccion=valor_hora_otro
+    #             vlr_total=valor_fraccion+(int(horas)*valor_hora_otro)
+    #     else:
+    #         tarifa="Tarifa Turno-Otro"
+    #         if minutos == 0:
+    #             valor_fraccion=0
+    #         if minutos > 0 and minutos <= 15:
+    #             valor_fraccion=valor_hora_otro/2
+    #         if minutos > 15:
+    #             valor_fraccion=valor_hora_otro
+    #         vlr_total=valor_fraccion+valor_turno_otro
 
     pdf=FPDF("P", "mm", (80, 150))
     pdf.add_page()
