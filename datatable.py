@@ -624,6 +624,11 @@ def showedit(e):
         direccion=configuracion[0][4]
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
+        resolucion=configuracion[0][7]
+        fecha_desde=configuracion[0][8]
+        fecha_hasta=configuracion[0][9]
+        autoriza_del=configuracion[0][10]
+        autoriza_al=configuracion[0][11]
 
         placa=registros[0][2]
         entrada=registros[0][3]
@@ -642,7 +647,7 @@ def showedit(e):
         if vlr_total == 0:
             showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, comentario3, entradas)
         if vlr_total > 0:
-            showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
+            showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
     except Exception as e:
         print(e)
 
@@ -749,7 +754,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
+def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -918,39 +923,53 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     factura="Factura Electrónica de Venta"
     factura_w=pdf.get_string_width(factura)
     pdf.set_x((doc_w - factura_w) / 2)
-    pdf.cell(factura_w, 105, factura, align="C")
+    pdf.cell(factura_w, 104, factura, align="C")
     pdf.set_font("helvetica", "B", size=20)
     consecutivo1=f"FE-{consecutivo}"
     consecutivo1_w=pdf.get_string_width(consecutivo1)
     pdf.set_x((doc_w - consecutivo1_w) / 2)
-    pdf.cell(consecutivo1_w, 122, consecutivo1, align="C")
+    pdf.cell(consecutivo1_w, 119, consecutivo1, align="C")
+    pdf.set_font("helvetica", "", size=13)
+    fecha_autoriza1="Desde " + str(fecha_desde) + " Hasta " + str(fecha_hasta)
+    fecha_autoriza1_w=pdf.get_string_width(fecha_autoriza1)
+    pdf.set_x((doc_w - fecha_autoriza1_w) / 2)
+    pdf.cell(fecha_autoriza1_w, 132, fecha_autoriza1, align="C")
+    autoriza1="Autoriza del " + str(autoriza_del) + " al " + str(autoriza_al)
+    autoriza1_w=pdf.get_string_width(autoriza1)
+    pdf.set_x((doc_w - autoriza1_w) / 2)
+    pdf.cell(autoriza1_w, 144, autoriza1, align="C")
+    resolucion1="Resolución " + str(resolucion)
+    resolucion1_w=pdf.get_string_width(resolucion1)
+    pdf.set_x((doc_w - resolucion1_w) / 2)
+    pdf.cell(resolucion1_w, 156, resolucion1, align="C")
+    pdf.set_font("helvetica", "B", size=20)
     placas1=f"Placa {placas}"
     placas1_w=pdf.get_string_width(placas1)
     pdf.set_x((doc_w - placas1_w) / 2)
-    pdf.cell(placas1_w, 139, placas1, align="C")
+    pdf.cell(placas1_w, 170, placas1, align="C")
     pdf.set_font("helvetica", "", size=15)
     entrada_w=pdf.get_string_width(entrada)
     pdf.set_x((doc_w - entrada_w) / 2)
-    pdf.cell(entrada_w, 156, entrada, align="C")
+    pdf.cell(entrada_w, 184, entrada, align="C")
     salida_w=pdf.get_string_width(salida)
     pdf.set_x((doc_w - salida_w) / 2)
-    pdf.cell(salida_w, 170, salida, align="C")
+    pdf.cell(salida_w, 198, salida, align="C")
     duracion_w=pdf.get_string_width(duracion)
     pdf.set_x((doc_w - duracion_w) / 2)
-    pdf.cell(duracion_w, 184, duracion, align="C")
+    pdf.cell(duracion_w, 212, duracion, align="C")
     tarifa_w=pdf.get_string_width(tarifa)
     pdf.set_x((doc_w - tarifa_w) / 2)
-    pdf.cell(tarifa_w, 198, tarifa, align="C")
+    pdf.cell(tarifa_w, 226, tarifa, align="C")
     valor=locale.currency(valor, grouping=True)
     valor="Valor Unidad " + str(valor) 
     valor_w=pdf.get_string_width(valor)
     pdf.set_x((doc_w - valor_w) / 2)
-    pdf.cell(valor_w, 212, valor, align="C")
+    pdf.cell(valor_w, 240, valor, align="C")
     vlr_total=locale.currency(vlr_total, grouping=True)
     vlr_total="Total " + str(vlr_total) 
     vlr_total_w=pdf.get_string_width(vlr_total)
     pdf.set_x((doc_w - vlr_total_w) / 2)
-    pdf.cell(vlr_total_w, 226, vlr_total, align="C")
+    pdf.cell(vlr_total_w, 254, vlr_total, align="C")
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=35, y=118, w=30, h=30)
     pdf.output(path+"receipt.pdf")

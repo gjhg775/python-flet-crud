@@ -586,9 +586,9 @@ def Register(page):
     elif page.window_width >= 992:
         textsize=90
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change)
     export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
-    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", on_blur=register)
+    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")

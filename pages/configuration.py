@@ -338,7 +338,7 @@ def Configuration(page):
     
     def print_change(e):
         settings.print_register_receipt=0 if print_receipt_switch.value == False else 1
-        printer.disabled=True if settings.print_receipt == 0 else False
+        printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
         printer.update()
 
     def preview_change_cash(e):
@@ -346,7 +346,7 @@ def Configuration(page):
     
     def print_change_cash(e):
         settings.print_cash_receipt=0 if print_receipt_switch_cash.value == False else 1
-        printer.disabled=True if settings.print_receipt == 0 else False
+        printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
         printer.update()
 
     def change_date_from(e):
@@ -380,6 +380,10 @@ def Configuration(page):
         if settings.sw == 1:
             date_button_to.focus()
         # print(f"Date picker changed, value is {date_picker.value}")
+
+    def autoriza_del_changed(e):
+        consecutivo.value = e.control.value
+        consecutivo.update()
 
     page.on_resize=page_resize
 
@@ -435,14 +439,14 @@ def Configuration(page):
     nit=ft.TextField(label="Nit", width=fieldwith, value=nit)
     regimen=ft.TextField(label="Régimen", width=fieldwith, value=regimen)
     direccion=ft.TextField(label="Dirección", width=fieldwith, value=direccion)
-    telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono)
+    telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono, input_filter=ft.NumbersOnlyInputFilter())
     servicio=ft.TextField(label="Servicio", width=fieldwith, value=servicio)
     resolucion=ft.TextField(label="Resolución", width=fieldwith, value=resolucion, input_filter=ft.NumbersOnlyInputFilter())
     fecha_desde=ft.TextField(label="Desde", hint_text="dd/mm/aaaa", width=fieldwith, value=fecha_desde)
     fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", width=fieldwith, value=fecha_hasta)
     date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_from.pick_date())
     date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_to.pick_date())
-    autoriza_del=ft.TextField(label="Autoriza del", width=fieldwith, value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter())
+    autoriza_del=ft.TextField(label="Autoriza del", width=fieldwith, value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter(), on_change=autoriza_del_changed)
     autoriza_al=ft.TextField(label="Autoriza al", width=fieldwith, value=autoriza_al, input_filter=ft.NumbersOnlyInputFilter())
     consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo, input_filter=ft.NumbersOnlyInputFilter())
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=validateConfiguration)
@@ -473,6 +477,7 @@ def Configuration(page):
         printers_list.append(ft.dropdown.Option(p),)
 
     printer=ft.Dropdown(hint_text="Seleccione una impresora", options=printers_list, value=impresora, disabled=False)
+    printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
     registros=selectUsers(search)
     if registros != []:
