@@ -1,4 +1,5 @@
 import time
+import datetime
 import flet as ft
 import settings
 import sqlite3
@@ -139,13 +140,22 @@ def Configuration(page):
         direccion=configuracion[0][4]
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
-        consecutivo=configuracion[0][7]
-        settings.preview=configuracion[0][8]
-        vista_previa=False if configuracion[0][8] == 0 else True
-        settings.print_receipt=configuracion[0][9]
-        imprimir=False if configuracion[0][9] == 0 else True
-        settings.printer=configuracion[0][10]
-        impresora=configuracion[0][10]
+        resolucion=configuracion[0][7]
+        fecha_desde=configuracion[0][8]
+        fecha_hasta=configuracion[0][9]
+        autoriza_del=configuracion[0][10]
+        autoriza_al=configuracion[0][11]
+        consecutivo=configuracion[0][12]
+        settings.preview_register=configuracion[0][13]
+        vista_previa_registro=False if configuracion[0][13] == 0 else True
+        settings.print_register_receipt=configuracion[0][14]
+        imprimir_registro=False if configuracion[0][14] == 0 else True
+        settings.preview_cash=configuracion[0][15]
+        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
+        settings.print_cash_receipt=configuracion[0][16]
+        imprimir_cuadre=False if configuracion[0][16] == 0 else True
+        settings.printer=configuracion[0][17]
+        impresora=configuracion[0][17]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -154,6 +164,11 @@ def Configuration(page):
         direccion.error_text=""
         telefono.error_text=""
         servicio.error_text=""
+        resolucion.error_text=""
+        fecha_desde.error_text=""
+        fecha_hasta.error_text=""
+        autoriza_del.error_text=""
+        autoriza_al.error_text=""
         consecutivo.error_text=""
         if parqueadero.value == "":
             parqueadero.error_text="Campo requerido"
@@ -186,21 +201,51 @@ def Configuration(page):
             servicio.update()
         else:
             servicio.update()
+        if resolucion.value == "":
+            resolucion.error_text="Campo requerido"
+            resolucion.update()
+        else:
+            resolucion.update()
+        if fecha_desde.value == "":
+            fecha_desde.error_text="Campo requerido"
+            fecha_desde.update()
+        else:
+            fecha_desde.update()
+        if fecha_hasta.value == "":
+            fecha_hasta.error_text="Campo requerido"
+            fecha_hasta.update()
+        else:
+            fecha_hasta.update()
+        if autoriza_del.value == "":
+            autoriza_del.error_text="Campo requerido"
+            autoriza_del.update()
+        else:
+            autoriza_del.update()
+        if autoriza_al.value == "":
+            autoriza_al.error_text="Campo requerido"
+            autoriza_al.update()
+        else:
+            autoriza_al.update()
         if consecutivo.value == "":
             consecutivo.error_text="Campo requerido"
             consecutivo.update()
         else:
             consecutivo.update()
         btn_save.focus()
-        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and consecutivo.value != "":
+        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and consecutivo.value != "":
             parqueadero.update()
             nit.update()
             regimen.update()
             direccion.update()
             telefono.update()
             servicio.update()
+            resolucion.update()
+            fecha_desde.update()
+            fecha_hasta.update()
+            autoriza_del.update()
+            autoriza_al.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, consecutivo.value, settings.preview, settings.print_receipt, printer.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, fecha_desde.value, fecha_hasta.value, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -261,6 +306,11 @@ def Configuration(page):
             direccion.width=settings.fieldwith
             telefono.width=settings.fieldwith
             servicio.width=settings.fieldwith
+            resolucion.width=settings.fieldwith
+            fecha_desde.width=settings.fieldwith
+            fecha_hasta.width=settings.fieldwith
+            autoriza_del.width=settings.fieldwith
+            autoriza_al.width=settings.fieldwith
             consecutivo.width=settings.fieldwith
             # lblDatos.width=settings.fieldwith
             # lblUsuarios.width=settings.fieldwith
@@ -273,18 +323,63 @@ def Configuration(page):
         direccion.update()
         telefono.update()
         servicio.update()
+        resolucion.update()
+        fecha_desde.update()
+        fecha_hasta.update()
+        autoriza_del.update()
+        autoriza_al.update()
         consecutivo.update()
         lblDatos.update()
         lblUsuarios.update()
         page.update()
 
     def preview_change(e):
-        settings.preview=0 if preview_switch.value == False else 1
+        settings.preview_register=0 if preview_switch.value == False else 1
     
     def print_change(e):
-        settings.print_receipt=0 if print_receipt_switch.value == False else 1
+        settings.print_register_receipt=0 if print_receipt_switch.value == False else 1
         printer.disabled=True if settings.print_receipt == 0 else False
         printer.update()
+
+    def preview_change_cash(e):
+        settings.preview_cash=0 if preview_switch_cash.value == False else 1
+    
+    def print_change_cash(e):
+        settings.print_cash_receipt=0 if print_receipt_switch_cash.value == False else 1
+        printer.disabled=True if settings.print_receipt == 0 else False
+        printer.update()
+
+    def change_date_from(e):
+        fecha_cierre=str(date_picker_from.value)
+        fecha_cierre=fecha_cierre.split(" ")
+        fecha_cierre=fecha_cierre[0]
+        fecha_cierre=fecha_cierre.split("-")
+        ano=fecha_cierre[0]
+        mes=fecha_cierre[1]
+        dia=fecha_cierre[2]
+        fecha_desde.value=dia + "/" + mes + "/" + ano
+        fecha_desde.update()
+        # fecha.value=dia + "/" + mes + "/" + ano
+        # fecha.focus()
+        if settings.sw == 1:
+            date_button_from.focus()
+        # print(f"Date picker changed, value is {date_picker.value}")
+
+    def change_date_to(e):
+        fecha_cierre=str(date_picker_to.value)
+        fecha_cierre=fecha_cierre.split(" ")
+        fecha_cierre=fecha_cierre[0]
+        fecha_cierre=fecha_cierre.split("-")
+        ano=fecha_cierre[0]
+        mes=fecha_cierre[1]
+        dia=fecha_cierre[2]
+        fecha_hasta.value=dia + "/" + mes + "/" + ano
+        fecha_hasta.update()
+        # fecha.value=dia + "/" + mes + "/" + ano
+        # fecha.focus()
+        if settings.sw == 1:
+            date_button_to.focus()
+        # print(f"Date picker changed, value is {date_picker.value}")
 
     page.on_resize=page_resize
 
@@ -314,6 +409,27 @@ def Configuration(page):
     elif page.window_width >= 1400:
         fieldwith=1300
 
+    date_picker_from=ft.DatePicker(
+        confirm_text="Aceptar",
+        field_label_text="Ingresa una fecha",
+        on_change=change_date_from,
+        # on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2023, 10, 1),
+        last_date=datetime.datetime(2024, 10, 1),
+    )
+
+    date_picker_to=ft.DatePicker(
+        confirm_text="Aceptar",
+        field_label_text="Ingresa una fecha",
+        on_change=change_date_to,
+        # on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2023, 10, 1),
+        last_date=datetime.datetime(2024, 10, 1),
+    )
+
+    page.overlay.append(date_picker_from)
+    page.overlay.append(date_picker_to)
+
     configuracion_id=id
     parqueadero=ft.TextField(label="Parqueadero", width=fieldwith, value=parqueadero)
     nit=ft.TextField(label="Nit", width=fieldwith, value=nit)
@@ -321,7 +437,14 @@ def Configuration(page):
     direccion=ft.TextField(label="Dirección", width=fieldwith, value=direccion)
     telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono)
     servicio=ft.TextField(label="Servicio", width=fieldwith, value=servicio)
-    consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo)
+    resolucion=ft.TextField(label="Resolución", width=fieldwith, value=resolucion, input_filter=ft.NumbersOnlyInputFilter())
+    fecha_desde=ft.TextField(label="Desde", hint_text="dd/mm/aaaa", width=fieldwith, value=fecha_desde)
+    fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", width=fieldwith, value=fecha_hasta)
+    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_from.pick_date())
+    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_to.pick_date())
+    autoriza_del=ft.TextField(label="Autoriza del", width=fieldwith, value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter())
+    autoriza_al=ft.TextField(label="Autoriza al", width=fieldwith, value=autoriza_al, input_filter=ft.NumbersOnlyInputFilter())
+    consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo, input_filter=ft.NumbersOnlyInputFilter())
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=validateConfiguration)
     # lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
     # lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
@@ -331,13 +454,18 @@ def Configuration(page):
     buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)
     # no_registros=ft.Text("No se encontraron registros", visible=True)
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
-    lblRecibos=ft.Text("Recibos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
+    lblRegistro=ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     # preview_switch=ft.Switch(label="Vista previa", label_position=ft.LabelPosition.LEFT, value=vista_previa, on_change=preview_change)
     # print_receipt_switch=ft.Switch(label="Imprimir", label_position=ft.LabelPosition.LEFT, value=imprimir, on_change=print_change)
-    lbl_preview=ft.Text("Vista previa", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
-    preview_switch=ft.Switch(value=vista_previa, on_change=preview_change)
-    lbl_print=ft.Text("Imprimir", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
-    print_receipt_switch=ft.Switch(value=imprimir, on_change=print_change)
+    lbl_preview=ft.Text("Vista previa recibo/factura", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    preview_switch=ft.Switch(value=vista_previa_registro, on_change=preview_change)
+    lbl_print=ft.Text("Imprimir recibo/factura", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    print_receipt_switch=ft.Switch(value=imprimir_registro, on_change=print_change)
+    lblCuadreCaja=ft.Text("Cuadre de Caja", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
+    lbl_preview_cash=ft.Text("Vista previa recibo", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    preview_switch_cash=ft.Switch(value=vista_previa_cuadre, on_change=preview_change_cash)
+    lbl_print_cash=ft.Text("Imprimir recibo", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    print_receipt_switch_cash=ft.Switch(value=imprimir_cuadre, on_change=print_change_cash)
 
     printers_list=[]
     printers=[printer[2] for printer in win32print.EnumPrinters(2)]
@@ -385,7 +513,8 @@ def Configuration(page):
             ),
             ft.Container(height=10),
             ft.Container(
-                ft.Row([
+                padding=ft.padding.only(10, 0, 10, 0),
+                content=ft.Row([
                     ft.Column([
                         lblDatos,
                         parqueadero,
@@ -394,8 +523,17 @@ def Configuration(page):
                         direccion,
                         telefono,
                         servicio,
-                        consecutivo,
-                        # btn_save
+                        resolucion
+                    ]),
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ),
+            ft.Container(
+                padding=ft.padding.only(10, 0, 10, 0),
+                content=ft.Row([
+                    ft.Column([
+                        fecha_desde,
                     ]),
                 ], 
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -403,11 +541,47 @@ def Configuration(page):
             ),
             ft.Container(
                 ft.Row([
-                    btn_save
+                    date_button_from
                 ], 
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
+            ft.Container(
+                padding=ft.padding.only(10, 0, 10, 0),
+                content=ft.Row([
+                    ft.Column([
+                        fecha_hasta, 
+                    ]),
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ),
+            ft.Container(
+                ft.Row([
+                    date_button_to
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ),
+            ft.Container(
+                padding=ft.padding.only(10, 0, 10, 0),
+                content=ft.Row([
+                    ft.Column([
+                        autoriza_del,
+                        autoriza_al,
+                        consecutivo
+                    ]),
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ),
+            # ft.Container(
+            #     ft.Row([
+            #         btn_save
+            #     ], 
+            #     alignment=ft.MainAxisAlignment.CENTER,
+            #     ),
+            # ),
             # ft.Container(
             #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
             #     # border_radius=10,
@@ -463,7 +637,7 @@ def Configuration(page):
                 padding=ft.padding.only(0, 0, 10, 0),
                 content=ft.ResponsiveRow([
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblRecibos]),
+                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblRegistro]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                 ]),
             ),
@@ -486,6 +660,32 @@ def Configuration(page):
                 ]),
             ),
             ft.Container(
+                padding=ft.padding.only(0, 0, 10, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblCuadreCaja]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                ]),
+            ),
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview_cash]),
+                    ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch_cash]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                ]),
+            ),
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print_cash]),
+                    ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch_cash]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                ]),
+            ),
+            ft.Container(
                 padding=ft.padding.only(0, 0, 20, 0),
                 content=ft.ResponsiveRow([
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
@@ -494,6 +694,14 @@ def Configuration(page):
                     ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[printer]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
+            ),
+            ft.Container(height=50),
+            ft.Container(
+                ft.Row([
+                    btn_save
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+                ),
             ),
             ft.Container(height=100),
         ]
