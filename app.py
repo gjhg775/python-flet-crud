@@ -45,16 +45,20 @@ from datatable import get_configuration, selectUser, selectAccess, add_user, get
 
 # ft.app(main)
 
-configuracion=get_configuration()
+# configuracion=get_configuration()
 
-if configuracion != None:
-    parqueadero=configuracion[0][1]
-    nit=configuracion[0][2]
-    regimen=configuracion[0][3]
-    direccion=configuracion[0][4]
-    telefono=configuracion[0][5]
-    servicio=configuracion[0][6]
-    consecutivo=configuracion[0][7]
+# if configuracion != None:
+#     parqueadero=configuracion[0][1]
+#     nit=configuracion[0][2]
+#     regimen=configuracion[0][3]
+#     direccion=configuracion[0][4]
+#     telefono=configuracion[0][5]
+#     servicio=configuracion[0][6]
+#     resolucion=configuracion[0][7]
+#     desde=configuracion[0][8]
+#     hasta=configuracion[0][9]
+#     autoriza=configuracion[0][10]
+#     consecutivo=configuracion[0][11]
 
 def main(page:ft.Page):
     
