@@ -559,8 +559,8 @@ def Register(page):
         field_label_text="Ingresa una fecha",
         on_change=change_date_from,
         # on_dismiss=date_picker_dismissed,
-        first_date=datetime.datetime(2023, 10, 1),
-        last_date=datetime.datetime(2024, 10, 1),
+        first_date=datetime.datetime(2024, 7, 1),
+        last_date=datetime.datetime(2050, 10, 1),
     )
 
     date_picker_to=ft.DatePicker(
@@ -568,8 +568,8 @@ def Register(page):
         field_label_text="Ingresa una fecha",
         on_change=change_date_to,
         # on_dismiss=date_picker_dismissed,
-        first_date=datetime.datetime(2023, 10, 1),
-        last_date=datetime.datetime(2024, 10, 1),
+        first_date=datetime.datetime(2024, 7, 1),
+        last_date=datetime.datetime(2050, 10, 1),
     )
 
     page.overlay.append(date_picker_from)

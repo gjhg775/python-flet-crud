@@ -156,6 +156,8 @@ def Configuration(page):
         imprimir_cuadre=False if configuracion[0][16] == 0 else True
         settings.printer=configuracion[0][17]
         impresora=configuracion[0][17]
+        settings.paper_width=configuracion[0][18]
+        papel=configuracion[0][18]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -245,7 +247,7 @@ def Configuration(page):
             autoriza_del.update()
             autoriza_al.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, fecha_desde.value, fecha_hasta.value, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, fecha_desde.value, fecha_hasta.value, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -339,7 +341,9 @@ def Configuration(page):
     def print_change(e):
         settings.print_register_receipt=0 if print_receipt_switch.value == False else 1
         printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
+        paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
         printer.update()
+        paper_width.update()
 
     def preview_change_cash(e):
         settings.preview_cash=0 if preview_switch_cash.value == False else 1
@@ -347,7 +351,9 @@ def Configuration(page):
     def print_change_cash(e):
         settings.print_cash_receipt=0 if print_receipt_switch_cash.value == False else 1
         printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
+        paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
         printer.update()
+        paper_width.update()
 
     def change_date_from(e):
         fecha_cierre=str(date_picker_from.value)
@@ -478,6 +484,9 @@ def Configuration(page):
 
     printer=ft.Dropdown(hint_text="Seleccione una impresora", options=printers_list, value=impresora, disabled=False)
     printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
+    # papers_list=[{"":"", "58":"58 mm", "80":"80 mm"}]
+    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option("58 mm"), ft.dropdown.Option("80 mm")], value=papel, disabled=False)
+    paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
     registros=selectUsers(search)
     if registros != []:
@@ -696,7 +705,7 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                     # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
                     # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
-                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[printer]),
+                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[printer, paper_width]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),

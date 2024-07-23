@@ -128,8 +128,8 @@ def Closing_day(page):
         field_label_text="Ingresa una fecha",
         on_change=change_date,
         # on_dismiss=date_picker_dismissed,
-        first_date=datetime.datetime(2023, 10, 1),
-        last_date=datetime.datetime(2024, 10, 1),
+        first_date=datetime.datetime(2024, 7, 1),
+        last_date=datetime.datetime(2050, 10, 1),
     )
 
     page.overlay.append(date_picker)
