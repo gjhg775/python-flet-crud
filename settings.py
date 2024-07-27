@@ -39,10 +39,12 @@ else:
     user_photo=ft.Image(src=f"img/{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
 def showMessage(bgcolor):
-    page.snack_bar=ft.SnackBar(
+    snack_bar=ft.SnackBar(
         ft.Text(message, text_align="center"),
         bgcolor=bgcolor,
-        duration=2000
+        duration=2000,
+        open=True
     )
-    page.snack_bar.open=True
+    page.overlay.append(snack_bar)
+    # page.snack_bar.open=True
     page.update()

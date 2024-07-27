@@ -365,7 +365,7 @@ def main(page:ft.Page):
 
     def exit(e):
         logout()
-        page.window_close()
+        page.window.close()
 
     def close_dlg(e):
         dlg_modal.open=False
@@ -374,7 +374,7 @@ def main(page:ft.Page):
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Text(title, text_align="center")
         dlg_modal.content=ft.Text(message, text_align="center")
-        page.dialog=dlg_modal
+        page.overlay.append(dlg_modal)
         dlg_modal.open=True
         page.update()
 
@@ -474,9 +474,9 @@ def main(page:ft.Page):
     page.title="Parqueadero"
     page.scroll="auto"
     page.theme_mode="light"
-    page.window_opacity=0.8
+    page.window.opacity=0.8
     page.opacity=0.0
-    page.window_min_width=378
+    page.window.min_width=378
     # page.window_width=378
     # page.window_width=992
     # page.window_resizable=False
@@ -484,7 +484,7 @@ def main(page:ft.Page):
     page.padding=0
     page.vertical_alignment="center"
     page.horizontal_alignment="center"
-    page.window_center()
+    page.window.center()
     page.locale_configuration = ft.LocaleConfiguration(
             supported_locales=[
                 # ft.Locale("de", "DE"),  # German, Germany

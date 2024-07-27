@@ -321,7 +321,7 @@ if configuracion != None:
 #     selectRegisters()
 
 def Register(page):
-    page.window_width=page.width
+    page.window.width=page.width
 
     configuracion=get_configuration()
 
@@ -333,13 +333,24 @@ def Register(page):
         direccion=configuracion[0][4]
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
-        # consecutivo=configuracion[0][7]
-        settings.preview=configuracion[0][8]
-        vista_previa=False if configuracion[0][8] == 0 else True
-        settings.print_receipt=configuracion[0][9]
-        imprimir=False if configuracion[0][9] == 0 else True
-        settings.printer=configuracion[0][10]
-        impresora=configuracion[0][10]
+        resolucion=configuracion[0][7]
+        fecha_desde=configuracion[0][8]
+        fecha_hasta=configuracion[0][9]
+        autoriza_del=configuracion[0][10]
+        autoriza_al=configuracion[0][11]
+        consecutivo=configuracion[0][12]
+        settings.preview_register=configuracion[0][13]
+        vista_previa_registro=False if configuracion[0][13] == 0 else True
+        settings.print_register_receipt=configuracion[0][14]
+        imprimir_registro=False if configuracion[0][14] == 0 else True
+        settings.preview_cash=configuracion[0][15]
+        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
+        settings.print_cash_receipt=configuracion[0][16]
+        imprimir_cuadre=False if configuracion[0][16] == 0 else True
+        settings.printer=configuracion[0][17]
+        impresora=configuracion[0][17]
+        settings.paper_width=configuracion[0][18]
+        papel=configuracion[0][18]
     
     def register(e):
         if placa.value != "":
@@ -415,13 +426,13 @@ def Register(page):
             total.update()
 
     def page_resize(e):
-        if page.window_width <= 425:
+        if page.window.width <= 425:
             settings.textsize=30
-        elif page.window_width > 425 and page.window_width <= 678:
+        elif page.window.width > 425 and page.window.width <= 678:
             settings.textsize=50
-        elif page.window_width >= 768 and page.window_width < 992:
+        elif page.window.width >= 768 and page.window.width < 992:
             settings.textsize=70
-        elif page.window_width >= 992 and page.window_width <= 1400:
+        elif page.window.width >= 992 and page.window.width <= 1400:
             settings.textsize=90
         if settings.sw == 0:
             placa.text_size=settings.textsize
@@ -491,7 +502,9 @@ def Register(page):
             settings.showMessage(bgcolor)
     
     def search_change(e):
-        search=e.control.value
+        search=e.control.value.upper()
+        buscar.value=search
+        buscar.update()
         # no_registros.visible=False
         tb.rows.clear()
         registros=selectRegisters(search)
@@ -507,6 +520,10 @@ def Register(page):
             settings.showMessage(bgcolor)
         tblRegistro.update()
         # no_registros.update()
+    
+    def text_to_upper(e):
+        placa.value=placa.value.upper()
+        placa.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -575,20 +592,20 @@ def Register(page):
     page.overlay.append(date_picker_from)
     page.overlay.append(date_picker_to)
 
-    page.on_resize=page_resize
+    page.on_resized=page_resize
 
-    if page.window_width <= 425:
+    if page.window.width <= 425:
         textsize=30
-    elif page.window_width > 425 and page.window_width <= 678:
+    elif page.window.width > 425 and page.window.width <= 678:
         textsize=50
-    elif page.window_width >= 768 and page.window_width < 992:
+    elif page.window.width >= 768 and page.window.width < 992:
         textsize=70
-    elif page.window_width >= 992:
+    elif page.window.width >= 992:
         textsize=90
     
     buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change)
     export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
-    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_blur=register)
+    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=text_to_upper, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")

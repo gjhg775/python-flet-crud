@@ -245,6 +245,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                 vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
             else:
                 horas=horas-(turno*12)
+                if int(horas) < 0:
+                    horas=horas*(-1)
                 total=int(horas)*valor_hora_moto
                 if minutos == 0:
                     valor_fraccion=0
@@ -265,6 +267,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                 vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
             else:
                 horas=horas-(turno*12)
+                if int(horas) < 0:
+                    horas=horas*(-1)
                 total=int(horas)*valor_hora_carro
                 if minutos == 0:
                     valor_fraccion=0
@@ -285,6 +289,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
             else:
                 horas=horas-(turno*12)
+                if int(horas) < 0:
+                    horas=horas*(-1)
                 total=int(horas)*valor_hora_otro
                 if minutos == 0:
                     valor_fraccion=0

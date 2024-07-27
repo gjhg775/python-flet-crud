@@ -67,7 +67,7 @@ tb = DataTable(
         # DataColumn(Text("Vehiculo")),
         # DataColumn(Text("Valor")),
         # DataColumn(Text("Tiempo")),
-        DataColumn(Text("Total"), visible=False),
+        # DataColumn(Text("Total"), visible=False),
         # DataColumn(Text("Cuadre")),
         # DataColumn(Text("Usuario")),
 		# DataColumn(Text("Acción")),
@@ -420,14 +420,19 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                     total=total+valor_fraccion+(valor_turno_moto*turno)
                 else:
                     horas=horas-(turno*12)
-                    total=int(horas)*valor_hora_moto
+                    if int(horas) < 0:
+                        horas=horas*(-1)
+                    if int(horas) <= 4:
+                        total=int(horas)*valor_hora_moto
+                    else:
+                        turno=int(horas/12)
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
                         valor_fraccion=valor_hora_moto/2
                     if minutos > 15:
                         valor_fraccion=valor_hora_moto
-                    total=total+valor_fraccion+valor_turno_moto
+                    total=total+valor_fraccion+(valor_turno_moto*turno)
             if vehiculo == "Carro":
                 if turno > 1 and int(horas) <= 4:
                     total=int(horas)*valor_hora_carro
@@ -440,6 +445,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                     total=total+valor_fraccion+(valor_turno_carro*turno)
                 else:
                     horas=horas-(turno*12)
+                    if int(horas) < 0:
+                        horas=horas*(-1)
                     total=int(horas)*valor_hora_carro
                     if minutos == 0:
                         valor_fraccion=0
@@ -460,6 +467,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                     total=total+valor_fraccion+(valor_turno_otro*turno)
                 else:
                     horas=horas-(turno*12)
+                    if int(horas) < 0:
+                        horas=horas*(-1)
                     total=int(horas)*valor_hora_otro
                     if minutos == 0:
                         valor_fraccion=0
@@ -634,6 +643,19 @@ def showedit(e):
         fecha_hasta=configuracion[0][9]
         autoriza_del=configuracion[0][10]
         autoriza_al=configuracion[0][11]
+        consecutivo=configuracion[0][12]
+        settings.preview_register=configuracion[0][13]
+        vista_previa_registro=False if configuracion[0][13] == 0 else True
+        settings.print_register_receipt=configuracion[0][14]
+        imprimir_registro=False if configuracion[0][14] == 0 else True
+        settings.preview_cash=configuracion[0][15]
+        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
+        settings.print_cash_receipt=configuracion[0][16]
+        imprimir_cuadre=False if configuracion[0][16] == 0 else True
+        settings.printer=configuracion[0][17]
+        impresora=configuracion[0][17]
+        settings.paper_width=configuracion[0][18]
+        papel=configuracion[0][18]
 
         placa=registros[0][2]
         entrada=registros[0][3]
@@ -841,6 +863,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
             turno=turno+1
         if vehiculo == "Moto":
             if turno > 1 and int(horas) <= 4:
+                print("UNO")
                 total=int(horas)*valor_hora_moto
                 if minutos == 0:
                     valor_fraccion=0
@@ -850,7 +873,10 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_moto
                 vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
             else:
+                print("DOS")
                 horas=horas-(turno*12)
+                if int(horas) < 0:
+                    horas=horas*(-1)
                 total=int(horas)*valor_hora_moto
                 if minutos == 0:
                     valor_fraccion=0
@@ -870,13 +896,17 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_carro
                 vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
             else:
+                horas=horas-(turno*12)
+                if int(horas) < 0:
+                    horas=horas*(-1)
+                total=int(horas)*valor_hora_carro
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_carro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_carro
-                vlr_total=valor_fraccion+valor_turno_carro
+                vlr_total=total+valor_fraccion+valor_turno_carro
         if vehiculo == "Otro":
             if turno > 1 and int(horas) <= 4:
                 total=int(horas)*valor_hora_otro
@@ -888,13 +918,17 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
             else:
+                horas=horas-(turno*12)
+                if int(horas) < 0:
+                    horas=horas*(-1)
+                total=int(horas)*valor_hora_otro
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_otro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_otro
-                vlr_total=valor_fraccion+valor_turno_otro
+                vlr_total=total+valor_fraccion+valor_turno_otro
 
     pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
     pdf.add_page()
@@ -1274,23 +1308,23 @@ def selectRegisters(search):
                         # DataCell(Text(x["vehiculo"])),
                         # DataCell(Text(x["valor"])),
                         # DataCell(Text(x["tiempo"])),
-                        DataCell(Text(x["total"], color=color, weight=weight)),
+                        # DataCell(Text(x["total"], color=color, weight=weight)),
                         # DataCell(Text(x["cuadre"])),
                         # DataCell(Text(x["usuario"])),
-                        DataCell(Row([
-                        	# IconButton(icon="create",icon_color="blue",
-                        	# 	data=x,
-                        	# 	on_click=showedit
-                        	# 	),
-                        	# IconButton(icon="delete",icon_color="red",
-                        	# 	data=x["id"],
-                        	# 	on_click=showdelete
-                        	# 	),
-                            # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
-                        	# 	data=x,
-                        	# 	on_click=showedit
-                        	# 	),
-                        ])),
+                        # DataCell(Row([
+                        # 	# IconButton(icon="create",icon_color="blue",
+                        # 	# 	data=x,
+                        # 	# 	on_click=showedit
+                        # 	# 	),
+                        # 	# IconButton(icon="delete",icon_color="red",
+                        # 	# 	data=x["id"],
+                        # 	# 	on_click=showdelete
+                        # 	# 	),
+                        #     # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        # 	# 	data=x,
+                        # 	# 	on_click=showedit
+                        # 	# 	),
+                        # ])),
                     ],
                 ),
             )
@@ -1347,20 +1381,20 @@ def selectCashRegister():
                         DataCell(Text(locale.currency(x["valor"], grouping=True), color=color, weight=weight)),
                         DataCell(Text(locale.currency(x["total"], grouping=True), color=color, weight=weight)),
                         # DataCell(Text(x["cuadre"])),
-                        DataCell(Row([
-                        	# IconButton(icon="create",icon_color="blue",
-                        	# 	data=x,
-                        	# 	on_click=showedit
-                        	# 	),
-                        	# IconButton(icon="delete",icon_color="red",
-                        	# 	data=x["id"],
-                        	# 	on_click=showdelete
-                        	# 	),
-                            # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
-                        	# 	data=x,
-                        	# 	on_click=showedit
-                        	# 	),
-                        ])),
+                        # DataCell(Row([
+                        # 	# IconButton(icon="create",icon_color="blue",
+                        # 	# 	data=x,
+                        # 	# 	on_click=showedit
+                        # 	# 	),
+                        # 	# IconButton(icon="delete",icon_color="red",
+                        # 	# 	data=x["id"],
+                        # 	# 	on_click=showdelete
+                        # 	# 	),
+                        #     # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        # 	# 	data=x,
+                        # 	# 	on_click=showedit
+                        # 	# 	),
+                        # ])),
                     ],
                 ),
             )

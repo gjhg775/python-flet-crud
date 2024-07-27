@@ -391,7 +391,7 @@ def Configuration(page):
         consecutivo.value = e.control.value
         consecutivo.update()
 
-    page.on_resize=page_resize
+    page.on_resized=page_resize
 
     # if page.window_width <= 425:
     #     fieldwith=page.window_width - 40
@@ -405,18 +405,18 @@ def Configuration(page):
     #     fieldwith=900
     # elif page.window_width >= 1400:
     #     fieldwith=1000
-    if page.window_width < 576:
-        fieldwith=page.window_width - 40
-    elif page.window_width >= 576 and page.window_width < 768:
-        fieldwith=page.window_width - 40
-    elif page.window_width >= 768:
+    if page.window.width < 576:
+        fieldwith=page.window.width - 40
+    elif page.window.width >= 576 and page.window.width < 768:
+        fieldwith=page.window.width - 40
+    elif page.window.width >= 768:
         # fieldwith=page.window_width - 40
         fieldwith=700
-    elif page.window_width >= 992:
+    elif page.window.width >= 992:
         fieldwith=900
-    elif page.window_width >= 1200:
+    elif page.window.width >= 1200:
         fieldwith=1100
-    elif page.window_width >= 1400:
+    elif page.window.width >= 1400:
         fieldwith=1300
 
     date_picker_from=ft.DatePicker(
