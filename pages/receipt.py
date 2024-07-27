@@ -32,23 +32,25 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     resolucion=configuracion[0][7]
-    fecha_desde=configuracion[0][8]
-    fecha_hasta=configuracion[0][9]
-    autoriza_del=configuracion[0][10]
-    autoriza_al=configuracion[0][11]
-    consecutivo=configuracion[0][12]
-    settings.preview_register=configuracion[0][13]
-    vista_previa_registro=False if configuracion[0][13] == 0 else True
-    settings.print_register_receipt=configuracion[0][14]
-    imprimir_registro=False if configuracion[0][14] == 0 else True
-    settings.preview_cash=configuracion[0][15]
-    vista_previa_cuadre=False if configuracion[0][15] == 0 else True
-    settings.print_cash_receipt=configuracion[0][16]
-    imprimir_cuadre=False if configuracion[0][16] == 0 else True
-    settings.printer=configuracion[0][17]
-    impresora=configuracion[0][17]
-    settings.paper_width=configuracion[0][18]
-    papel=configuracion[0][18]
+    settings.prefijo=configuracion[0][8]
+    prefijo=configuracion[0][8]
+    fecha_desde=configuracion[0][9]
+    fecha_hasta=configuracion[0][10]
+    autoriza_del=configuracion[0][11]
+    autoriza_al=configuracion[0][12]
+    consecutivo=configuracion[0][13]
+    settings.preview_register=configuracion[0][14]
+    vista_previa_registro=False if configuracion[0][14] == 0 else True
+    settings.print_register_receipt=configuracion[0][15]
+    imprimir_registro=False if configuracion[0][15] == 0 else True
+    settings.preview_cash=configuracion[0][16]
+    vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+    settings.print_cash_receipt=configuracion[0][17]
+    imprimir_cuadre=False if configuracion[0][17] == 0 else True
+    settings.printer=configuracion[0][18]
+    impresora=configuracion[0][18]
+    settings.paper_width=configuracion[0][19]
+    papel=configuracion[0][19]
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
@@ -153,12 +155,12 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
+def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, prefijo, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=str(consecutivo)
+    consecutivo=prefijo + str(consecutivo)
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
@@ -244,17 +246,16 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                     valor_fraccion=valor_hora_moto
                 vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
             else:
-                horas=horas-(turno*12)
-                if int(horas) < 0:
-                    horas=horas*(-1)
-                total=int(horas)*valor_hora_moto
+                total=0
+                if int(horas) <= 4:
+                    total=int(horas)*valor_hora_moto
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_moto/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_moto
-                vlr_total=total+valor_fraccion+valor_turno_moto
+                vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
         if vehiculo == "Carro":
             if turno > 1 and int(horas) <= 4:
                 total=int(horas)*valor_hora_carro
@@ -266,17 +267,16 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                     valor_fraccion=valor_hora_carro
                 vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
             else:
-                horas=horas-(turno*12)
-                if int(horas) < 0:
-                    horas=horas*(-1)
-                total=int(horas)*valor_hora_carro
+                total=0
+                if int(horas) <= 4:
+                    total=int(horas)*valor_hora_carro
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_carro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_carro
-                vlr_total=total+valor_fraccion+valor_turno_carro
+                vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
         if vehiculo == "Otro":
             if turno > 1 and int(horas) <= 4:
                 total=int(horas)*valor_hora_otro
@@ -288,17 +288,16 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
             else:
-                horas=horas-(turno*12)
-                if int(horas) < 0:
-                    horas=horas*(-1)
-                total=int(horas)*valor_hora_otro
+                total=0
+                if int(horas) <= 4:
+                    total=int(horas)*valor_hora_otro
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_otro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_otro
-                vlr_total=total+valor_fraccion+valor_turno_otro
+                vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
     pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
     pdf.add_page()
@@ -479,7 +478,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         pos+=10
         pagina+=1
         contador+=1
-        consecutivo=registro[0]
+        consecutivo=settings.prefijo + str(registro[0])
         placa=registro[1]
         entrada=registro[2]
         salida=registro[3]
@@ -602,7 +601,7 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         pos+=10
         contador+=1
         pendiente+=1
-        consecutivo=registro[0]
+        consecutivo=settings.prefijo + str(registro[0])
         placa=registro[1]
         entrada=registro[2]
         vehiculo=registro[4]

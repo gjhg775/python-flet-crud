@@ -64,6 +64,7 @@ def create_configuration():
         resolucion TEXT,
         fecha_desde TEXT,
         fecha_hasta TEXT,
+        prefijo TEXT,
         autoriza_del TEXT,
         autoriza_al TEXT,
         consecutivo TEXT,
@@ -157,8 +158,8 @@ def admin_access():
 def add_configuration():
     try:
         cursor=conn.cursor()
-        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-        values=("", "", "", "", "", "", "", "", "", "", "", "", "1", "1", "1", "1", "", "")
+        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        values=("", "", "", "", "", "", "", "", "", "", "", "", "", "1", "1", "1", "1", "", "")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

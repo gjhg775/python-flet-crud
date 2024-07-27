@@ -243,29 +243,31 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     resolucion=configuracion[0][7]
-    fecha_desde=configuracion[0][8]
-    fecha_hasta=configuracion[0][9]
-    autoriza_del=configuracion[0][10]
-    autoriza_al=configuracion[0][11]
-    consecutivo=configuracion[0][12]
-    settings.preview_register=configuracion[0][13]
-    vista_previa_registro=False if configuracion[0][13] == 0 else True
-    settings.print_register_receipt=configuracion[0][14]
-    imprimir_registro=False if configuracion[0][14] == 0 else True
-    settings.preview_cash=configuracion[0][15]
-    vista_previa_cuadre=False if configuracion[0][15] == 0 else True
-    settings.print_cash_receipt=configuracion[0][16]
-    imprimir_cuadre=False if configuracion[0][16] == 0 else True
-    settings.printer=configuracion[0][17]
-    impresora=configuracion[0][17]
-    settings.paper_width=configuracion[0][18]
-    papel=configuracion[0][18]
+    settings.prefijo=configuracion[0][8]
+    prefijo=configuracion[0][8]
+    fecha_desde=configuracion[0][9]
+    fecha_hasta=configuracion[0][10]
+    autoriza_del=configuracion[0][11]
+    autoriza_al=configuracion[0][12]
+    consecutivo=configuracion[0][13]
+    settings.preview_register=configuracion[0][14]
+    vista_previa_registro=False if configuracion[0][14] == 0 else True
+    settings.print_register_receipt=configuracion[0][15]
+    imprimir_registro=False if configuracion[0][15] == 0 else True
+    settings.preview_cash=configuracion[0][16]
+    vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+    settings.print_cash_receipt=configuracion[0][17]
+    imprimir_cuadre=False if configuracion[0][17] == 0 else True
+    settings.printer=configuracion[0][18]
+    impresora=configuracion[0][18]
+    settings.paper_width=configuracion[0][19]
+    papel=configuracion[0][19]
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, autoriza_del = ?, autoriza_al = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{autoriza_del}", f"{autoriza_al}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -409,7 +411,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             if int(horas) > 4:
                 turno=turno+1
             if vehiculo == "Moto":
-                if turno > 1 and int(horas) <= 4:
+                if turno >= 1 and int(horas) <= 4:
                     total=int(horas)*valor_hora_moto
                     if minutos == 0:
                         valor_fraccion=0
@@ -419,13 +421,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                         valor_fraccion=valor_hora_moto
                     total=total+valor_fraccion+(valor_turno_moto*turno)
                 else:
-                    horas=horas-(turno*12)
-                    if int(horas) < 0:
-                        horas=horas*(-1)
+                    total=0
                     if int(horas) <= 4:
                         total=int(horas)*valor_hora_moto
-                    else:
-                        turno=int(horas/12)
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
@@ -444,17 +442,16 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                         valor_fraccion=valor_hora_carro
                     total=total+valor_fraccion+(valor_turno_carro*turno)
                 else:
-                    horas=horas-(turno*12)
-                    if int(horas) < 0:
-                        horas=horas*(-1)
-                    total=int(horas)*valor_hora_carro
+                    total=0
+                    if int(horas) <= 4:
+                        total=int(horas)*valor_hora_carro
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
                         valor_fraccion=valor_hora_carro/2
                     if minutos > 15:
                         valor_fraccion=valor_hora_carro
-                    total=total+valor_fraccion+valor_turno_carro
+                    total=total+valor_fraccion+(valor_turno_carro*turno)
             if vehiculo == "Otro":
                 if turno > 1 and int(horas) <= 4:
                     total=int(horas)*valor_hora_otro
@@ -466,17 +463,16 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                         valor_fraccion=valor_hora_otro
                     total=total+valor_fraccion+(valor_turno_otro*turno)
                 else:
-                    horas=horas-(turno*12)
-                    if int(horas) < 0:
-                        horas=horas*(-1)
-                    total=int(horas)*valor_hora_otro
+                    total=0
+                    if int(horas) <= 4:
+                        total=int(horas)*valor_hora_otro
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
                         valor_fraccion=valor_hora_otro/2
                     if minutos > 15:
                         valor_fraccion=valor_hora_otro
-                    total=total+valor_fraccion+valor_turno_otro
+                    total=total+valor_fraccion+(valor_turno_otro*turno)
             facturacion=1
 
         # tiempo=int(tiempo)
@@ -641,21 +637,23 @@ def showedit(e):
         resolucion=configuracion[0][7]
         fecha_desde=configuracion[0][8]
         fecha_hasta=configuracion[0][9]
-        autoriza_del=configuracion[0][10]
-        autoriza_al=configuracion[0][11]
-        consecutivo=configuracion[0][12]
-        settings.preview_register=configuracion[0][13]
-        vista_previa_registro=False if configuracion[0][13] == 0 else True
-        settings.print_register_receipt=configuracion[0][14]
-        imprimir_registro=False if configuracion[0][14] == 0 else True
-        settings.preview_cash=configuracion[0][15]
-        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
-        settings.print_cash_receipt=configuracion[0][16]
-        imprimir_cuadre=False if configuracion[0][16] == 0 else True
-        settings.printer=configuracion[0][17]
-        impresora=configuracion[0][17]
-        settings.paper_width=configuracion[0][18]
-        papel=configuracion[0][18]
+        settings.prefijo=configuracion[0][10]
+        prefijo=configuracion[0][10]
+        autoriza_del=configuracion[0][11]
+        autoriza_al=configuracion[0][12]
+        consecutivo=configuracion[0][13]
+        settings.preview_register=configuracion[0][14]
+        vista_previa_registro=False if configuracion[0][14] == 0 else True
+        settings.print_register_receipt=configuracion[0][15]
+        imprimir_registro=False if configuracion[0][15] == 0 else True
+        settings.preview_cash=configuracion[0][16]
+        vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+        settings.print_cash_receipt=configuracion[0][17]
+        imprimir_cuadre=False if configuracion[0][17] == 0 else True
+        settings.printer=configuracion[0][18]
+        impresora=configuracion[0][18]
+        settings.paper_width=configuracion[0][19]
+        papel=configuracion[0][19]
 
         placa=registros[0][2]
         entrada=registros[0][3]
@@ -674,7 +672,7 @@ def showedit(e):
         if vlr_total == 0:
             showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, comentario3, entradas)
         if vlr_total > 0:
-            showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
+            showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
     except Exception as e:
         print(e)
 
@@ -781,12 +779,12 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
+def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=str(consecutivo)
+    consecutivo=prefijo + str(consecutivo)
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
@@ -862,7 +860,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         if int(horas) > 4:
             turno=turno+1
         if vehiculo == "Moto":
-            if turno > 1 and int(horas) <= 4:
+            if turno >= 1 and int(horas) <= 4:
                 print("UNO")
                 total=int(horas)*valor_hora_moto
                 if minutos == 0:
@@ -873,18 +871,16 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_moto
                 vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
             else:
-                print("DOS")
-                horas=horas-(turno*12)
-                if int(horas) < 0:
-                    horas=horas*(-1)
-                total=int(horas)*valor_hora_moto
+                total=0
+                if int(horas) <= 4:
+                    total=int(horas)*valor_hora_moto
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_moto/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_moto
-                vlr_total=total+valor_fraccion+valor_turno_moto
+                vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
         if vehiculo == "Carro":
             if turno > 1 and int(horas) <= 4:
                 total=int(horas)*valor_hora_carro
@@ -896,17 +892,16 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_carro
                 vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
             else:
-                horas=horas-(turno*12)
-                if int(horas) < 0:
-                    horas=horas*(-1)
-                total=int(horas)*valor_hora_carro
+                total=0
+                if int(horas) <= 4:
+                    total=int(horas)*valor_hora_carro
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_carro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_carro
-                vlr_total=total+valor_fraccion+valor_turno_carro
+                vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
         if vehiculo == "Otro":
             if turno > 1 and int(horas) <= 4:
                 total=int(horas)*valor_hora_otro
@@ -918,17 +913,16 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
             else:
-                horas=horas-(turno*12)
-                if int(horas) < 0:
-                    horas=horas*(-1)
-                total=int(horas)*valor_hora_otro
+                total=0
+                if int(horas) <= 4:
+                    total=int(horas)*valor_hora_otro
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_otro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_otro
-                vlr_total=total+valor_fraccion+valor_turno_otro
+                vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
     pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
     pdf.add_page()
@@ -1335,13 +1329,13 @@ def selectRegisters(search):
     #     settings.showMessage(bgcolor)
     return registros
 
-def exportRegister(fecha_desde, fecha_hasta):
+def exportRegister(fecha_desde, fecha_hasta, prefijo):
     cuadre=1
     cursor=conn.cursor()
     if fecha_desde == "dd/mm/aaaa" and fecha_hasta == "dd/mm/aaaa":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
+        sql=f"""SELECT '{prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE salida BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
+        sql=f"""SELECT '{prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE salida BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
     cursor.execute(sql)
     registros=cursor.fetchall()
     return registros

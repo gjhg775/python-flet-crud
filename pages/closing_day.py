@@ -10,7 +10,7 @@ conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 locale.setlocale(locale.LC_ALL, "")
 
 def Closing_day(page):
-    page.window_width=page.width
+    page.window.width=page.width
 
     configuracion=get_configuration()
 
@@ -23,23 +23,25 @@ def Closing_day(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         resolucion=configuracion[0][7]
-        fecha_desde=configuracion[0][8]
-        fecha_hasta=configuracion[0][9]
-        autoriza_del=configuracion[0][10]
-        autoriza_al=configuracion[0][11]
-        consecutivo=configuracion[0][12]
-        settings.preview_register=configuracion[0][13]
-        vista_previa_registro=False if configuracion[0][13] == 0 else True
-        settings.print_register_receipt=configuracion[0][14]
-        imprimir_registro=False if configuracion[0][14] == 0 else True
-        settings.preview_cash=configuracion[0][15]
-        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
-        settings.print_cash_receipt=configuracion[0][16]
-        imprimir_cuadre=False if configuracion[0][16] == 0 else True
-        settings.printer=configuracion[0][17]
-        impresora=configuracion[0][17]
-        settings.paper_width=configuracion[0][18]
-        papel=configuracion[0][18]
+        settings.prefijo=configuracion[0][8]
+        prefijo=configuracion[0][8]
+        fecha_desde=configuracion[0][9]
+        fecha_hasta=configuracion[0][10]
+        autoriza_del=configuracion[0][11]
+        autoriza_al=configuracion[0][12]
+        consecutivo=configuracion[0][13]
+        settings.preview_register=configuracion[0][14]
+        vista_previa_registro=False if configuracion[0][14] == 0 else True
+        settings.print_register_receipt=configuracion[0][15]
+        imprimir_registro=False if configuracion[0][15] == 0 else True
+        settings.preview_cash=configuracion[0][16]
+        vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+        settings.print_cash_receipt=configuracion[0][17]
+        imprimir_cuadre=False if configuracion[0][17] == 0 else True
+        settings.printer=configuracion[0][18]
+        impresora=configuracion[0][18]
+        settings.paper_width=configuracion[0][19]
+        papel=configuracion[0][19]
 
     def cancel(e):
         close_dlg(e)
@@ -96,21 +98,23 @@ def Closing_day(page):
             fecha.update()
             date_button.focus()
 
-            page.snack_bar=ft.SnackBar(
+            snack_bar=ft.SnackBar(
                 ft.Text(message, color="white", text_align="center"),
-                bgcolor=bg_color
+                bgcolor=bg_color,
+                open=True
             )
-            page.snack_bar.open=True
+            page.overlay.append(snack_bar)
+            # page.snack_bar.open=True
             page.update()
 
     def page_resize(e):
-        if page.window_width <= 425:
+        if page.window.width <= 425:
             settings.textsize=30
-        elif page.window_width > 425 and page.window_width <= 678:
+        elif page.window.width > 425 and page.window.width <= 678:
             settings.textsize=50
-        elif page.window_width >= 768 and page.window_width < 992:
+        elif page.window.width >= 768 and page.window.width < 992:
             settings.textsize=70
-        elif page.window_width >= 992 and page.window_width <= 1400:
+        elif page.window.width >= 992 and page.window.width <= 1400:
             settings.textsize=90
         if settings.sw == 0:
             fecha.text_size=settings.textsize
@@ -146,7 +150,7 @@ def Closing_day(page):
         on_change=change_date,
         # on_dismiss=date_picker_dismissed,
         first_date=datetime.datetime(2024, 7, 1),
-        last_date=datetime.datetime(2050, 10, 1),
+        last_date=datetime.datetime(2099, 10, 1),
     )
 
     page.overlay.append(date_picker)
@@ -157,7 +161,7 @@ def Closing_day(page):
         width=280,
         bgcolor=ft.colors.BLUE_900,
         color="white",
-        on_click=lambda _: date_picker.pick_date(),
+        on_click=lambda _: page.open(date_picker),
     )
 
     btn_cierre=ft.ElevatedButton(
@@ -170,14 +174,14 @@ def Closing_day(page):
 
     def close_dlg(e):
         dlg_modal.open=False
-        page.update()
+        dlg_modal.update()
         # total.update()
 
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Text(title, text_align="center")
         dlg_modal.content=ft.Text(message, text_align="center")
-        page.dialog=dlg_modal
         dlg_modal.open=True
+        page.overlay.append(dlg_modal)
         page.update()
 
     dlg_modal=ft.AlertDialog(
@@ -194,15 +198,15 @@ def Closing_day(page):
         on_dismiss=lambda _: date_button.focus(),
     )
     
-    page.on_resize=page_resize
+    page.on_resized=page_resize
 
-    if page.window_width <= 425:
+    if page.window.width <= 425:
         textsize=30
-    elif page.window_width > 425 and page.window_width <= 678:
+    elif page.window.width > 425 and page.window.width <= 678:
         textsize=50
-    elif page.window_width >= 768 and page.window_width < 992:
+    elif page.window.width >= 768 and page.window.width < 992:
         textsize=70
-    elif page.window_width >= 992:
+    elif page.window.width >= 992:
         textsize=90
 
     # fecha=ft.TextField(hint_text="dd/mm/aaaa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=close_day)

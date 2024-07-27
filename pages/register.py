@@ -34,12 +34,26 @@ if configuracion != None:
     direccion=configuracion[0][4]
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
-    consecutivo=configuracion[0][7]
-    settings.preview=configuracion[0][8]
-    vista_previa=False if configuracion[0][8] == 0 else True
-    imprimir=False if configuracion[0][9] == 0 else True
-    impresora=configuracion[0][10]
-    settings.printer=configuracion[0][10]
+    resolucion=configuracion[0][7]
+    settings.prefijo=configuracion[0][8]
+    prefijo=configuracion[0][8]
+    fecha_desde=configuracion[0][9]
+    fecha_hasta=configuracion[0][10]
+    autoriza_del=configuracion[0][11]
+    autoriza_al=configuracion[0][12]
+    consecutivo=configuracion[0][13]
+    settings.preview_register=configuracion[0][14]
+    vista_previa_registro=False if configuracion[0][14] == 0 else True
+    settings.print_register_receipt=configuracion[0][15]
+    imprimir_registro=False if configuracion[0][15] == 0 else True
+    settings.preview_cash=configuracion[0][16]
+    vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+    settings.print_cash_receipt=configuracion[0][17]
+    imprimir_cuadre=False if configuracion[0][17] == 0 else True
+    settings.printer=configuracion[0][18]
+    impresora=configuracion[0][18]
+    settings.paper_width=configuracion[0][19]
+    papel=configuracion[0][19]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -452,21 +466,21 @@ def Register(page):
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Text(title, text_align="center")
         dlg_modal.content=ft.Text(message, text_align="center")
-        page.dialog=dlg_modal
+        page.overlay.append(dlg_modal)
         dlg_modal.open=True
-        page.update()
+        dlg_modal.update()
 
     def export_excel(e):
         dlg_modal2.open=False
-        page.update()
-        data=exportRegister(fecha_desde.value, fecha_hasta.value)
+        dlg_modal2.update()
+        data=exportRegister(fecha_desde.value, fecha_hasta.value, settings.prefijo)
         if data != []:
             message="Exportando registros"
             bgcolor="blue"
             settings.message=message
             settings.showMessage(bgcolor)
             file_name="register.xlsx"
-            df=pd.DataFrame(data, columns=["Recibo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
+            df=pd.DataFrame(data, columns=["Factura", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
             df.to_excel(path+file_name, index=False)
             message="Registros exportados satisfactoriamente"
             bgcolor="green"
@@ -492,7 +506,7 @@ def Register(page):
         if settings.username == "Super Admin" or settings.username == "Admin":
             # dlg_modal2.title=ft.Text(title, text_align="center")
             # dlg_modal2.content=ft.Text(message, text_align="center")
-            page.dialog=dlg_modal2
+            page.overlay.append(dlg_modal2)
             dlg_modal2.open=True
             page.update()
         else:
@@ -577,7 +591,7 @@ def Register(page):
         on_change=change_date_from,
         # on_dismiss=date_picker_dismissed,
         first_date=datetime.datetime(2024, 7, 1),
-        last_date=datetime.datetime(2050, 10, 1),
+        last_date=datetime.datetime(2099, 10, 1),
     )
 
     date_picker_to=ft.DatePicker(
@@ -586,7 +600,7 @@ def Register(page):
         on_change=change_date_to,
         # on_dismiss=date_picker_dismissed,
         first_date=datetime.datetime(2024, 7, 1),
-        last_date=datetime.datetime(2050, 10, 1),
+        last_date=datetime.datetime(2099, 10, 1),
     )
 
     page.overlay.append(date_picker_from)
@@ -609,8 +623,8 @@ def Register(page):
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
-    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_from.pick_date())
-    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_to.pick_date())
+    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from))
+    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_to))
 
     dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),

@@ -141,23 +141,25 @@ def Configuration(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         resolucion=configuracion[0][7]
-        fecha_desde=configuracion[0][8]
-        fecha_hasta=configuracion[0][9]
-        autoriza_del=configuracion[0][10]
-        autoriza_al=configuracion[0][11]
-        consecutivo=configuracion[0][12]
-        settings.preview_register=configuracion[0][13]
-        vista_previa_registro=False if configuracion[0][13] == 0 else True
-        settings.print_register_receipt=configuracion[0][14]
-        imprimir_registro=False if configuracion[0][14] == 0 else True
-        settings.preview_cash=configuracion[0][15]
-        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
-        settings.print_cash_receipt=configuracion[0][16]
-        imprimir_cuadre=False if configuracion[0][16] == 0 else True
-        settings.printer=configuracion[0][17]
-        impresora=configuracion[0][17]
-        settings.paper_width=configuracion[0][18]
-        papel=configuracion[0][18]
+        settings.prefijo=configuracion[0][8]
+        prefijo=configuracion[0][8]
+        fecha_desde=configuracion[0][9]
+        fecha_hasta=configuracion[0][10]
+        autoriza_del=configuracion[0][11]
+        autoriza_al=configuracion[0][12]
+        consecutivo=configuracion[0][13]
+        settings.preview_register=configuracion[0][14]
+        vista_previa_registro=False if configuracion[0][14] == 0 else True
+        settings.print_register_receipt=configuracion[0][15]
+        imprimir_registro=False if configuracion[0][15] == 0 else True
+        settings.preview_cash=configuracion[0][16]
+        vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+        settings.print_cash_receipt=configuracion[0][17]
+        imprimir_cuadre=False if configuracion[0][17] == 0 else True
+        settings.printer=configuracion[0][18]
+        impresora=configuracion[0][18]
+        settings.paper_width=configuracion[0][19]
+        papel=configuracion[0][19]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -169,6 +171,7 @@ def Configuration(page):
         resolucion.error_text=""
         fecha_desde.error_text=""
         fecha_hasta.error_text=""
+        prefijo.error_text=""
         autoriza_del.error_text=""
         autoriza_al.error_text=""
         consecutivo.error_text=""
@@ -208,6 +211,11 @@ def Configuration(page):
             resolucion.update()
         else:
             resolucion.update()
+        if prefijo.value == "":
+            prefijo.error_text="Campo requerido"
+            prefijo.update()
+        else:
+            prefijo.update()
         if fecha_desde.value == "":
             fecha_desde.error_text="Campo requerido"
             fecha_desde.update()
@@ -234,7 +242,7 @@ def Configuration(page):
         else:
             consecutivo.update()
         btn_save.focus()
-        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and consecutivo.value != "":
+        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and prefijo.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and consecutivo.value != "":
             parqueadero.update()
             nit.update()
             regimen.update()
@@ -242,12 +250,13 @@ def Configuration(page):
             telefono.update()
             servicio.update()
             resolucion.update()
+            prefijo.update()
             fecha_desde.update()
             fecha_hasta.update()
             autoriza_del.update()
             autoriza_al.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, fecha_desde.value, fecha_hasta.value, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, settings.prefijo, fecha_desde.value, fecha_hasta.value, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -288,18 +297,18 @@ def Configuration(page):
         #     settings.fieldwith=900
         # elif page.window_width >= 1400:
         #     settings.fieldwith=1000
-        if page.window_width < 576:
-            settings.fieldwith=page.window_width - 40
-        elif page.window_width >= 576 and page.window_width < 768:
-            settings.fieldwith=page.window_width - 40
-        elif page.window_width >= 768:
-            # settings.fieldwith=page.window_width - 40
+        if page.window.width < 576:
+            settings.fieldwith=page.window.width - 40
+        elif page.window.width >= 576 and page.window.width < 768:
+            settings.fieldwith=page.window.width - 40
+        elif page.window.width >= 768:
+            # settings.fieldwith=page.window.width - 40
             settings.fieldwith=700
-        elif page.window_width >= 992:
+        elif page.window.width >= 992:
             settings.fieldwith=900
-        elif page.window_width >= 1200:
+        elif page.window.width >= 1200:
             settings.fieldwith=1100
-        elif page.window_width >= 1400:
+        elif page.window.width >= 1400:
             settings.fieldwith=1300
         if settings.sw == 0:
             parqueadero.width=settings.fieldwith
@@ -311,6 +320,7 @@ def Configuration(page):
             resolucion.width=settings.fieldwith
             fecha_desde.width=settings.fieldwith
             fecha_hasta.width=settings.fieldwith
+            prefijo.width=settings.fieldwith
             autoriza_del.width=settings.fieldwith
             autoriza_al.width=settings.fieldwith
             consecutivo.width=settings.fieldwith
@@ -328,6 +338,7 @@ def Configuration(page):
         resolucion.update()
         fecha_desde.update()
         fecha_hasta.update()
+        prefijo.update()
         autoriza_del.update()
         autoriza_al.update()
         consecutivo.update()
@@ -391,6 +402,10 @@ def Configuration(page):
         consecutivo.value = e.control.value
         consecutivo.update()
 
+    def prefijo_to_upper(e):
+        prefijo.value=e.control.value.upper()
+        prefijo.update()
+
     page.on_resized=page_resize
 
     # if page.window_width <= 425:
@@ -424,8 +439,8 @@ def Configuration(page):
         field_label_text="Ingresa una fecha",
         on_change=change_date_from,
         # on_dismiss=date_picker_dismissed,
-        first_date=datetime.datetime(2023, 10, 1),
-        last_date=datetime.datetime(2024, 10, 1),
+        first_date=datetime.datetime(2024, 7, 1),
+        last_date=datetime.datetime(2099, 10, 1),
     )
 
     date_picker_to=ft.DatePicker(
@@ -433,8 +448,8 @@ def Configuration(page):
         field_label_text="Ingresa una fecha",
         on_change=change_date_to,
         # on_dismiss=date_picker_dismissed,
-        first_date=datetime.datetime(2023, 10, 1),
-        last_date=datetime.datetime(2024, 10, 1),
+        first_date=datetime.datetime(2024, 7, 1),
+        last_date=datetime.datetime(2099, 10, 1),
     )
 
     page.overlay.append(date_picker_from)
@@ -442,16 +457,17 @@ def Configuration(page):
 
     configuracion_id=id
     parqueadero=ft.TextField(label="Parqueadero", width=fieldwith, value=parqueadero)
-    nit=ft.TextField(label="Nit", width=fieldwith, value=nit)
+    nit=ft.TextField(label="Nit", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9-]", replacement_string=""), value=nit)
     regimen=ft.TextField(label="Régimen", width=fieldwith, value=regimen)
     direccion=ft.TextField(label="Dirección", width=fieldwith, value=direccion)
     telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono, input_filter=ft.NumbersOnlyInputFilter())
     servicio=ft.TextField(label="Servicio", width=fieldwith, value=servicio)
     resolucion=ft.TextField(label="Resolución", width=fieldwith, value=resolucion, input_filter=ft.NumbersOnlyInputFilter())
-    fecha_desde=ft.TextField(label="Desde", hint_text="dd/mm/aaaa", width=fieldwith, value=fecha_desde)
-    fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", width=fieldwith, value=fecha_hasta)
-    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_from.pick_date())
-    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: date_picker_to.pick_date())
+    fecha_desde=ft.TextField(label="Desde", hint_text="dd/mm/aaaa", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_desde)
+    fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_hasta)
+    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from))
+    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_to))
+    prefijo=ft.TextField(label="Prefijo", width=fieldwith, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[a-zA-Z-]", replacement_string=""), value=prefijo, on_change=prefijo_to_upper)
     autoriza_del=ft.TextField(label="Autoriza del", width=fieldwith, value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter(), on_change=autoriza_del_changed)
     autoriza_al=ft.TextField(label="Autoriza al", width=fieldwith, value=autoriza_al, input_filter=ft.NumbersOnlyInputFilter())
     consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo, input_filter=ft.NumbersOnlyInputFilter())
@@ -581,6 +597,7 @@ def Configuration(page):
                 padding=ft.padding.only(10, 0, 10, 0),
                 content=ft.Row([
                     ft.Column([
+                        prefijo,
                         autoriza_del,
                         autoriza_al,
                         consecutivo
