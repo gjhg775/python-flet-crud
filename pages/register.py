@@ -348,10 +348,10 @@ def Register(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         resolucion=configuracion[0][7]
-        settings.prefijo=configuracion[0][8]
-        prefijo=configuracion[0][8]
-        fecha_desde=configuracion[0][9]
-        fecha_hasta=configuracion[0][10]
+        fecha_desde=configuracion[0][8]
+        fecha_hasta=configuracion[0][9]
+        settings.prefijo=configuracion[0][10]
+        prefijo=configuracion[0][10]
         autoriza_del=configuracion[0][11]
         autoriza_al=configuracion[0][12]
         consecutivo=configuracion[0][13]
@@ -468,14 +468,13 @@ def Register(page):
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Text(title, text_align="center")
         dlg_modal.content=ft.Text(message, text_align="center")
-        page.overlay.append(dlg_modal)
         dlg_modal.open=True
         dlg_modal.update()
 
     def export_excel(e):
         dlg_modal2.open=False
         dlg_modal2.update()
-        data=exportRegister(fecha_desde.value, fecha_hasta.value, settings.prefijo)
+        data=exportRegister(fecha_desde.value, fecha_hasta.value)
         if data != []:
             message="Exportando registros"
             bgcolor="blue"
@@ -508,9 +507,8 @@ def Register(page):
         if settings.username == "Super Admin" or settings.username == "Admin":
             # dlg_modal2.title=ft.Text(title, text_align="center")
             # dlg_modal2.content=ft.Text(message, text_align="center")
-            page.overlay.append(dlg_modal2)
             dlg_modal2.open=True
-            page.update()
+            dlg_modal2.update()
         else:
             message="Acceso no permitido"
             bgcolor="orange"
@@ -658,6 +656,9 @@ def Register(page):
         actions_alignment=ft.MainAxisAlignment.END,
         on_dismiss=lambda _: placa.focus(),
     )
+
+    page.overlay.append(dlg_modal)
+    page.overlay.append(dlg_modal2)
 
     registros=selectRegisters(search)
     if registros != []:

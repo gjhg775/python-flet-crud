@@ -681,12 +681,12 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo="Recibo " + str(consecutivo)
+    consecutivo="Recibo " + str(consecutivo).zfill(7)
     entrada=str(entrada)
     entrada=str(entrada[0:19])
     entrada=f"Entrada " + str(entradas)
 
-    pdf=FPDF("P", "mm", [int(str(settings.paper_width)[0:2]), 150])
+    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -784,7 +784,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=settings.prefijo + str(consecutivo)
+    consecutivo=settings.prefijo + str(consecutivo).zfill(7)
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
@@ -923,7 +923,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
-    pdf=FPDF("P", "mm", [int(str(settings.paper_width)[0:2]), 200])
+    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -1327,13 +1327,13 @@ def selectRegisters(search):
     #     settings.showMessage(bgcolor)
     return registros
 
-def exportRegister(fecha_desde, fecha_hasta, prefijo):
+def exportRegister(fecha_desde, fecha_hasta):
     cuadre=1
     cursor=conn.cursor()
     if fecha_desde == "dd/mm/aaaa" and fecha_hasta == "dd/mm/aaaa":
-        sql=f"""SELECT '{prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
+        sql=f"""SELECT '{settings.prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
     else:
-        sql=f"""SELECT '{prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE salida BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
+        sql=f"""SELECT '{settings.prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE strftime('%d/%m/%Y', salida) BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
     cursor.execute(sql)
     registros=cursor.fetchall()
     return registros

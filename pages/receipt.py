@@ -57,12 +57,12 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo="Recibo " + str(consecutivo)
+    consecutivo="Recibo " + str(consecutivo).zfill(7)
     entrada=str(entrada)
     entrada=str(entrada[0:19])
     entrada=f"Entrada " + str(entradas)
     
-    pdf=FPDF("P", "mm", [int(str(settings.paper_width)[0:2]), 150])
+    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -160,7 +160,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=settings.prefijo + str(consecutivo)
+    consecutivo=settings.prefijo + str(consecutivo).zfill(7)
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
@@ -299,7 +299,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
-    pdf=FPDF("P", "mm", [int(str(settings.paper_width)[0:2]), 200])
+    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -477,7 +477,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         pos+=10
         pagina+=1
         contador+=1
-        consecutivo=settings.prefijo + str(registro[0])
+        consecutivo=settings.prefijo + str(registro[0]).zfill(7)
         placa=registro[1]
         entrada=registro[2]
         salida=registro[3]
@@ -489,11 +489,13 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         facturacion="Horas" if registro[5] == 0 else "Turnos"
         valor=locale.currency(registro[6], grouping=True)
         total=locale.currency(registro[8], grouping=True)
+        pdf.set_font("helvetica", "", size=8)
         row=consecutivo + "  " + placa + "  " + entrada + "  " + salida
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
         pos+=10
+        pdf.set_font("helvetica", "", size=9)
         row=vehiculo + "  " + facturacion + "  " + str(valor) + "  " + str(total)
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
@@ -600,7 +602,7 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         pos+=10
         contador+=1
         pendiente+=1
-        consecutivo=settings.prefijo + str(registro[0])
+        consecutivo=str(registro[0]).zfill(7)
         placa=registro[1]
         entrada=registro[2]
         vehiculo=registro[4]
