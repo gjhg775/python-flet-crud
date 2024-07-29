@@ -8,12 +8,12 @@ load_dotenv()
 
 conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
-password=os.getenv("pswsa")
+password=os.getenv("PSWSA")
 # bytes=password.encode('utf-8')
 # hashsa=hashlib.sha256(bytes).hexdigest()
 hashsa=password
 
-password=os.getenv("pswa")
+password=os.getenv("PSWA")
 # bytes=password.encode('utf-8')
 # hasha=hashlib.sha256(bytes).hexdigest()
 hasha=password
