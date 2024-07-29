@@ -29,7 +29,7 @@ def Developer(page):
     developer_photo=ft.Icon(name=ft.icons.PERSON, color=ft.colors.PRIMARY_CONTAINER, scale=(10))
     developer_name=ft.Text("Desarrollado por Gareca", theme_style=ft.TextThemeStyle.TITLE_LARGE)
     copyright=ft.Text("Copyright © 2024", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
-    rights=ft.Text("Todos los derechos reservados", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    rights=ft.Text("Derechos reservados", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
 
     return ft.Column([
         # ft.Container(height=100),
