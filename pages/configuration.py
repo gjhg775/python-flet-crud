@@ -141,10 +141,10 @@ def Configuration(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         resolucion=configuracion[0][7]
-        settings.prefijo=configuracion[0][8]
-        prefijo=configuracion[0][8]
-        fecha_desde=configuracion[0][9]
-        fecha_hasta=configuracion[0][10]
+        fecha_desde=configuracion[0][8]
+        fecha_hasta=configuracion[0][9]
+        settings.prefijo=configuracion[0][10]
+        prefijo=configuracion[0][10]
         autoriza_del=configuracion[0][11]
         autoriza_al=configuracion[0][12]
         consecutivo=configuracion[0][13]
@@ -256,7 +256,7 @@ def Configuration(page):
             autoriza_del.update()
             autoriza_al.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, settings.prefijo, fecha_desde.value, fecha_hasta.value, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, resolucion.value, fecha_desde.value, fecha_hasta.value, settings.prefijo, autoriza_del.value, autoriza_al.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, settings.paper_width, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message

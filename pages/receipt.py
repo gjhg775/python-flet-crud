@@ -32,10 +32,10 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     resolucion=configuracion[0][7]
-    settings.prefijo=configuracion[0][8]
-    prefijo=configuracion[0][8]
-    fecha_desde=configuracion[0][9]
-    fecha_hasta=configuracion[0][10]
+    fecha_desde=configuracion[0][8]
+    fecha_hasta=configuracion[0][9]
+    settings.prefijo=configuracion[0][10]
+    prefijo=configuracion[0][10]
     autoriza_del=configuracion[0][11]
     autoriza_al=configuracion[0][12]
     consecutivo=configuracion[0][13]
@@ -62,7 +62,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     entrada=str(entrada[0:19])
     entrada=f"Entrada " + str(entradas)
     
-    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 150))
+    pdf=FPDF("P", "mm", [int(str(settings.paper_width)[0:2]), 150])
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -155,12 +155,12 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, prefijo, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
+def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
     nit="Nit " + nit
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=prefijo + str(consecutivo)
+    consecutivo=settings.prefijo + str(consecutivo)
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
@@ -299,7 +299,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, prefij
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
-    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
+    pdf=FPDF("P", "mm", [int(str(settings.paper_width)[0:2]), 200])
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -333,10 +333,9 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, prefij
     pdf.set_x((doc_w - factura_w) / 2)
     pdf.cell(factura_w, 104, factura, align="C")
     pdf.set_font("helvetica", "B", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
-    consecutivo1=f"FE-{consecutivo}"
-    consecutivo1_w=pdf.get_string_width(consecutivo1)
+    consecutivo1_w=pdf.get_string_width(consecutivo)
     pdf.set_x((doc_w - consecutivo1_w) / 2)
-    pdf.cell(consecutivo1_w, 119, consecutivo1, align="C")
+    pdf.cell(consecutivo1_w, 119, consecutivo, align="C")
     pdf.set_font("helvetica", "", size=13 if int(str(settings.paper_width)[0:2]) == 80 else 10)
     fecha_autoriza1="Desde " + str(fecha_desde) + " Hasta " + str(fecha_hasta)
     fecha_autoriza1_w=pdf.get_string_width(fecha_autoriza1)

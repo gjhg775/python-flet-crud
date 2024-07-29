@@ -35,10 +35,10 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     resolucion=configuracion[0][7]
-    settings.prefijo=configuracion[0][8]
-    prefijo=configuracion[0][8]
-    fecha_desde=configuracion[0][9]
-    fecha_hasta=configuracion[0][10]
+    fecha_desde=configuracion[0][8]
+    fecha_hasta=configuracion[0][9]
+    settings.prefijo=configuracion[0][10]
+    prefijo=configuracion[0][10]
     autoriza_del=configuracion[0][11]
     autoriza_al=configuracion[0][12]
     consecutivo=configuracion[0][13]
@@ -348,23 +348,25 @@ def Register(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         resolucion=configuracion[0][7]
-        fecha_desde=configuracion[0][8]
-        fecha_hasta=configuracion[0][9]
-        autoriza_del=configuracion[0][10]
-        autoriza_al=configuracion[0][11]
-        consecutivo=configuracion[0][12]
-        settings.preview_register=configuracion[0][13]
-        vista_previa_registro=False if configuracion[0][13] == 0 else True
-        settings.print_register_receipt=configuracion[0][14]
-        imprimir_registro=False if configuracion[0][14] == 0 else True
-        settings.preview_cash=configuracion[0][15]
-        vista_previa_cuadre=False if configuracion[0][15] == 0 else True
-        settings.print_cash_receipt=configuracion[0][16]
-        imprimir_cuadre=False if configuracion[0][16] == 0 else True
-        settings.printer=configuracion[0][17]
-        impresora=configuracion[0][17]
-        settings.paper_width=configuracion[0][18]
-        papel=configuracion[0][18]
+        settings.prefijo=configuracion[0][8]
+        prefijo=configuracion[0][8]
+        fecha_desde=configuracion[0][9]
+        fecha_hasta=configuracion[0][10]
+        autoriza_del=configuracion[0][11]
+        autoriza_al=configuracion[0][12]
+        consecutivo=configuracion[0][13]
+        settings.preview_register=configuracion[0][14]
+        vista_previa_registro=False if configuracion[0][14] == 0 else True
+        settings.print_register_receipt=configuracion[0][15]
+        imprimir_registro=False if configuracion[0][15] == 0 else True
+        settings.preview_cash=configuracion[0][16]
+        vista_previa_cuadre=False if configuracion[0][16] == 0 else True
+        settings.print_cash_receipt=configuracion[0][17]
+        imprimir_cuadre=False if configuracion[0][17] == 0 else True
+        settings.printer=configuracion[0][18]
+        impresora=configuracion[0][18]
+        settings.paper_width=configuracion[0][19]
+        papel=configuracion[0][19]
     
     def register(e):
         if placa.value != "":

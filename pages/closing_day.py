@@ -23,10 +23,10 @@ def Closing_day(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         resolucion=configuracion[0][7]
-        settings.prefijo=configuracion[0][8]
-        prefijo=configuracion[0][8]
-        fecha_desde=configuracion[0][9]
-        fecha_hasta=configuracion[0][10]
+        fecha_desde=configuracion[0][8]
+        fecha_hasta=configuracion[0][9]
+        settings.prefijo=configuracion[0][10]
+        prefijo=configuracion[0][10]
         autoriza_del=configuracion[0][11]
         autoriza_al=configuracion[0][12]
         consecutivo=configuracion[0][13]
@@ -181,8 +181,8 @@ def Closing_day(page):
         dlg_modal.title=ft.Text(title, text_align="center")
         dlg_modal.content=ft.Text(message, text_align="center")
         dlg_modal.open=True
-        page.overlay.append(dlg_modal)
-        page.update()
+        # page.overlay.append(dlg_modal)
+        dlg_modal.update()
 
     dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
@@ -197,6 +197,8 @@ def Closing_day(page):
         actions_alignment=ft.MainAxisAlignment.END,
         on_dismiss=lambda _: date_button.focus(),
     )
+
+    page.overlay.append(dlg_modal)
     
     page.on_resized=page_resize
 

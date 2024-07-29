@@ -610,10 +610,11 @@ def main(page:ft.Page):
     # page.add(Home(page))
     page.add(container)
 
-if settings.sw == 0:
-    ft.app(target=main, assets_dir="assets", upload_dir="upload")
-else:
-    ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)
+if __name__ == "__main__":
+    if settings.sw == 0:
+        ft.app(target=main, assets_dir="assets", upload_dir="upload")
+    else:
+        ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)
 
 
 # import flet as ft
