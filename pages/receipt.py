@@ -6,6 +6,7 @@ import settings
 import subprocess
 import webbrowser
 import pywhatkit
+import hashlib
 import win32api
 import win32print
 from fpdf import FPDF
@@ -184,6 +185,40 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
 
+    num_fac=consecutivo.split("-")
+    num_fac=int(num_fac[1])
+    fec_fac=str(salidas).split("/")
+    dia=fec_fac[0]
+    mes=fec_fac[1]
+    ano=fec_fac[2]
+    ano=ano[0:4]
+    fec_fac=ano+"-"+mes+"-"+dia
+    hor_fac=str(salidas).split(" ")
+    hor_fac=hor_fac[1]
+    nit_fac=str(nit).split(" ")
+    nit_fac=nit_fac[1]
+    nit_fac=str(nit_fac).split("-")
+    nit_fac=nit_fac[0] # Hora de la factura incluyendo GMT
+    doc_adq=settings.cliente_final
+    val_fac=vlr_total
+    CodImp1="01"
+    ValImp1=0
+    CodImp2="04"
+    ValImp2=0
+    CodImp3="03"
+    ValImp3=0
+    val_iva=0
+    val_otro_im=0
+    val_tol_fac=val_fac
+    ValTot=val_fac+ValImp1+ValImp2+ValImp3
+    NitOFE=nit_fac
+    ClTec="" # Clave técnica del rango de facturación
+    TipoAmbie="2" # Falta éste valor
+    cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
+    bytes=cufe.encode('utf-8')
+    hash=hashlib.sha384(bytes).hexdigest()
+    cufe=hash
+
     variables=get_variables()
 
     if variables != None:
@@ -299,7 +334,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
-    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 200))
+    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 230))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
@@ -378,9 +413,18 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     vlr_total_w=pdf.get_string_width(vlr_total)
     pdf.set_x((doc_w - vlr_total_w) / 2)
     pdf.cell(vlr_total_w, 254, vlr_total, align="C")
+    pdf.set_font("helvetica", "", size=13)
+    title_cufe="CUFE:"
+    title_cufe_w=pdf.get_string_width(title_cufe)
+    pdf.set_x((doc_w - title_cufe_w) / 2)
+    pdf.cell(title_cufe_w, 268, title_cufe, align="C")
+    cufe_w=pdf.get_string_width(cufe)
+    pdf.set_x((doc_w - cufe_w) / 2)
+    pdf.set_y(150)
+    pdf.write(0, cufe)
     pdf.set_font("helvetica", "", size=15)
-    img=qrcode.make(f"{placas}")
-    pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=140, w=30, h=30)
+    img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
+    pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=172, w=30, h=30)
     pdf.output(path+"receipt.pdf")
 
     if settings.sw == 0:

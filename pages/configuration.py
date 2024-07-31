@@ -494,6 +494,7 @@ def Configuration(page):
     print_receipt_switch_cash=ft.Switch(value=imprimir_cuadre, on_change=print_change_cash)
 
     printers_list=[]
+    printers_list.append(ft.dropdown.Option("Seleccione una impresora"),)
     printers=[printer[2] for printer in win32print.EnumPrinters(2)]
     for p in printers:
         printers_list.append(ft.dropdown.Option(p),)
@@ -501,7 +502,7 @@ def Configuration(page):
     printer=ft.Dropdown(hint_text="Seleccione una impresora", options=printers_list, value=impresora, disabled=False)
     printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
     # papers_list=[{"":"", "58":"58 mm", "80":"80 mm"}]
-    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option("58 mm"), ft.dropdown.Option("80 mm")], value=papel, disabled=False)
+    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option("Seleccione ancho de papel"), ft.dropdown.Option("58 mm"), ft.dropdown.Option("80 mm")], value=papel, disabled=False)
     paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
     registros=selectUsers(search)

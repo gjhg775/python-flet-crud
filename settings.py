@@ -1,6 +1,6 @@
 import flet as ft
 
-global username, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, sw, preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, progressRing
+global username, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, sw, preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, cliente_final, progressRing
 
 username=""
 login_nombre=""
@@ -10,6 +10,7 @@ usuario=""
 printer=""
 paper_width=""
 prefijo=""
+cliente_final="222222222222"
 acceso_configuracion=0
 acceso_variables=0
 acceso_registro=0
