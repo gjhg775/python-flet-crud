@@ -61,12 +61,15 @@ def create_configuration():
         direccion TEXT,
         telefono TEXT,
         servicio TEXT,
+        facturacion INTEGER,
         resolucion TEXT,
         fecha_desde TEXT,
         fecha_hasta TEXT,
         prefijo TEXT,
         autoriza_del TEXT,
         autoriza_al TEXT,
+        clave_tecnica TEXT,
+        tipo_ambiente TEXT,
         consecutivo TEXT,
         vista_previa_registro INTEGER,
         imprimir_registro INTEGER,
@@ -158,8 +161,8 @@ def admin_access():
 def add_configuration():
     try:
         cursor=conn.cursor()
-        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-        values=("", "", "", "", "", "", "", "", "", "", "", "", "", "1", "1", "1", "1", "", "")
+        sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        values=("", "", "", "", "", "", "0", "", "", "", "", "", "", "", "0", "", "1", "1", "1", "1", "", "")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

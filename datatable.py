@@ -23,7 +23,7 @@ title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
-if settings.sw == 0:
+if settings.tipo_app == 0:
     path=os.path.join(os.getcwd(), "upload\\receipt\\")
 else:
     path=os.path.join(os.getcwd(), "assets\\receipt\\")
@@ -124,7 +124,7 @@ def selectUser(usuario, contrasena):
     hash=hashlib.sha256(contrasena.encode()).hexdigest()
     try:
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
+        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
         values=(f'{usuario}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
@@ -157,8 +157,8 @@ def selectUser(usuario, contrasena):
 def add_user(usuario, hashed, nombre, foto):
     try:
         cursor=conn.cursor()
-        sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
-        values=(usuario,)
+        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
+        values=(f'{usuario}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
@@ -172,8 +172,9 @@ def add_user(usuario, hashed, nombre, foto):
         conn.commit()
 
         user="Admin"
-        sql=f"""SELECT * FROM accesos WHERE usuario = '{user}'"""
-        cursor.execute(sql)
+        sql="""SELECT * FROM accesos WHERE usuario = ?"""
+        values=(f'{user}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         for registro in registros:
@@ -242,35 +243,41 @@ if configuracion != None:
     direccion=configuracion[0][4]
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
-    resolucion=configuracion[0][7]
-    fecha_desde=configuracion[0][8]
-    fecha_hasta=configuracion[0][9]
-    settings.prefijo=configuracion[0][10]
-    prefijo=configuracion[0][10]
-    autoriza_del=configuracion[0][11]
-    autoriza_al=configuracion[0][12]
-    consecutivo=configuracion[0][13]
-    settings.preview_register=configuracion[0][14]
-    vista_previa_registro=False if configuracion[0][14] == 0 else True
-    settings.print_register_receipt=configuracion[0][15]
-    imprimir_registro=False if configuracion[0][15] == 0 else True
-    settings.preview_cash=configuracion[0][16]
-    vista_previa_cuadre=False if configuracion[0][16] == 0 else True
-    settings.print_cash_receipt=configuracion[0][17]
-    imprimir_cuadre=False if configuracion[0][17] == 0 else True
-    settings.printer=configuracion[0][18]
-    impresora=configuracion[0][18]
-    settings.paper_width=configuracion[0][19]
-    papel=configuracion[0][19]
+    settings.billing=configuracion[0][7]
+    facturacion=False if configuracion[0][7] == 0 else True
+    resolucion=configuracion[0][8]
+    fecha_desde=configuracion[0][9]
+    fecha_hasta=configuracion[0][10]
+    settings.prefijo=configuracion[0][11]
+    prefijo=configuracion[0][11]
+    autoriza_del=configuracion[0][12]
+    autoriza_al=configuracion[0][13]
+    clave_tecnica=configuracion[0][14]
+    settings.tipo_ambiente=configuracion[0][15]
+    tipo_ambiente=configuracion[0][15]
+    consecutivo=configuracion[0][16]
+    settings.preview_register=configuracion[0][17]
+    vista_previa_registro=False if configuracion[0][17] == 0 else True
+    settings.print_register_receipt=configuracion[0][18]
+    imprimir_registro=False if configuracion[0][18] == 0 else True
+    settings.preview_cash=configuracion[0][19]
+    vista_previa_cuadre=False if configuracion[0][19] == 0 else True
+    settings.print_cash_receipt=configuracion[0][20]
+    imprimir_cuadre=False if configuracion[0][20] == 0 else True
+    settings.printer=configuracion[0][21]
+    impresora=configuracion[0][21]
+    settings.paper_width=configuracion[0][22]
+    papel=configuracion[0][22]
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
+        settings.billing=facturacion
         settings.printer=impresora
         settings.paper_width=papel
         
@@ -334,8 +341,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
         cursor=conn.cursor()
 
-        sql=f"""SELECT * FROM usuarios WHERE usuario = '{usuario}'"""
-        cursor.execute(sql)
+        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
+        values=(f'{usuario}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         usuario=registros[0][3]
@@ -345,8 +353,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         cursor.execute(sql, values)
         conn.commit()
 
-        sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = {id}"""
-        cursor.execute(sql)
+        sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = ?"""
+        values=(f'{id}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         id=registros[0][0]
@@ -476,13 +485,14 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             facturacion=1
 
         # tiempo=int(tiempo)
-        sql=f"""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
+        sql="""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
         values=(f"{salida}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
-        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = {id}"""
-        cursor.execute(sql)
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = ?"""
+        values=(f'{id}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         entradas=registros[0][13]
@@ -536,15 +546,17 @@ def add_register(vehiculo, placa):
     try:
         cursor=conn.cursor()
 
-        sql=f"""SELECT * FROM usuarios WHERE usuario = '{usuario}'"""
-        cursor.execute(sql)
+        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
+        values=(f'{usuario}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         usuario=registros[0][3]
 
         id=1
-        sql=f"""SELECT consecutivo FROM configuracion WHERE configuracion_id = {id}"""
-        cursor.execute(sql)
+        sql="""SELECT consecutivo FROM configuracion WHERE configuracion_id = ?"""
+        values=(f'{id}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         consecutivo=registros[0][0]
@@ -554,8 +566,9 @@ def add_register(vehiculo, placa):
         cursor.execute(sql, values)
         conn.commit()
 
-        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE placa = '{placa}' AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
-        cursor.execute(sql)
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
+        values=(f'{placa}',)
+        cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         entradas=registros[0][13]
@@ -750,7 +763,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     pdf.output(path+"receipt.pdf")
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         if settings.preview_register == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
@@ -1050,7 +1063,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=172, w=30, h=30)
     pdf.output(path+"receipt.pdf")
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         if settings.preview_register == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
@@ -1130,8 +1143,9 @@ def update_access(e):
 def show_edit_access(e):
     usuario=e.control.data["usuario"]
     cursor=conn.cursor()
-    sql=f"""SELECT programa, acceso_usuario FROM accesos WHERE usuario = '{usuario}'"""
-    cursor.execute(sql)
+    sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
+    values=(f"{usuario}",)
+    cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     if registros != []:
@@ -1242,15 +1256,20 @@ def selectUsers(search):
     if settings.username == "Super Admin":
         if search == "":
             sql=f"""SELECT usuario, nombre FROM usuarios"""
+            cursor.execute(sql)
         else:
-            sql=f"""SELECT usuario, nombre FROM usuarios WHERE usuario LIKE '%{search}%' OR nombre LIKE '%{search}%'"""
+            sql="""SELECT usuario, nombre FROM usuarios WHERE usuario LIKE ? OR nombre LIKE ?"""
+            values=(f'%{search}%', f'%{search}%')
+            cursor.execute(sql, values)
     # elif settings.username["username"] == "Admin":
     elif settings.username == "Admin":
         if search == "":
-            sql=f"""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> '{user}'"""
+            sql="""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> ?"""
+            values=(f'{user}',)
         else:
-            sql=f"""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> '{user}' AND (usuarios.usuario LIKE '%{search}%' OR usuarios.nombre LIKE '%{search}%')"""
-    cursor.execute(sql)
+            sql="""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> ? AND (usuarios.usuario LIKE ? OR usuarios.nombre LIKE ?)"""
+            values=(f'{user}', f'%{search}%', f'%{search}%')
+        cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     if registros != []:
@@ -1294,8 +1313,9 @@ def selectUsers(search):
 
 def selectAccess(username):
     cursor=conn.cursor()
-    sql=f"""SELECT programa, acceso_usuario FROM accesos WHERE usuario = '{username}'"""
-    cursor.execute(sql)
+    sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
+    values=(f'{username}',)
+    cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     if registros != []:
@@ -1310,10 +1330,12 @@ def selectRegisters(search):
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE cuadre = {cuadre}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE cuadre = ?"""
+        values=(f'{cuadre}',)
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE (consecutivo LIKE '%{search}%' OR placa LIKE '%{search}%') AND cuadre = {cuadre}"""
-    cursor.execute(sql)
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ?"""
+        values=(f'%{search}%', f'%{search}%', f'{cuadre}')
+    cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     tb.rows.clear()
@@ -1374,10 +1396,12 @@ def exportRegister(fecha_desde, fecha_hasta):
     cuadre=1
     cursor=conn.cursor()
     if fecha_desde == "dd/mm/aaaa" and fecha_hasta == "dd/mm/aaaa":
-        sql=f"""SELECT '{settings.prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = {cuadre}"""
+        sql=f"""SELECT ? || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE cuadre = ?"""
+        values=(f'{settings.prefijo}', f'{cuadre}',)
     else:
-        sql=f"""SELECT '{settings.prefijo}' || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE strftime('%d/%m/%Y', salida) BETWEEN '{fecha_desde}' AND '{fecha_hasta}' AND cuadre = {cuadre}"""
-    cursor.execute(sql)
+        sql=f"""SELECT ? || SUBSTR('0' || consecutivo, -10, 10), placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), vehiculo, valor, tiempo, total FROM registro WHERE strftime('%d/%m/%Y', salida) BETWEEN ? AND ? AND cuadre = ?"""
+        values=(f'{settings.prefijo}', f'{fecha_desde}', f'{fecha_hasta}', f'{cuadre}')
+    cursor.execute(sql, values)
     registros=cursor.fetchall()
     return registros
 
@@ -1385,8 +1409,9 @@ def selectCashRegister():
     cuadre=0
     cursor=conn.cursor()    
     # sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = 0 AND cuadre = 0"""
-    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = {cuadre}"""
-    cursor.execute(sql)
+    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = ?"""
+    values=(f'{cuadre}',)
+    cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     tbc.rows.clear()

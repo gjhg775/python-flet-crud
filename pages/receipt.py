@@ -17,7 +17,7 @@ title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
-if settings.sw == 0:
+if settings.tipo_app == 0:
     path=os.path.join(os.getcwd(), "upload\\receipt\\")
 else:
     path=os.path.join(os.getcwd(), "assets\\receipt\\")
@@ -32,26 +32,31 @@ if configuracion != None:
     direccion=configuracion[0][4]
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
-    resolucion=configuracion[0][7]
-    fecha_desde=configuracion[0][8]
-    fecha_hasta=configuracion[0][9]
-    settings.prefijo=configuracion[0][10]
-    prefijo=configuracion[0][10]
-    autoriza_del=configuracion[0][11]
-    autoriza_al=configuracion[0][12]
-    consecutivo=configuracion[0][13]
-    settings.preview_register=configuracion[0][14]
-    vista_previa_registro=False if configuracion[0][14] == 0 else True
-    settings.print_register_receipt=configuracion[0][15]
-    imprimir_registro=False if configuracion[0][15] == 0 else True
-    settings.preview_cash=configuracion[0][16]
-    vista_previa_cuadre=False if configuracion[0][16] == 0 else True
-    settings.print_cash_receipt=configuracion[0][17]
-    imprimir_cuadre=False if configuracion[0][17] == 0 else True
-    settings.printer=configuracion[0][18]
-    impresora=configuracion[0][18]
-    settings.paper_width=configuracion[0][19]
-    papel=configuracion[0][19]
+    settings.billing=configuracion[0][7]
+    facturacion=False if configuracion[0][7] == 0 else True
+    resolucion=configuracion[0][8]
+    fecha_desde=configuracion[0][9]
+    fecha_hasta=configuracion[0][10]
+    settings.prefijo=configuracion[0][11]
+    prefijo=configuracion[0][11]
+    autoriza_del=configuracion[0][12]
+    autoriza_al=configuracion[0][13]
+    clave_tecnica=configuracion[0][14]
+    settings.tipo_ambiente=configuracion[0][15]
+    tipo_ambiente=configuracion[0][15]
+    consecutivo=configuracion[0][16]
+    settings.preview_register=configuracion[0][17]
+    vista_previa_registro=False if configuracion[0][17] == 0 else True
+    settings.print_register_receipt=configuracion[0][18]
+    imprimir_registro=False if configuracion[0][18] == 0 else True
+    settings.preview_cash=configuracion[0][19]
+    vista_previa_cuadre=False if configuracion[0][19] == 0 else True
+    settings.print_cash_receipt=configuracion[0][20]
+    imprimir_cuadre=False if configuracion[0][20] == 0 else True
+    settings.printer=configuracion[0][21]
+    impresora=configuracion[0][21]
+    settings.paper_width=configuracion[0][22]
+    papel=configuracion[0][22]
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="Nit " + nit
@@ -127,7 +132,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     pdf.output(path+"receipt.pdf")
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         if settings.preview_register == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
@@ -427,7 +432,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=172, w=30, h=30)
     pdf.output(path+"receipt.pdf")
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         if settings.preview_register == 1:
             subprocess.Popen([path+"receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
@@ -562,7 +567,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     pdf.cell(0, pos, efectivo, align="R")
     pdf.output(path+"cash_register.pdf")
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         if settings.preview_cash == 1:
             subprocess.Popen([path+"cash_register.pdf"], shell=True)
         if settings.print_cash_receipt == 1:
@@ -678,7 +683,7 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf.cell(pendiente_w, pos, pendiente, align="C")
     pdf.output(path+"cash_register2.pdf")
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         if settings.preview_cash == 1:
             subprocess.Popen([path+"cash_register2.pdf"], shell=True)
         if settings.print_cash_receipt == 1:

@@ -68,7 +68,7 @@ def main(page:ft.Page):
     # settings.user_photo.src=f"upload\\img\\{photo}"
     # page.update()
 
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
     #     avatar=ft.Image(src=os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}") if settings.photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
         settings.user_avatar=ft.Image(src=f"upload\\img\\{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
     else:
@@ -139,7 +139,7 @@ def main(page:ft.Page):
             page.clean()
             page.add(Developer(page))
         if e.control.selected_index == 7:
-            if settings.sw == 0:
+            if settings.tipo_app == 0:
                 title="Salir"
                 message="Desea salir de la aplicación ?"
                 open_dlg_modal(e, title, message)
@@ -264,7 +264,7 @@ def main(page:ft.Page):
                 page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
                 page.add(home(page))
                 page.update()
-                if settings.sw == 0:
+                if settings.tipo_app == 0:
                     settings.user_avatar.src=f"upload\\img\\{login_photo}"
                     settings.user_photo.src=f"upload\\img\\{login_photo}"
                 else:
@@ -453,9 +453,9 @@ def main(page:ft.Page):
             ),
             ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.POWER_SETTINGS_NEW_OUTLINED if settings.sw == 1 else ft.icons.EXIT_TO_APP_OUTLINED),
-                label="Cerrar sesión" if settings.sw == 1 else "Salir",
-                selected_icon=ft.icons.POWER_SETTINGS_NEW if settings.sw == 1 else ft.icons.EXIT_TO_APP_ROUNDED,
+                icon_content=ft.Icon(ft.icons.POWER_SETTINGS_NEW_OUTLINED if settings.tipo_app == 1 else ft.icons.EXIT_TO_APP_OUTLINED),
+                label="Cerrar sesión" if settings.tipo_app == 1 else "Salir",
+                selected_icon=ft.icons.POWER_SETTINGS_NEW if settings.tipo_app == 1 else ft.icons.EXIT_TO_APP_ROUNDED,
             )
         ],
         on_change=lambda e: change_navigation_destination(e),
@@ -611,7 +611,7 @@ def main(page:ft.Page):
     page.add(container)
 
 if __name__ == "__main__":
-    if settings.sw == 0:
+    if settings.tipo_app == 0:
         ft.app(target=main, assets_dir="assets", upload_dir="upload")
     else:
         ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)

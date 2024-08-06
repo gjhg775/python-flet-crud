@@ -15,7 +15,7 @@ conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
 
-if settings.sw == 0:
+if settings.tipo_app == 0:
     path=os.path.join(os.getcwd(), "upload\\xls\\")
 else:
     path=os.path.join(os.getcwd(), "assets\\xls\\")
@@ -347,26 +347,31 @@ def Register(page):
         direccion=configuracion[0][4]
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
-        resolucion=configuracion[0][7]
-        fecha_desde=configuracion[0][8]
-        fecha_hasta=configuracion[0][9]
-        settings.prefijo=configuracion[0][10]
-        prefijo=configuracion[0][10]
-        autoriza_del=configuracion[0][11]
-        autoriza_al=configuracion[0][12]
-        consecutivo=configuracion[0][13]
-        settings.preview_register=configuracion[0][14]
-        vista_previa_registro=False if configuracion[0][14] == 0 else True
-        settings.print_register_receipt=configuracion[0][15]
-        imprimir_registro=False if configuracion[0][15] == 0 else True
-        settings.preview_cash=configuracion[0][16]
-        vista_previa_cuadre=False if configuracion[0][16] == 0 else True
-        settings.print_cash_receipt=configuracion[0][17]
-        imprimir_cuadre=False if configuracion[0][17] == 0 else True
-        settings.printer=configuracion[0][18]
-        impresora=configuracion[0][18]
-        settings.paper_width=configuracion[0][19]
-        papel=configuracion[0][19]
+        settings.billing=configuracion[0][7]
+        facturacion=False if configuracion[0][7] == 0 else True
+        resolucion=configuracion[0][8]
+        fecha_desde=configuracion[0][9]
+        fecha_hasta=configuracion[0][10]
+        settings.prefijo=configuracion[0][11]
+        prefijo=configuracion[0][11]
+        autoriza_del=configuracion[0][12]
+        autoriza_al=configuracion[0][13]
+        clave_tecnica=configuracion[0][14]
+        settings.tipo_ambiente=configuracion[0][15]
+        tipo_ambiente=configuracion[0][15]
+        consecutivo=configuracion[0][16]
+        settings.preview_register=configuracion[0][17]
+        vista_previa_registro=False if configuracion[0][17] == 0 else True
+        settings.print_register_receipt=configuracion[0][18]
+        imprimir_registro=False if configuracion[0][18] == 0 else True
+        settings.preview_cash=configuracion[0][19]
+        vista_previa_cuadre=False if configuracion[0][19] == 0 else True
+        settings.print_cash_receipt=configuracion[0][20]
+        imprimir_cuadre=False if configuracion[0][20] == 0 else True
+        settings.printer=configuracion[0][21]
+        impresora=configuracion[0][21]
+        settings.paper_width=configuracion[0][22]
+        papel=configuracion[0][22]
     
     def register(e):
         if placa.value != "":
@@ -422,7 +427,7 @@ def Register(page):
             total.hint_text="Total "+str(vlr_total)
             # card.update()
             total.update()
-            if settings.sw == 0:
+            if settings.tipo_app == 0:
                 placa.focus()
             tb.rows.clear()
             selectRegisters(search)
@@ -450,7 +455,7 @@ def Register(page):
             settings.textsize=70
         elif page.window.width >= 992 and page.window.width <= 1400:
             settings.textsize=90
-        if settings.sw == 0:
+        if settings.tipo_app == 0:
             placa.text_size=settings.textsize
             total.text_size=settings.textsize
         else:
@@ -554,7 +559,7 @@ def Register(page):
         fecha_desde.update()
         # fecha.value=dia + "/" + mes + "/" + ano
         # fecha.focus()
-        if settings.sw == 1:
+        if settings.tipo_app == 1:
             date_button_from.focus()
         # print(f"Date picker changed, value is {date_picker.value}")
 
@@ -570,7 +575,7 @@ def Register(page):
         fecha_hasta.update()
         # fecha.value=dia + "/" + mes + "/" + ano
         # fecha.focus()
-        if settings.sw == 1:
+        if settings.tipo_app == 1:
             date_button_to.focus()
         # print(f"Date picker changed, value is {date_picker.value}")
 
