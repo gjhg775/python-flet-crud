@@ -8,6 +8,7 @@ import sqlite3
 import pandas as pd
 # from flet import Page
 # from app import page
+from time import sleep
 from pages.receipt import show_input, show_output
 from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister
 
@@ -479,6 +480,8 @@ def Register(page):
     def export_excel(e):
         dlg_modal2.open=False
         dlg_modal2.update()
+        settings.progressBar.visible=True
+        settings.page.update()
         data=exportRegister(fecha_desde.value, fecha_hasta.value)
         if data != []:
             message="Exportando registros"
@@ -500,6 +503,9 @@ def Register(page):
             settings.showMessage(bgcolor)
         fecha_desde.value="dd/mm/aaaa"
         fecha_hasta.value="dd/mm/aaaa"
+        time.sleep(2)
+        settings.progressBar.visible=False
+        settings.page.update()
 
     def close_dlg2(e):
         dlg_modal2.open=False
@@ -743,6 +749,7 @@ def Register(page):
 
     return ft.Column(
         controls=[
+            settings.progressBar,
             ft.Container(height=20),
             ft.Container(
                 alignment=ft.alignment.center,

@@ -641,32 +641,40 @@ def showedit(e):
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
-        parqueadero=configuracion[0][1]
-        nit=configuracion[0][2]
-        regimen=configuracion[0][3]
-        direccion=configuracion[0][4]
-        telefono=configuracion[0][5]
-        servicio=configuracion[0][6]
-        resolucion=configuracion[0][7]
-        fecha_desde=configuracion[0][8]
-        fecha_hasta=configuracion[0][9]
-        settings.prefijo=configuracion[0][10]
-        prefijo=configuracion[0][10]
-        autoriza_del=configuracion[0][11]
-        autoriza_al=configuracion[0][12]
-        consecutivo=configuracion[0][13]
-        settings.preview_register=configuracion[0][14]
-        vista_previa_registro=False if configuracion[0][14] == 0 else True
-        settings.print_register_receipt=configuracion[0][15]
-        imprimir_registro=False if configuracion[0][15] == 0 else True
-        settings.preview_cash=configuracion[0][16]
-        vista_previa_cuadre=False if configuracion[0][16] == 0 else True
-        settings.print_cash_receipt=configuracion[0][17]
-        imprimir_cuadre=False if configuracion[0][17] == 0 else True
-        settings.printer=configuracion[0][18]
-        impresora=configuracion[0][18]
-        settings.paper_width=configuracion[0][19]
-        papel=configuracion[0][19]
+        configuracion=get_configuration()
+        
+        if configuracion != None:
+            parqueadero=configuracion[0][1]
+            nit=configuracion[0][2]
+            regimen=configuracion[0][3]
+            direccion=configuracion[0][4]
+            telefono=configuracion[0][5]
+            servicio=configuracion[0][6]
+            settings.billing=configuracion[0][7]
+            facturacion=False if configuracion[0][7] == 0 else True
+            resolucion=configuracion[0][8]
+            fecha_desde=configuracion[0][9]
+            fecha_hasta=configuracion[0][10]
+            settings.prefijo=configuracion[0][11]
+            prefijo=configuracion[0][11]
+            autoriza_del=configuracion[0][12]
+            autoriza_al=configuracion[0][13]
+            clave_tecnica=configuracion[0][14]
+            settings.tipo_ambiente=configuracion[0][15]
+            tipo_ambiente=configuracion[0][15]
+            consecutivo=configuracion[0][16]
+            settings.preview_register=configuracion[0][17]
+            vista_previa_registro=False if configuracion[0][17] == 0 else True
+            settings.print_register_receipt=configuracion[0][18]
+            imprimir_registro=False if configuracion[0][18] == 0 else True
+            settings.preview_cash=configuracion[0][19]
+            vista_previa_cuadre=False if configuracion[0][19] == 0 else True
+            settings.print_cash_receipt=configuracion[0][20]
+            imprimir_cuadre=False if configuracion[0][20] == 0 else True
+            settings.printer=configuracion[0][21]
+            impresora=configuracion[0][21]
+            settings.paper_width=configuracion[0][22]
+            papel=configuracion[0][22]
 
         placa=registros[0][2]
         entrada=registros[0][3]
@@ -699,19 +707,20 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     entrada=str(entrada[0:19])
     entrada=f"Entrada " + str(entradas)
 
-    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 150))
+    # pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 150))
+    pdf=FPDF("P", "mm", (settings.paper_width, 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
     pdf.set_x((doc_w - title_w) / 2)
     pdf.cell(title_w, 0, title, align="C")
-    pdf.set_font("helvetica", "B", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
     pdf.cell(parqueadero_w, 18, parqueadero, align="C")
-    pdf.set_font("helvetica", "", size=15 if int(str(settings.paper_width)[0:2]) == 80 else 11)
+    pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     nit_w=pdf.get_string_width(nit)
     pdf.set_x((doc_w - nit_w) / 2)
     pdf.cell(nit_w, 35, nit, align="C")
@@ -727,7 +736,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
-    pdf.set_font("helvetica", "B", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     consecutivo_w=pdf.get_string_width(consecutivo)
     pdf.set_x((doc_w - consecutivo_w) / 2)
     pdf.cell(consecutivo_w, 107, consecutivo, align="C")
@@ -735,11 +744,11 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     placas1_w=pdf.get_string_width(placas1)
     pdf.set_x((doc_w - placas1_w) / 2)
     pdf.cell(placas1_w, 125, placas1, align="C")
-    pdf.set_font("helvetica", "", size=15 if int(str(settings.paper_width)[0:2]) == 80 else 11)
+    pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     entrada_w=pdf.get_string_width(entrada)
     pdf.set_x((doc_w - entrada_w) / 2)
     pdf.cell(entrada_w, 142, entrada, align="C")
-    pdf.set_font("helvetica", "", size=10 if int(str(settings.paper_width)[0:2]) == 80 else 8)
+    pdf.set_font("helvetica", "", size=10 if settings.paper_width == 80 else 8)
     comentario1_w=pdf.get_string_width(comentario1)
     pdf.set_x((doc_w - comentario1_w) / 2)
     pdf.cell(comentario1_w, 157, comentario1, align="C")
@@ -970,19 +979,19 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                     valor_fraccion=valor_hora_otro
                 vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
-    pdf=FPDF("P", "mm", (int(str(settings.paper_width)[0:2]), 230))
+    pdf=FPDF("P", "mm", (settings.paper_width, 230))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.set_font("helvetica", "", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
     pdf.set_x((doc_w - title_w) / 2)
     pdf.cell(title_w, 0, title, align="C")
-    pdf.set_font("helvetica", "B", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
     pdf.cell(parqueadero_w, 18, parqueadero, align="C")
-    pdf.set_font("helvetica", "", size=15 if int(str(settings.paper_width)[0:2]) == 80 else 11)
+    pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     nit_w=pdf.get_string_width(nit)
     pdf.set_x((doc_w - nit_w) / 2)
     pdf.cell(nit_w, 35, nit, align="C")
@@ -998,21 +1007,21 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
-    pdf.set_font("helvetica", "B", size=15 if int(str(settings.paper_width)[0:2]) == 80 else 11)
+    pdf.set_font("helvetica", "B", size=15 if settings.paper_width == 80 else 11)
     factura="Factura Electrónica de Venta"
     factura_w=pdf.get_string_width(factura)
     pdf.set_x((doc_w - factura_w) / 2)
     pdf.cell(factura_w, 104, factura, align="C")
-    pdf.set_font("helvetica", "B", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     consecutivo1_w=pdf.get_string_width(consecutivo)
     pdf.set_x((doc_w - consecutivo1_w) / 2)
     pdf.cell(consecutivo1_w, 119, consecutivo, align="C")
-    pdf.set_font("helvetica", "", size=13 if int(str(settings.paper_width)[0:2]) == 80 else 10)
+    pdf.set_font("helvetica", "", size=13 if settings.paper_width == 80 else 10)
     fecha_autoriza1="Desde " + str(fecha_desde) + " Hasta " + str(fecha_hasta)
     fecha_autoriza1_w=pdf.get_string_width(fecha_autoriza1)
     pdf.set_x((doc_w - fecha_autoriza1_w) / 2)
     pdf.cell(fecha_autoriza1_w, 132, fecha_autoriza1, align="C")
-    pdf.set_font("helvetica", "", size=13 if int(str(settings.paper_width)[0:2]) == 80 else 11)
+    pdf.set_font("helvetica", "", size=13 if settings.paper_width == 80 else 11)
     autoriza1="Autoriza del " + str(autoriza_del) + " al " + str(autoriza_al)
     autoriza1_w=pdf.get_string_width(autoriza1)
     pdf.set_x((doc_w - autoriza1_w) / 2)
@@ -1021,12 +1030,12 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     resolucion1_w=pdf.get_string_width(resolucion1)
     pdf.set_x((doc_w - resolucion1_w) / 2)
     pdf.cell(resolucion1_w, 156, resolucion1, align="C")
-    pdf.set_font("helvetica", "B", size=20 if int(str(settings.paper_width)[0:2]) == 80 else 16)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     placas1=f"Placa {placas}"
     placas1_w=pdf.get_string_width(placas1)
     pdf.set_x((doc_w - placas1_w) / 2)
     pdf.cell(placas1_w, 170, placas1, align="C")
-    pdf.set_font("helvetica", "", size=15 if int(str(settings.paper_width)[0:2]) == 80 else 11)
+    pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     entrada_w=pdf.get_string_width(entrada)
     pdf.set_x((doc_w - entrada_w) / 2)
     pdf.cell(entrada_w, 184, entrada, align="C")
@@ -1060,7 +1069,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     pdf.write(0, cufe)
     pdf.set_font("helvetica", "", size=15)
     img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-    pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=172, w=30, h=30)
+    pdf.image(img.get_image(), x=25 if settings.paper_width == 80 else 14, y=172, w=30, h=30)
     pdf.output(path+"receipt.pdf")
 
     if settings.tipo_app == 0:

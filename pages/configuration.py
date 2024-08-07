@@ -364,6 +364,9 @@ def Configuration(page):
         lblUsuarios.update()
         page.update()
 
+    def paper_width_change(e):
+        settings.paper_width=e.control.value
+
     def preview_change(e):
         settings.preview_register=0 if preview_switch.value == False else 1
     
@@ -551,7 +554,7 @@ def Configuration(page):
     printer=ft.Dropdown(hint_text="Seleccione una impresora", options=printers_list, value=impresora, disabled=False)
     printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
     # papers_list=[{"":"", "58":"58 mm", "80":"80 mm"}]
-    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option("", "Seleccione ancho de papel"), ft.dropdown.Option("58", "58 mm"), ft.dropdown.Option("80", "80 mm")], value=papel, disabled=False)
+    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel"), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, on_change=paper_width_change, disabled=False)
     paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
     registros=selectUsers(search)

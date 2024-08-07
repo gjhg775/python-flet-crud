@@ -532,7 +532,6 @@ def main(page:ft.Page):
     container=ft.Column(
             controls=[
                 ft.Container(
-                    
                     ft.Column([
                         ft.Container(
                             # ft.Text(

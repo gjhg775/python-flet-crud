@@ -10,7 +10,6 @@ photo=""
 message=""
 usuario=""
 printer=""
-paper_width=""
 prefijo=""
 clave_tecnica=""
 cliente_final="222222222222"
@@ -24,12 +23,14 @@ fieldwith=280
 tipo_app=0 # 0=Escritorio 1=Web
 billing=0
 tipo_ambiente=0
+paper_width=0
 preview_register=1
 print_register_receipt=1
 preview_cash=1
 print_cash_receipt=1
-page:ft.Page
+page=ft.Page
 progressRing=ft.ProgressRing()
+progressBar=ft.ProgressBar(width=page.width, color="amber", bgcolor="#eeeeee", visible=False)
 
 # if sw == 0:
 #     user_avatar=ft.Image(src=f"upload\\img\\{photo}" if photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
