@@ -152,19 +152,21 @@ def Configuration(page):
         clave_tecnica=configuracion[0][14]
         settings.tipo_ambiente=configuracion[0][15]
         tipo_ambiente=configuracion[0][15]
-        consecutivo=configuracion[0][16]
-        settings.preview_register=configuracion[0][17]
-        vista_previa_registro=False if configuracion[0][17] == 0 else True
-        settings.print_register_receipt=configuracion[0][18]
-        imprimir_registro=False if configuracion[0][18] == 0 else True
-        settings.preview_cash=configuracion[0][19]
-        vista_previa_cuadre=False if configuracion[0][19] == 0 else True
-        settings.print_cash_receipt=configuracion[0][20]
-        imprimir_cuadre=False if configuracion[0][20] == 0 else True
-        settings.printer=configuracion[0][21]
-        impresora=configuracion[0][21]
-        settings.paper_width=configuracion[0][22]
-        papel=configuracion[0][22]
+        settings.cliente_final=configuracion[0][16]
+        cliente=configuracion[0][16]
+        consecutivo=configuracion[0][17]
+        settings.preview_register=configuracion[0][18]
+        vista_previa_registro=False if configuracion[0][18] == 0 else True
+        settings.print_register_receipt=configuracion[0][19]
+        imprimir_registro=False if configuracion[0][19] == 0 else True
+        settings.preview_cash=configuracion[0][20]
+        vista_previa_cuadre=False if configuracion[0][20] == 0 else True
+        settings.print_cash_receipt=configuracion[0][21]
+        imprimir_cuadre=False if configuracion[0][21] == 0 else True
+        settings.printer=configuracion[0][22]
+        impresora=configuracion[0][22]
+        settings.paper_width=configuracion[0][23]
+        papel=configuracion[0][23]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -180,7 +182,11 @@ def Configuration(page):
         autoriza_del.error_text=""
         autoriza_al.error_text=""
         clave_tecnica.error_text=""
+        environment.error_text=""
+        client.error_text=""
         consecutivo.error_text=""
+        printer.error_text=""
+        paper_width.error_text=""
         if parqueadero.value == "":
             parqueadero.error_text="Campo requerido"
             btn_save.focus()
@@ -212,53 +218,70 @@ def Configuration(page):
             servicio.update()
         else:
             servicio.update()
-        if resolucion.value == "":
-            resolucion.error_text="Campo requerido"
-            resolucion.update()
-        else:
-            resolucion.update()
-        if prefijo.value == "":
-            prefijo.error_text="Campo requerido"
-            prefijo.update()
-        else:
-            prefijo.update()
-        if fecha_desde.value == "":
-            fecha_desde.error_text="Campo requerido"
-            fecha_desde.update()
-        else:
-            fecha_desde.update()
-        if fecha_hasta.value == "":
-            fecha_hasta.error_text="Campo requerido"
-            fecha_hasta.update()
-        else:
-            fecha_hasta.update()
-        if autoriza_del.value == "":
-            autoriza_del.error_text="Campo requerido"
-            autoriza_del.update()
-        else:
-            autoriza_del.update()
-        if autoriza_al.value == "":
-            autoriza_al.error_text="Campo requerido"
-            autoriza_al.update()
-        else:
-            autoriza_al.update()
-        if clave_tecnica.value == "":
-            clave_tecnica.error_text="Campo requerido"
-            clave_tecnica.update()
-        else:
-            clave_tecnica.update()
-        if environment.value == "":
-            environment.error_text="Campo requerido"
-            environment.update()
-        else:
-            environment.update()
+        if settings.billing == 1:
+            if resolucion.value == "":
+                resolucion.error_text="Campo requerido"
+                resolucion.update()
+            else:
+                resolucion.update()
+            if prefijo.value == "":
+                prefijo.error_text="Campo requerido"
+                prefijo.update()
+            else:
+                prefijo.update()
+            if fecha_desde.value == "":
+                fecha_desde.error_text="Campo requerido"
+                fecha_desde.update()
+            else:
+                fecha_desde.update()
+            if fecha_hasta.value == "":
+                fecha_hasta.error_text="Campo requerido"
+                fecha_hasta.update()
+            else:
+                fecha_hasta.update()
+            if autoriza_del.value == "":
+                autoriza_del.error_text="Campo requerido"
+                autoriza_del.update()
+            else:
+                autoriza_del.update()
+            if autoriza_al.value == "":
+                autoriza_al.error_text="Campo requerido"
+                autoriza_al.update()
+            else:
+                autoriza_al.update()
+            if clave_tecnica.value == "":
+                clave_tecnica.error_text="Campo requerido"
+                clave_tecnica.update()
+            else:
+                clave_tecnica.update()
+            if environment.value == 0:
+                environment.error_text="Campo requerido"
+                environment.update()
+            else:
+                environment.update()
+            if client.value == "":
+                client.error_text="Campo requerido"
+                client.update()
+            else:
+                client.update()
         if consecutivo.value == "":
             consecutivo.error_text="Campo requerido"
             consecutivo.update()
         else:
             consecutivo.update()
+        if settings.print_register_receipt == 1 or settings.print_cash_receipt == 1:
+            if printer.value == "":
+                printer.error_text="Campo requerido"
+                printer.update()
+            else:
+                printer.update()
+            if paper_width.value == 0:
+                paper_width.error_text="Campo requerido"
+                paper_width.update()
+            else:
+                paper_width.update()
         btn_save.focus()
-        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and prefijo.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and clave_tecnica.value != "" and environment.value != "" and consecutivo.value != "":
+        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and prefijo.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and clave_tecnica.value != "" and environment.value != 0 and client.value != "" and consecutivo.value != "":
             parqueadero.update()
             nit.update()
             regimen.update()
@@ -273,8 +296,9 @@ def Configuration(page):
             autoriza_al.update()
             clave_tecnica.update()
             environment.update()
+            client.update()
             consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, settings.cliente_final, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
             if message != "":
                 bgcolor="green"
                 settings.message=message
@@ -374,6 +398,8 @@ def Configuration(page):
         settings.print_register_receipt=0 if print_receipt_switch.value == False else 1
         printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
         paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
+        printer.error_text=""
+        paper_width.error_text=""
         printer.update()
         paper_width.update()
 
@@ -384,8 +410,13 @@ def Configuration(page):
         settings.print_cash_receipt=0 if print_receipt_switch_cash.value == False else 1
         printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
         paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
+        printer.error_text=""
+        paper_width.error_text=""
         printer.update()
         paper_width.update()
+
+    def client_change(e):
+        settings.cliente_final=client.value
 
     def environment_change(e):
         settings.tipo_ambiente=environment.value
@@ -402,16 +433,28 @@ def Configuration(page):
         autoriza_al.disabled=True if settings.billing == 0 else False
         clave_tecnica.disabled=True if settings.billing == 0 else False
         environment.disabled=True if settings.billing == 0 else False
-        resolucion.update()
-        fecha_desde.update()
-        date_button_from.update()
-        fecha_hasta.update()
-        date_button_to.update()
-        prefijo.update()
-        autoriza_del.update()
-        autoriza_al.update()
-        clave_tecnica.update()
-        environment.update()
+        client.disabled=True if settings.billing == 0 else False
+        resolucion.error_text=""
+        fecha_desde.error_text=""
+        fecha_hasta.error_text=""
+        prefijo.error_text=""
+        autoriza_del.error_text=""
+        autoriza_al.error_text=""
+        clave_tecnica.error_text=""
+        environment.error_text=""
+        client.error_text=""
+        # resolucion.update()
+        # fecha_desde.update()
+        # date_button_from.update()
+        # fecha_hasta.update()
+        # date_button_to.update()
+        # prefijo.update()
+        # autoriza_del.update()
+        # autoriza_al.update()
+        # clave_tecnica.update()
+        # environment.update()
+        # client.update()
+        page.update()
 
     def change_date_from(e):
         fecha_cierre=str(date_picker_from.value)
@@ -509,15 +552,15 @@ def Configuration(page):
     direccion=ft.TextField(label="Dirección", width=fieldwith, value=direccion)
     telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono, input_filter=ft.NumbersOnlyInputFilter())
     servicio=ft.TextField(label="Servicio", width=fieldwith, value=servicio)
-    resolucion=ft.TextField(label="Resolución", width=fieldwith, value=resolucion, input_filter=ft.NumbersOnlyInputFilter())
-    fecha_desde=ft.TextField(label="Desde", hint_text="dd/mm/aaaa", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_desde)
-    fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_hasta)
-    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from))
-    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_to))
-    prefijo=ft.TextField(label="Prefijo", width=fieldwith, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[a-zA-Z-]", replacement_string=""), value=prefijo, on_change=prefijo_to_upper)
-    autoriza_del=ft.TextField(label="Autoriza del", width=fieldwith, value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter(), on_change=autoriza_del_changed)
-    autoriza_al=ft.TextField(label="Autoriza al", width=fieldwith, value=autoriza_al, input_filter=ft.NumbersOnlyInputFilter())
-    clave_tecnica=ft.TextField(label="Clave técnica", width=fieldwith, value=clave_tecnica)
+    resolucion=ft.TextField(label="Resolución", width=fieldwith, value=resolucion, input_filter=ft.NumbersOnlyInputFilter(), disabled=True if settings.billing == 0 else False)
+    fecha_desde=ft.TextField(label="Desde", hint_text="dd/mm/aaaa", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_desde, disabled=True if settings.billing == 0 else False)
+    fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_hasta, disabled=True if settings.billing == 0 else False)
+    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", disabled=True if settings.billing == 0 else False, on_click=lambda _: page.open(date_picker_from))
+    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", disabled=True if settings.billing == 0 else False, on_click=lambda _: page.open(date_picker_to))
+    prefijo=ft.TextField(label="Prefijo", width=fieldwith, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[a-zA-Z-]", replacement_string=""), value=prefijo, disabled=True if settings.billing == 0 else False, on_change=prefijo_to_upper)
+    autoriza_del=ft.TextField(label="Autoriza del", width=fieldwith, value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter(), disabled=True if settings.billing == 0 else False, on_change=autoriza_del_changed)
+    autoriza_al=ft.TextField(label="Autoriza al", width=fieldwith, value=autoriza_al, input_filter=ft.NumbersOnlyInputFilter(), disabled=True if settings.billing == 0 else False)
+    clave_tecnica=ft.TextField(label="Clave técnica", width=fieldwith, value=clave_tecnica, disabled=True if settings.billing == 0 else False)
     consecutivo=ft.TextField(label="Consecutivo", width=fieldwith, value=consecutivo, input_filter=ft.NumbersOnlyInputFilter())
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=validateConfiguration)
     # lblDatos=ft.Text("Datos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, width=fieldwith, text_align="left", color=ft.colors.PRIMARY)
@@ -545,16 +588,17 @@ def Configuration(page):
     print_receipt_switch_cash=ft.Switch(value=imprimir_cuadre, on_change=print_change_cash)
 
     printers_list=[]
-    printers_list.append(ft.dropdown.Option("", "Seleccione una impresora"),)
+    printers_list.append(ft.dropdown.Option("", "Seleccione impresora", disabled=True))
     printers=[printer[2] for printer in win32print.EnumPrinters(2)]
     for p in printers:
         printers_list.append(ft.dropdown.Option(p),)
 
-    environment=ft.Dropdown(hint_text="Seleccione un ambiente", options=[ft.dropdown.Option("", "Seleccione un ambiente"), ft.dropdown.Option("1", "Producción"), ft.dropdown.Option("2", "Prueba")], value=tipo_ambiente, disabled=False, on_change=environment_change)
-    printer=ft.Dropdown(hint_text="Seleccione una impresora", options=printers_list, value=impresora, disabled=False)
+    environment=ft.Dropdown(hint_text="Seleccione ambiente", options=[ft.dropdown.Option(0, "Seleccione ambiente", disabled=True), ft.dropdown.Option(1, "Producción"), ft.dropdown.Option(2, "Prueba")], value=tipo_ambiente, disabled=True if settings.billing == 0 else False, on_change=environment_change)
+    client=ft.Dropdown(hint_text="Seleccione cliente", options=[ft.dropdown.Option("", "Seleccione cliente", disabled=True), ft.dropdown.Option("222222222222", "Consumidor final")], value=cliente, disabled=True if settings.billing == 0 else False, on_change=client_change)
+    printer=ft.Dropdown(hint_text="Seleccione impresora", options=printers_list, value=impresora, disabled=True)
     printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
     # papers_list=[{"":"", "58":"58 mm", "80":"80 mm"}]
-    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel"), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, on_change=paper_width_change, disabled=False)
+    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel", disabled=True), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, on_change=paper_width_change, disabled=False)
     paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
     registros=selectUsers(search)
@@ -741,7 +785,7 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                     # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
                     # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
-                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[environment]),
+                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[environment, client]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),
@@ -807,7 +851,7 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),
-            ft.Container(height=50),
+            ft.Container(height=20),
             ft.Container(
                 ft.Row([
                     btn_save
@@ -815,6 +859,6 @@ def Configuration(page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
-            ft.Container(height=100),
+            ft.Container(height=50),
         ]
     )

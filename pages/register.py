@@ -35,26 +35,33 @@ if configuracion != None:
     direccion=configuracion[0][4]
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
-    resolucion=configuracion[0][7]
-    fecha_desde=configuracion[0][8]
-    fecha_hasta=configuracion[0][9]
-    settings.prefijo=configuracion[0][10]
-    prefijo=configuracion[0][10]
-    autoriza_del=configuracion[0][11]
-    autoriza_al=configuracion[0][12]
-    consecutivo=configuracion[0][13]
-    settings.preview_register=configuracion[0][14]
-    vista_previa_registro=False if configuracion[0][14] == 0 else True
-    settings.print_register_receipt=configuracion[0][15]
-    imprimir_registro=False if configuracion[0][15] == 0 else True
-    settings.preview_cash=configuracion[0][16]
-    vista_previa_cuadre=False if configuracion[0][16] == 0 else True
-    settings.print_cash_receipt=configuracion[0][17]
-    imprimir_cuadre=False if configuracion[0][17] == 0 else True
-    settings.printer=configuracion[0][18]
-    impresora=configuracion[0][18]
-    settings.paper_width=configuracion[0][19]
-    papel=configuracion[0][19]
+    settings.billing=configuracion[0][7]
+    facturacion=False if configuracion[0][7] == 0 else True
+    resolucion=configuracion[0][8]
+    fecha_desde=configuracion[0][9]
+    fecha_hasta=configuracion[0][10]
+    settings.prefijo=configuracion[0][11]
+    prefijo=configuracion[0][11]
+    autoriza_del=configuracion[0][12]
+    autoriza_al=configuracion[0][13]
+    clave_tecnica=configuracion[0][14]
+    settings.tipo_ambiente=configuracion[0][15]
+    tipo_ambiente=configuracion[0][15]
+    settings.cliente_final=configuracion[0][16]
+    cliente=configuracion[0][16]
+    consecutivo=configuracion[0][17]
+    settings.preview_register=configuracion[0][18]
+    vista_previa_registro=False if configuracion[0][18] == 0 else True
+    settings.print_register_receipt=configuracion[0][19]
+    imprimir_registro=False if configuracion[0][19] == 0 else True
+    settings.preview_cash=configuracion[0][20]
+    vista_previa_cuadre=False if configuracion[0][20] == 0 else True
+    settings.print_cash_receipt=configuracion[0][21]
+    imprimir_cuadre=False if configuracion[0][21] == 0 else True
+    settings.printer=configuracion[0][22]
+    impresora=configuracion[0][22]
+    settings.paper_width=configuracion[0][23]
+    papel=configuracion[0][23]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -360,19 +367,21 @@ def Register(page):
         clave_tecnica=configuracion[0][14]
         settings.tipo_ambiente=configuracion[0][15]
         tipo_ambiente=configuracion[0][15]
-        consecutivo=configuracion[0][16]
-        settings.preview_register=configuracion[0][17]
-        vista_previa_registro=False if configuracion[0][17] == 0 else True
-        settings.print_register_receipt=configuracion[0][18]
-        imprimir_registro=False if configuracion[0][18] == 0 else True
-        settings.preview_cash=configuracion[0][19]
-        vista_previa_cuadre=False if configuracion[0][19] == 0 else True
-        settings.print_cash_receipt=configuracion[0][20]
-        imprimir_cuadre=False if configuracion[0][20] == 0 else True
-        settings.printer=configuracion[0][21]
-        impresora=configuracion[0][21]
-        settings.paper_width=configuracion[0][22]
-        papel=configuracion[0][22]
+        settings.cliente_final=configuracion[0][16]
+        cliente=configuracion[0][16]
+        consecutivo=configuracion[0][17]
+        settings.preview_register=configuracion[0][18]
+        vista_previa_registro=False if configuracion[0][18] == 0 else True
+        settings.print_register_receipt=configuracion[0][19]
+        imprimir_registro=False if configuracion[0][19] == 0 else True
+        settings.preview_cash=configuracion[0][20]
+        vista_previa_cuadre=False if configuracion[0][20] == 0 else True
+        settings.print_cash_receipt=configuracion[0][21]
+        imprimir_cuadre=False if configuracion[0][21] == 0 else True
+        settings.printer=configuracion[0][22]
+        impresora=configuracion[0][22]
+        settings.paper_width=configuracion[0][23]
+        papel=configuracion[0][23]
     
     def register(e):
         if placa.value != "":

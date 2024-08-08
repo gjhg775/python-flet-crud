@@ -255,29 +255,32 @@ if configuracion != None:
     clave_tecnica=configuracion[0][14]
     settings.tipo_ambiente=configuracion[0][15]
     tipo_ambiente=configuracion[0][15]
-    consecutivo=configuracion[0][16]
-    settings.preview_register=configuracion[0][17]
-    vista_previa_registro=False if configuracion[0][17] == 0 else True
-    settings.print_register_receipt=configuracion[0][18]
-    imprimir_registro=False if configuracion[0][18] == 0 else True
-    settings.preview_cash=configuracion[0][19]
-    vista_previa_cuadre=False if configuracion[0][19] == 0 else True
-    settings.print_cash_receipt=configuracion[0][20]
-    imprimir_cuadre=False if configuracion[0][20] == 0 else True
-    settings.printer=configuracion[0][21]
-    impresora=configuracion[0][21]
-    settings.paper_width=configuracion[0][22]
-    papel=configuracion[0][22]
+    settings.cliente_final=configuracion[0][16]
+    cliente=configuracion[0][16]
+    consecutivo=configuracion[0][17]
+    settings.preview_register=configuracion[0][18]
+    vista_previa_registro=False if configuracion[0][18] == 0 else True
+    settings.print_register_receipt=configuracion[0][19]
+    imprimir_registro=False if configuracion[0][19] == 0 else True
+    settings.preview_cash=configuracion[0][20]
+    vista_previa_cuadre=False if configuracion[0][20] == 0 else True
+    settings.print_cash_receipt=configuracion[0][21]
+    imprimir_cuadre=False if configuracion[0][21] == 0 else True
+    settings.printer=configuracion[0][22]
+    impresora=configuracion[0][22]
+    settings.paper_width=configuracion[0][23]
+    papel=configuracion[0][23]
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, cliente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{cliente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
         settings.billing=facturacion
+        settings.cliente_final=cliente
         settings.printer=impresora
         settings.paper_width=papel
         
@@ -662,19 +665,21 @@ def showedit(e):
             clave_tecnica=configuracion[0][14]
             settings.tipo_ambiente=configuracion[0][15]
             tipo_ambiente=configuracion[0][15]
-            consecutivo=configuracion[0][16]
-            settings.preview_register=configuracion[0][17]
-            vista_previa_registro=False if configuracion[0][17] == 0 else True
-            settings.print_register_receipt=configuracion[0][18]
-            imprimir_registro=False if configuracion[0][18] == 0 else True
-            settings.preview_cash=configuracion[0][19]
-            vista_previa_cuadre=False if configuracion[0][19] == 0 else True
-            settings.print_cash_receipt=configuracion[0][20]
-            imprimir_cuadre=False if configuracion[0][20] == 0 else True
-            settings.printer=configuracion[0][21]
-            impresora=configuracion[0][21]
-            settings.paper_width=configuracion[0][22]
-            papel=configuracion[0][22]
+            settings.cliente_final=configuracion[0][16]
+            cliente=configuracion[0][16]
+            consecutivo=configuracion[0][17]
+            settings.preview_register=configuracion[0][18]
+            vista_previa_registro=False if configuracion[0][18] == 0 else True
+            settings.print_register_receipt=configuracion[0][19]
+            imprimir_registro=False if configuracion[0][19] == 0 else True
+            settings.preview_cash=configuracion[0][20]
+            vista_previa_cuadre=False if configuracion[0][20] == 0 else True
+            settings.print_cash_receipt=configuracion[0][21]
+            imprimir_cuadre=False if configuracion[0][21] == 0 else True
+            settings.printer=configuracion[0][22]
+            impresora=configuracion[0][22]
+            settings.paper_width=configuracion[0][23]
+            papel=configuracion[0][23]
 
         placa=registros[0][2]
         entrada=registros[0][3]
@@ -812,6 +817,13 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     salida=str(salida)
     entrada=str(entrada[0:16])
     salida=str(salida[0:16])
+    fecha=str(salida[0:16])
+    fecha=fecha.split(" ")
+    generacion=fecha[0]
+    hora=fecha[1]
+    generacion=generacion.split("-")
+    generacion=generacion[2] + "/" + generacion[1] + "/" + generacion[0] + " " + hora
+    expedicion=generacion
     entrada=datetime.datetime.strptime(entrada, formato)
     salida=datetime.datetime.strptime(salida, formato)
     tiempos=salida - entrada
@@ -857,8 +869,8 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     val_tol_fac=val_fac
     ValTot=val_fac+ValImp1+ValImp2+ValImp3
     NitOFE=nit_fac
-    ClTec="" # Clave técnica del rango de facturación
-    TipoAmbie="2" # Falta éste valor
+    ClTec=settings.clave_tecnica
+    TipoAmbie=settings.tipo_ambiente
     cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
     bytes=cufe.encode('utf-8')
     hash=hashlib.sha384(bytes).hexdigest()
@@ -876,13 +888,13 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     
     if vehiculo == "Moto":
         valor=valor_hora_moto
-        tarifa="Tarifa Horas-Moto"
+        tarifa="Tarifa Hora-Moto"
     if vehiculo == "Carro":
         valor=valor_hora_carro
-        tarifa="Tarifa Horas-Carro"
+        tarifa="Tarifa Hora-Carro"
     if vehiculo == "Otro":
         valor=valor_hora_otro
-        tarifa="Tarifa Horas-Otro"
+        tarifa="Tarifa Hora-Otro"
 
     if dias == 0 and int(horas) <= 4:
         if int(horas) == 0:
@@ -1030,46 +1042,62 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     resolucion1_w=pdf.get_string_width(resolucion1)
     pdf.set_x((doc_w - resolucion1_w) / 2)
     pdf.cell(resolucion1_w, 156, resolucion1, align="C")
+    generacion=f"Fecha Generación " + generacion
+    generacion_w=pdf.get_string_width(generacion)
+    pdf.set_x((doc_w - generacion_w) / 2)
+    pdf.cell(generacion_w, 170, generacion, align="C")
+    expedicion=f"Fecha Expedición " + expedicion
+    expedicion_w=pdf.get_string_width(expedicion)
+    pdf.set_x((doc_w - expedicion_w) / 2)
+    pdf.cell(expedicion_w, 184, expedicion, align="C")
+    cod_cliente=f"Cliente: {settings.cliente_final}"
+    cod_cliente_w=pdf.get_string_width(cod_cliente)
+    pdf.set_x((doc_w - cod_cliente_w) / 2)
+    pdf.cell(cod_cliente_w, 198, cod_cliente, align="C")
+    cliente=f"Consumidor final"
+    cliente_w=pdf.get_string_width(cliente)
+    pdf.set_x((doc_w - cliente_w) / 2)
+    pdf.cell(cliente_w, 212, cliente, align="C")
     pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     placas1=f"Placa {placas}"
     placas1_w=pdf.get_string_width(placas1)
     pdf.set_x((doc_w - placas1_w) / 2)
-    pdf.cell(placas1_w, 170, placas1, align="C")
+    pdf.cell(placas1_w, 226, placas1, align="C")
     pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     entrada_w=pdf.get_string_width(entrada)
     pdf.set_x((doc_w - entrada_w) / 2)
-    pdf.cell(entrada_w, 184, entrada, align="C")
+    pdf.cell(entrada_w, 240, entrada, align="C")
     salida_w=pdf.get_string_width(salida)
     pdf.set_x((doc_w - salida_w) / 2)
-    pdf.cell(salida_w, 198, salida, align="C")
+    pdf.cell(salida_w, 254, salida, align="C")
     duracion_w=pdf.get_string_width(duracion)
     pdf.set_x((doc_w - duracion_w) / 2)
-    pdf.cell(duracion_w, 212, duracion, align="C")
+    pdf.cell(duracion_w, 268, duracion, align="C")
     tarifa_w=pdf.get_string_width(tarifa)
     pdf.set_x((doc_w - tarifa_w) / 2)
-    pdf.cell(tarifa_w, 226, tarifa, align="C")
+    pdf.cell(tarifa_w, 282, tarifa, align="C")
     valor=locale.currency(valor, grouping=True)
     valor="Valor Unidad " + str(valor) 
     valor_w=pdf.get_string_width(valor)
     pdf.set_x((doc_w - valor_w) / 2)
-    pdf.cell(valor_w, 240, valor, align="C")
+    pdf.cell(valor_w, 296, valor, align="C")
     vlr_total=locale.currency(vlr_total, grouping=True)
     vlr_total="Total " + str(vlr_total) 
     vlr_total_w=pdf.get_string_width(vlr_total)
     pdf.set_x((doc_w - vlr_total_w) / 2)
-    pdf.cell(vlr_total_w, 254, vlr_total, align="C")
+    pdf.cell(vlr_total_w, 310, vlr_total, align="C")
     pdf.set_font("helvetica", "", size=13)
     title_cufe="CUFE:"
     title_cufe_w=pdf.get_string_width(title_cufe)
     pdf.set_x((doc_w - title_cufe_w) / 2)
-    pdf.cell(title_cufe_w, 268, title_cufe, align="C")
+    pdf.cell(title_cufe_w, 324, title_cufe, align="C")
     cufe_w=pdf.get_string_width(cufe)
     pdf.set_x((doc_w - cufe_w) / 2)
-    pdf.set_y(150)
+    pdf.set_y(177)
     pdf.write(0, cufe)
     pdf.set_font("helvetica", "", size=15)
     img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-    pdf.image(img.get_image(), x=25 if settings.paper_width == 80 else 14, y=172, w=30, h=30)
+    pdf.image(img.get_image(), x=25 if settings.paper_width == 80 else 14, y=198, w=30, h=30)
     pdf.output(path+"receipt.pdf")
 
     if settings.tipo_app == 0:

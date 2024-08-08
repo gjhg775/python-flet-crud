@@ -12,7 +12,7 @@ usuario=""
 printer=""
 prefijo=""
 clave_tecnica=""
-cliente_final="222222222222"
+cliente_final=""
 acceso_configuracion=0
 acceso_variables=0
 acceso_registro=0
@@ -21,7 +21,7 @@ acceso_cierre=0
 textsize=30
 fieldwith=280
 tipo_app=0 # 0=Escritorio 1=Web
-billing=0
+billing=1
 tipo_ambiente=0
 paper_width=0
 preview_register=1
