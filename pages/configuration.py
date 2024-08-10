@@ -547,7 +547,7 @@ def Configuration(page):
 
     configuracion_id=id
     parqueadero=ft.TextField(label="Parqueadero", width=fieldwith, value=parqueadero)
-    nit=ft.TextField(label="Nit", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9-]", replacement_string=""), value=nit)
+    nit=ft.TextField(label="NIT", width=fieldwith, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9-]", replacement_string=""), value=nit)
     regimen=ft.TextField(label="Régimen", width=fieldwith, value=regimen)
     direccion=ft.TextField(label="Dirección", width=fieldwith, value=direccion)
     telefono=ft.TextField(label="Teléfono", width=fieldwith, value=telefono, input_filter=ft.NumbersOnlyInputFilter())

@@ -498,7 +498,7 @@ def Register(page):
             settings.message=message
             settings.showMessage(bgcolor)
             file_name="register.xlsx"
-            df=pd.DataFrame(data, columns=["Factura", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
+            df=pd.DataFrame(data, columns=["Factura" if settings.billing == 1 else "Recibo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
             df.to_excel(path+file_name, index=False)
             message="Registros exportados satisfactoriamente"
             bgcolor="green"
