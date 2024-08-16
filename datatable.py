@@ -413,55 +413,57 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 valor=valor_turno_carro
             if vehiculo == "Otro":
                 valor=valor_turno_otro
-            turno=dias/12
+            # turno=dias/12
+            turno=horas/12
             turno=int(turno)
             # horas=dias-(turno*12)
             # horas=int(horas)
-            horas=dias-horas
+            # horas=dias-horas
+            horas=(turno*12)-horas
             if int(horas) < 0:
                 horas=horas*(-1)
+            incrementa=0
             if int(horas) > 3:
                 turno=turno+1
-            horas=12-horas
-            # horas=(12*turno)-((12*turno)-horas)
-            if int(horas) < 0:
-                horas=horas*(-1)
+                incrementa=1
+            # horas=12-horas
+            # if int(horas) < 0:
+            #     horas=horas*(-1)
+            valor_fraccion=0
+            total=0
             if vehiculo == "Moto":
-                if turno > 0 and int(horas) <= 3:
+                if int(horas) <= 3:
                     total=int(horas)*valor_hora_moto
+                if incrementa == 0:
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
                         valor_fraccion=valor_hora_moto/2
                     if minutos > 15:
                         valor_fraccion=valor_hora_moto
-                    total=total+valor_fraccion+(valor_turno_moto*turno)
-                else:
-                    total=valor_turno_moto
+                total=total+valor_fraccion+(valor_turno_moto*turno)
             if vehiculo == "Carro":
-                if turno > 1 and int(horas) <= 3:
+                if int(horas) <= 3:
                     total=int(horas)*valor_hora_carro
+                if incrementa == 0:
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
                         valor_fraccion=valor_hora_carro/2
                     if minutos > 15:
                         valor_fraccion=valor_hora_carro
-                    total=total+valor_fraccion+(valor_turno_carro*turno)
-                else:
-                    total=valor_turno_carro
+                total=total+valor_fraccion+(valor_turno_carro*turno)
             if vehiculo == "Otro":
-                if turno > 0 and int(horas) <= 3:
+                if int(horas) <= 3:
                     total=int(horas)*valor_hora_otro
+                if incrementa == 0:
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
                         valor_fraccion=valor_hora_otro/2
                     if minutos > 15:
                         valor_fraccion=valor_hora_otro
-                    total=total+valor_fraccion+(valor_turno_otro*turno)
-                else:
-                    total=valor_turno_otro
+                total=total+valor_fraccion+(valor_turno_otro*turno)
             facturacion=1
 
         # tiempo=int(tiempo)
@@ -921,55 +923,57 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         if vehiculo == "Otro":
             valor=valor_turno_otro
             tarifa="Tarifa Turno-Otro"
-        turno=dias/12
+        # turno=dias/12
+        turno=horas/12
         turno=int(turno)
         # horas=dias-(turno*12)
         # horas=int(horas)
-        horas=dias-horas
+        # horas=dias-horas
+        horas=(turno*12)-horas
         if int(horas) < 0:
             horas=horas*(-1)
+        incrementa=0
         if int(horas) > 3:
             turno=turno+1
-        horas=12-horas
-        # horas=(12*turno)-((12*turno)-horas)
-        if int(horas) < 0:
-            horas=horas*(-1)
+            incrementa=1
+        # horas=12-horas
+        # if int(horas) < 0:
+        #     horas=horas*(-1)
+        valor_fraccion=0
+        total=0
         if vehiculo == "Moto":
-            if turno > 0 and int(horas) <= 3:
+            if int(horas) <= 3:
                 total=int(horas)*valor_hora_moto
+            if incrementa == 0:
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_moto/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_moto
-                vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
-            else:
-                vlr_total=valor_turno_moto
+            vlr_total=total+valor_fraccion+(valor_turno_moto*turno)
         if vehiculo == "Carro":
-            if turno > 0 and int(horas) <= 3:
+            if int(horas) <= 3:
                 total=int(horas)*valor_hora_carro
+            if incrementa == 0:
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_carro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_carro
-                vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
-            else:
-                vlr_total=valor_turno_carro
+            vlr_total=total+valor_fraccion+(valor_turno_carro*turno)
         if vehiculo == "Otro":
-            if turno > 0 and int(horas) <= 3:
+            if int(horas) <= 3:
                 total=int(horas)*valor_hora_otro
+            if incrementa == 0:
                 if minutos == 0:
                     valor_fraccion=0
                 if minutos > 0 and minutos <= 15:
                     valor_fraccion=valor_hora_otro/2
                 if minutos > 15:
                     valor_fraccion=valor_hora_otro
-                vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
-            else:
-                vlr_total=valor_turno_otro
+            vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
 
     pdf=FPDF("P", "mm", (settings.paper_width, 150 if settings.billing == 0 else 255))
     pdf.add_page()
