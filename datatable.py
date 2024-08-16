@@ -646,7 +646,7 @@ def showedit(e):
             tipo_ambiente=configuracion[0][15]
             settings.cliente_final=configuracion[0][16]
             cliente=configuracion[0][16]
-            consecutivo=configuracion[0][17]
+            # consecutivo=configuracion[0][17]
             settings.preview_register=configuracion[0][18]
             vista_previa_registro=False if configuracion[0][18] == 0 else True
             settings.print_register_receipt=configuracion[0][19]
@@ -755,8 +755,8 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
-    pdf.set_font("helvetica", "", size=9)
-    impreso="Impreso por XSoftware - NIT 98573207"
+    pdf.set_font("helvetica", "", size=8)
+    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     pdf.set_y(120)
@@ -1085,7 +1085,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         pdf.set_y(184)
         pdf.write(0, cufe)
         img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-        pdf.image(img.get_image(), x=25 if settings.paper_width == 80 else 14, y=204, w=28, h=28)
+        pdf.image(img.get_image(), x=28 if settings.paper_width == 80 else 14, y=204, w=25, h=25)
     else:
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         consecutivo_w=pdf.get_string_width(consecutivo)
@@ -1118,14 +1118,14 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         vlr_total_w=pdf.get_string_width(vlr_total)
         pdf.set_x((doc_w - vlr_total_w) / 2)
         pdf.cell(vlr_total_w, 212, vlr_total, align="C")
-    pdf.set_font("helvetica", "", size=9)
-    impreso="Impreso por XSoftware - NIT 98573207"
+    pdf.set_font("helvetica", "", size=8)
+    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     if settings.billing == 0:
-        pdf.set_y(123)
+        pdf.set_y(125)
     else:
-        pdf.set_y(235)
+        pdf.set_y(231)
     pdf.write(0, impreso)
     pdf.output(path+"receipt.pdf")
 

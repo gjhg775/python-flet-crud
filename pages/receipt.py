@@ -134,8 +134,8 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
-    pdf.set_font("helvetica", "", size=9)
-    impreso="Impreso por XSoftware - NIT 98573207"
+    pdf.set_font("helvetica", "", size=8)
+    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     pdf.set_y(123)
@@ -464,7 +464,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         pdf.set_y(184)
         pdf.write(0, cufe)
         img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-        pdf.image(img.get_image(), x=25 if settings.paper_width == 80 else 14, y=204, w=28, h=28)
+        pdf.image(img.get_image(), x=28 if settings.paper_width == 80 else 14, y=204, w=25, h=25)
     else:
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         consecutivo_w=pdf.get_string_width(consecutivo)
@@ -497,14 +497,14 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         vlr_total_w=pdf.get_string_width(vlr_total)
         pdf.set_x((doc_w - vlr_total_w) / 2)
         pdf.cell(vlr_total_w, 212, vlr_total, align="C")
-    pdf.set_font("helvetica", "", size=9)
-    impreso="Impreso por XSoftware - NIT 98573207"
+    pdf.set_font("helvetica", "", size=8)
+    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     if settings.billing == 0:
-        pdf.set_y(123)
+        pdf.set_y(125)
     else:
-        pdf.set_y(235)
+        pdf.set_y(231)
     pdf.write(0, impreso)
     pdf.output(path+"receipt.pdf")
 
@@ -628,11 +628,14 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         pdf.cell(row_w, pos, row, align="C")
         # pdf.cell(1, pos, row, align="R")
         efectivo+=registro[8]
-        if pagina > 0 and contador == 6:
+        if pagina == 1 and contador == 6:
             pdf.add_page(same=True)
+            contador=0
             pos=0
-        if (contador%18) == 0:
+        # if (contador%18) == 0:
+        if contador == 13:
             pdf.add_page(same=True)
+            contador=0
             pos=0
     pdf.set_font("helvetica", "B", size=9)
     pos+=10
