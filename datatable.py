@@ -189,11 +189,13 @@ def add_user(usuario, hashed, nombre, foto):
     except Exception as e:
         print(e)
 
-def update_user(usuario, foto):
+def update_user(usuario, clave, foto):
+    hash=hashlib.sha256(clave.encode()).hexdigest()
+    clave=hash
     try:
         cursor=conn.cursor()
-        sql="""UPDATE usuarios SET foto = ? WHERE usuario = ?"""
-        values=(f"{foto}", f"{usuario}")
+        sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ?"""
+        values=(f"{clave}", f"{foto}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -212,6 +214,7 @@ def get_user(usuario):
         registros=cursor.fetchall()
 
         if registros != []:
+            settings.password=registros[0][1]
             settings.photo=registros[0][4]
             # settings.photo=photo
             # settings.user_avatar.src=f"upload\\img\\{photo}"

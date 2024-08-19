@@ -1,10 +1,11 @@
 import flet as ft
 
-global username, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, tipo_app, \
-       preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, billing, clave_tecnica, tipo_ambiente, cliente_final, \
+global username, password, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, \
+       tipo_app, preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, billing, clave_tecnica, tipo_ambiente, cliente_final, \
        progressRing
 
 username=""
+password=""
 login_nombre=""
 photo=""
 message=""
