@@ -490,6 +490,7 @@ def Register(page):
         dlg_modal2.open=False
         dlg_modal2.update()
         settings.progressBar.visible=True
+        page.open(dlg_modal3)
         settings.page.update()
         data=exportRegister(fecha_desde.value, fecha_hasta.value)
         if data != []:
@@ -497,6 +498,7 @@ def Register(page):
             bgcolor="blue"
             settings.message=message
             settings.showMessage(bgcolor)
+            time.sleep(1)
             file_name="register.xlsx"
             df=pd.DataFrame(data, columns=["Factura" if settings.billing == 1 else "Recibo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
             df.to_excel(path+file_name, index=False)
@@ -504,6 +506,7 @@ def Register(page):
             bgcolor="green"
             settings.message=message
             settings.showMessage(bgcolor)
+            time.sleep(1)
             os.system("start " + path+file_name)
         else:
             message="No hay registros para exportar"
@@ -514,6 +517,7 @@ def Register(page):
         fecha_hasta.value="dd/mm/aaaa"
         time.sleep(2)
         settings.progressBar.visible=False
+        page.close(dlg_modal3)
         settings.page.update()
 
     def close_dlg2(e):
@@ -677,8 +681,19 @@ def Register(page):
         on_dismiss=lambda _: placa.focus(),
     )
 
+    dlg_modal3 = ft.AlertDialog(
+        modal=True,
+        bgcolor=ft.colors.TRANSPARENT,
+        content=ft.Column(
+            [ft.ProgressRing(),],
+            height=15,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        ),
+    )
+
     page.overlay.append(dlg_modal)
     page.overlay.append(dlg_modal2)
+    page.overlay.append(dlg_modal3)
 
     registros=selectRegisters(search)
     if registros != []:
@@ -759,6 +774,7 @@ def Register(page):
     return ft.Column(
         controls=[
             settings.progressBar,
+            
             ft.Container(height=20),
             ft.Container(
                 alignment=ft.alignment.center,
