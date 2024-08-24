@@ -6,7 +6,7 @@ import sqlite3
 import win32print
 from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, lblAccesos, tba, tblAccesos
 
-conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 search=""
 message=""
 fieldwith=settings.fieldwith

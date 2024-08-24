@@ -12,7 +12,7 @@ from time import sleep
 from pages.receipt import show_input, show_output
 from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister
 
-conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -416,6 +416,16 @@ def Register(page):
             
             consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
+            if settings.correcto == 1:
+                message="Verifique que la fecha y hora del sistema estén actualizadas"
+                bgcolor="red"
+                settings.message=message
+                settings.showMessage(bgcolor)
+                time.sleep(2)
+                placa.value=""
+                placa.focus()
+                placa.update()
+                return False
             if comentario1 != "":
                 show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas)
             else:

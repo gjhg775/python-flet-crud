@@ -213,8 +213,10 @@ def main(page:ft.Page):
 
     def loginMe(e):
         lbl_login.value="Iniciar sesión"
+        user.hint_text="Usuario ó Correo electrónico"
         btn_login.text="Iniciar sesión"
         btn_login.on_click=login
+        email.visible=False
         confirm_password.visible=False
         name.visible=False
         lbl_cuenta.value="¿No tiene una cuenta?"
@@ -230,11 +232,12 @@ def main(page:ft.Page):
     def login(e):
         user.error_text=""
         password.error_text=""
+        email.visible=False
         bln_login=False
         if user.value != "" and password.value != "":
             usuario=user.value
             contrasena=password.value
-            login_user, login_password, login_nombre, login_photo, bln_login=selectUser(usuario, contrasena)
+            login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login=selectUser(usuario, contrasena)
             if login_user != "" and bln_login == False:
                 user.error_text=login_user
                 # user.focus()
@@ -252,7 +255,7 @@ def main(page:ft.Page):
                 password.error_text=""
                 password.update()
             if bln_login == True:
-                datalogin={"logged":bln_login, "username":user.value}
+                datalogin={"logged":bln_login, "username":login_user}
                 page.session.set("username", datalogin["username"])
                 settings.username=page.session.get("username")
                 username=settings.username
@@ -292,12 +295,14 @@ def main(page:ft.Page):
     def signUp(e):
         message=""
         user.error_text=""
+        email.error_text=""
         password.error_text=""
         confirm_password.error_text=""
         name.error_text=""
         bln_login=False
-        if user.value != "" and password.value != "" and confirm_password.value != "" and name.value != "":
+        if user.value != "" and email.value != "" and password.value != "" and confirm_password.value != "" and name.value != "":
             usuario=user.value
+            correo_electronico=email.value
             contrasena=password.value
             confirm_contrasena=confirm_password.value
             nombre=name.value
@@ -305,7 +310,7 @@ def main(page:ft.Page):
             hash2=hashlib.sha256(confirm_contrasena.encode()).hexdigest()
             if hash == hash2:
                 foto="default.jpg"
-                bln_login=add_user(usuario, hash, nombre, foto)
+                bln_login=add_user(usuario, correo_electronico, hash, nombre, foto)
                 if bln_login != False:
                     user.value=""
                     password.value=""
@@ -326,6 +331,9 @@ def main(page:ft.Page):
             if user.value == "":
                 user.error_text="Digite el usuario"
                 btn_login.focus()
+            if email.value == "":
+                email.error_text="Digite el correo electrónico"
+                btn_login.focus()
             if password.value == "":
                 password.error_text="Digite la contraseña"
                 btn_login.focus()
@@ -342,17 +350,21 @@ def main(page:ft.Page):
 
     def sign_up(e):
         lbl_login.value="Crear cuenta"
+        user.hint_text="Usuario"
         btn_login.text="Crear cuenta"
         btn_login.on_click=signUp
+        email.visible=True
         confirm_password.visible=True
         name.visible=True
         lbl_cuenta.value="Ya tiene una cuenta"
         btn_cuenta.visible=False
         btn_loginme.visible=True
         user.value=""
+        email.value=""
         password.value=""
         name.value=""
         user.error_text=""
+        email.error_text=""
         password.error_text=""
         confirm_password.error_text=""
         name.error_text=""
@@ -520,7 +532,8 @@ def main(page:ft.Page):
         )
 
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
-    user=ft.TextField(width=280, height=60, hint_text="Usuario", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
+    user=ft.TextField(width=280, height=60, hint_text="Usuario ó Correo electrónico", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
+    email=ft.TextField(width=280, height=60, hint_text="Correo electrónico", border="underline", prefix_icon=ft.icons.EMAIL, visible=False)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
     confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=False)
     name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
@@ -548,6 +561,10 @@ def main(page:ft.Page):
                         ),
                         ft.Container(
                             user,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            email,
                             padding=ft.padding.only(20,20)
                         ),
                         ft.Container(

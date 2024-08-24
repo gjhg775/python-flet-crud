@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 
 password=os.getenv("PSWSA")
 # bytes=password.encode('utf-8')
@@ -26,6 +26,7 @@ def create_users():
     cursor.execute("""CREATE TABLE IF NOT EXISTS usuarios(
         usuario_id INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario TEXT,
+        correo_electronico TEXT,
         clave TEXT,
         nombre TEXT,
         foto TEXT)
@@ -128,13 +129,13 @@ def drop_regist():
 def admin_user():
     try:
         cursor=conn.cursor()
-        sql="""INSERT INTO usuarios (usuario, clave, nombre, foto) VALUES (?, ?, ?, ?)"""
-        values=("Super Admin", f"{hashsa}", "Super Administrador", "default.jpg")
+        sql="""INSERT INTO usuarios (usuario, correo_electronico, clave, nombre, foto) VALUES (?, ?, ?, ?, ?)"""
+        values=("Super Admin", "gjhg_69@hotmail.com", f"{hashsa}", "Super Administrador", "default.jpg")
         cursor.execute(sql, values)
         conn.commit()
 
-        sql="""INSERT INTO usuarios (usuario, clave, nombre, foto) VALUES (?, ?, ?, ?)"""
-        values=("Admin", f"{hasha}", "Administrador", "default.jpg")
+        sql="""INSERT INTO usuarios (usuario, correo_electronico, clave, nombre, foto) VALUES (?, ?, ?, ?, ?)"""
+        values=("Admin", "gjhg_69@hotmail.com", f"{hasha}", "Administrador", "default.jpg")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

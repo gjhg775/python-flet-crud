@@ -2,7 +2,7 @@ import flet as ft
 
 global username, password, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, \
        tipo_app, preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, billing, clave_tecnica, tipo_ambiente, cliente_final, \
-       progressRing
+       progressRing, correcto
 
 username=""
 password=""
@@ -29,6 +29,7 @@ preview_register=1
 print_register_receipt=1
 preview_cash=1
 print_cash_receipt=1
+correcto=0
 page=ft.Page
 progressRing=ft.ProgressRing()
 progressBar=ft.ProgressBar(width=page.width, color="amber", bgcolor="#eeeeee", visible=False)

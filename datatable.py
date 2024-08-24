@@ -15,7 +15,7 @@ from flet import *
 from fpdf import FPDF
 from pathlib import Path
 
-conn=sqlite3.connect('database/parqueadero.db',check_same_thread=False)
+conn=sqlite3.connect('C:/pdb/database/parqueadero.db',check_same_thread=False)
 
 valor=0
 
@@ -34,6 +34,7 @@ tbu = DataTable(
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
+        DataColumn(Text("Foto")),
 		DataColumn(Text("Usuario")),
 		DataColumn(Text("Nombre")),
 		DataColumn(Text("Acción")),
@@ -124,12 +125,13 @@ def selectUser(usuario, contrasena):
     hash=hashlib.sha256(contrasena.encode()).hexdigest()
     try:
         cursor=conn.cursor()
-        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
-        values=(f'{usuario}',)
+        sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ?"""
+        values=(f'{usuario}', f'{usuario}')
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
         login_user=""
+        correo_electronico=""
         login_password=""
         login_nombre=""
         login_photo=""
@@ -138,11 +140,14 @@ def selectUser(usuario, contrasena):
         if registros != []:
             # print(registros[0])
 
-            hashed=registros[0][2]
+            hashed=registros[0][3]
 
             if hash == hashed:
-                login_nombre=registros[0][3]
-                login_photo=registros[0][4]
+                login_user=registros[0][1]
+                correo_electronico=registros[0][2]
+                login_password=registros[0][3]
+                login_nombre=registros[0][4]
+                login_photo=registros[0][5]
                 bln_login=True
             else:
                 bln_login=False
@@ -150,15 +155,15 @@ def selectUser(usuario, contrasena):
             login_user="Usuario no registrado"
         if bln_login == False:
             login_password="Contraseña inválida"
-        return login_user, login_password, login_nombre, login_photo, bln_login
+        return login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login
     except Exception as e:
         print(e)
 
 def add_user(usuario, hashed, nombre, foto):
     try:
         cursor=conn.cursor()
-        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
-        values=(f'{usuario}',)
+        sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ?"""
+        values=(f'{usuario}', f'{usuario}')
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
@@ -194,8 +199,8 @@ def update_user(usuario, clave, foto):
     clave=hash
     try:
         cursor=conn.cursor()
-        sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ?"""
-        values=(f"{clave}", f"{foto}", f"{usuario}")
+        sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ? OR correo_electronico = ?"""
+        values=(f"{clave}", f"{foto}", f"{usuario}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -214,8 +219,8 @@ def get_user(usuario):
         registros=cursor.fetchall()
 
         if registros != []:
-            settings.password=registros[0][1]
-            settings.photo=registros[0][4]
+            settings.password=registros[0][3]
+            settings.photo=registros[0][5]
             # settings.photo=photo
             # settings.user_avatar.src=f"upload\\img\\{photo}"
             # settings.user_photo.src=f"upload\\img\\{photo}"
@@ -347,159 +352,185 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
         cursor=conn.cursor()
 
-        sql="""SELECT * FROM usuarios WHERE usuario = ?"""
-        values=(f'{usuario}',)
+        sql=f"""SELECT entrada AS ent, datetime() AS sal FROM registro WHERE registro_id = ?"""
+        values=(f"{id}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
-        usuario=registros[0][3]
+        ent=registros[0][0]
+        sal=registros[0][1]
 
-        sql=f"""UPDATE registro SET salida = ?, valor = ?, retiro = ? WHERE registro_id = ?"""
-        values=(f"{salida}", f"{valor}", f"{usuario}", f"{id}")
-        cursor.execute(sql, values)
-        conn.commit()
+        settings.correcto=0
 
-        sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = ?"""
-        values=(f'{id}',)
-        cursor.execute(sql, values)
-        registros=cursor.fetchall()
-
-        id=registros[0][0]
-        placa=registros[0][2]
-        entrada=registros[0][3]
-        salida=registros[0][4]
-        valor=registros[0][7]
-        # tiempo=((registros[0][13])/60)/60
-        tiempo=registros[0][13]
-
-        formato=f"%Y-%m-%d %H:%M"
-        entrada=str(entrada)
-        salida=str(salida)
-        entrada=str(entrada[0:16])
-        salida=str(salida[0:16])
-        entrada=datetime.datetime.strptime(entrada, formato)
-        salida=datetime.datetime.strptime(salida, formato)
-        tiempos=salida - entrada
-        dias=tiempos.days*24
-        horas=tiempos.seconds//3600
-        horas+=dias
-        sobrante=tiempos.seconds%3600
-        minutos=sobrante//60
-
-        # segundos=registros[0][13]
-        # dias=segundos//(24*60*60)
-        # segundos=segundos % (24*60*60)
-        # horas=segundos//(60*60)
-        # segundos=segundos % (60*60)
-        # minutos=segundos//60
-        # segundos=segundos % 60
-
-        # print("Días: {} Horas: {} Minutos: {} Segundos: {}".format(dias, horas, minutos, segundos))
-
-        if dias == 0 and int(horas) <= 3:
-            if int(horas) == 0:
-                total=valor
-            else:
-                valor_horas=valor*int(horas)
-                if minutos == 0:
-                    valor_fraccion=0
-                if minutos > 0 and minutos <= 15:
-                    valor_fraccion=valor/2
-                if minutos > 15:
-                    valor_fraccion=valor
-                total=valor_horas+valor_fraccion
-            facturacion=0
-        else:
-            if vehiculo == "Moto":
-                valor=valor_turno_moto
-            if vehiculo == "Carro":
-                valor=valor_turno_carro
-            if vehiculo == "Otro":
-                valor=valor_turno_otro
-            # turno=dias/12
-            turno=horas/12
-            turno=int(turno)
-            # horas=dias-(turno*12)
-            # horas=int(horas)
-            # horas=dias-horas
-            horas=(turno*12)-horas
-            if int(horas) < 0:
-                horas=horas*(-1)
-            incrementa=0
-            if int(horas) > 3:
-                turno=turno+1
-                incrementa=1
-            # horas=12-horas
-            # if int(horas) < 0:
-            #     horas=horas*(-1)
-            valor_fraccion=0
+        if ent > sal:
+            settings.correcto=1
+            consecutivo=0
+            vehiculo=""
+            placa=""
+            entrada=""
+            salida=""
+            tiempo=0
+            comentario1=""
+            comentario2=""
+            comentario3=""
             total=0
-            if vehiculo == "Moto":
-                if int(horas) <= 3:
-                    total=int(horas)*valor_hora_moto
-                if incrementa == 0:
+            entradas=""
+            salidas=""
+
+        if settings.correcto == 0:
+            sql="""SELECT * FROM usuarios WHERE usuario = ?"""
+            values=(f'{usuario}',)
+            cursor.execute(sql, values)
+            registros=cursor.fetchall()
+
+            usuario=registros[0][4]
+
+            sql=f"""UPDATE registro SET salida = ?, valor = ?, retiro = ? WHERE registro_id = ?"""
+            values=(f"{salida}", f"{valor}", f"{usuario}", f"{id}")
+            cursor.execute(sql, values)
+            conn.commit()
+
+            sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = ?"""
+            values=(f'{id}',)
+            cursor.execute(sql, values)
+            registros=cursor.fetchall()
+
+            id=registros[0][0]
+            placa=registros[0][2]
+            entrada=registros[0][3]
+            salida=registros[0][4]
+            valor=registros[0][7]
+            # tiempo=((registros[0][13])/60)/60
+            tiempo=registros[0][13]
+
+            formato=f"%Y-%m-%d %H:%M"
+            entrada=str(entrada)
+            salida=str(salida)
+            entrada=str(entrada[0:16])
+            salida=str(salida[0:16])
+            entrada=datetime.datetime.strptime(entrada, formato)
+            salida=datetime.datetime.strptime(salida, formato)
+            tiempos=salida - entrada
+            dias=tiempos.days*24
+            horas=tiempos.seconds//3600
+            horas+=dias
+            sobrante=tiempos.seconds%3600
+            minutos=sobrante//60
+
+            # segundos=registros[0][13]
+            # dias=segundos//(24*60*60)
+            # segundos=segundos % (24*60*60)
+            # horas=segundos//(60*60)
+            # segundos=segundos % (60*60)
+            # minutos=segundos//60
+            # segundos=segundos % 60
+
+            # print("Días: {} Horas: {} Minutos: {} Segundos: {}".format(dias, horas, minutos, segundos))
+
+            if dias == 0 and int(horas) <= 3:
+                if int(horas) == 0:
+                    total=valor
+                else:
+                    valor_horas=valor*int(horas)
                     if minutos == 0:
                         valor_fraccion=0
                     if minutos > 0 and minutos <= 15:
-                        valor_fraccion=valor_hora_moto/2
+                        valor_fraccion=valor/2
                     if minutos > 15:
-                        valor_fraccion=valor_hora_moto
-                total=total+valor_fraccion+(valor_turno_moto*turno)
-            if vehiculo == "Carro":
-                if int(horas) <= 3:
-                    total=int(horas)*valor_hora_carro
-                if incrementa == 0:
-                    if minutos == 0:
-                        valor_fraccion=0
-                    if minutos > 0 and minutos <= 15:
-                        valor_fraccion=valor_hora_carro/2
-                    if minutos > 15:
-                        valor_fraccion=valor_hora_carro
-                total=total+valor_fraccion+(valor_turno_carro*turno)
-            if vehiculo == "Otro":
-                if int(horas) <= 3:
-                    total=int(horas)*valor_hora_otro
-                if incrementa == 0:
-                    if minutos == 0:
-                        valor_fraccion=0
-                    if minutos > 0 and minutos <= 15:
-                        valor_fraccion=valor_hora_otro/2
-                    if minutos > 15:
-                        valor_fraccion=valor_hora_otro
-                total=total+valor_fraccion+(valor_turno_otro*turno)
-            facturacion=1
+                        valor_fraccion=valor
+                    total=valor_horas+valor_fraccion
+                facturacion=0
+            else:
+                if vehiculo == "Moto":
+                    valor=valor_turno_moto
+                if vehiculo == "Carro":
+                    valor=valor_turno_carro
+                if vehiculo == "Otro":
+                    valor=valor_turno_otro
+                # turno=dias/12
+                turno=horas/12
+                turno=int(turno)
+                # horas=dias-(turno*12)
+                # horas=int(horas)
+                # horas=dias-horas
+                horas=(turno*12)-horas
+                if int(horas) < 0:
+                    horas=horas*(-1)
+                incrementa=0
+                if int(horas) > 3:
+                    turno=turno+1
+                    incrementa=1
+                # horas=12-horas
+                # if int(horas) < 0:
+                #     horas=horas*(-1)
+                valor_fraccion=0
+                total=0
+                if vehiculo == "Moto":
+                    if int(horas) <= 3:
+                        total=int(horas)*valor_hora_moto
+                    if incrementa == 0:
+                        if minutos == 0:
+                            valor_fraccion=0
+                        if minutos > 0 and minutos <= 15:
+                            valor_fraccion=valor_hora_moto/2
+                        if minutos > 15:
+                            valor_fraccion=valor_hora_moto
+                    total=total+valor_fraccion+(valor_turno_moto*turno)
+                if vehiculo == "Carro":
+                    if int(horas) <= 3:
+                        total=int(horas)*valor_hora_carro
+                    if incrementa == 0:
+                        if minutos == 0:
+                            valor_fraccion=0
+                        if minutos > 0 and minutos <= 15:
+                            valor_fraccion=valor_hora_carro/2
+                        if minutos > 15:
+                            valor_fraccion=valor_hora_carro
+                    total=total+valor_fraccion+(valor_turno_carro*turno)
+                if vehiculo == "Otro":
+                    if int(horas) <= 3:
+                        total=int(horas)*valor_hora_otro
+                    if incrementa == 0:
+                        if minutos == 0:
+                            valor_fraccion=0
+                        if minutos > 0 and minutos <= 15:
+                            valor_fraccion=valor_hora_otro/2
+                        if minutos > 15:
+                            valor_fraccion=valor_hora_otro
+                    total=total+valor_fraccion+(valor_turno_otro*turno)
+                facturacion=1
 
-        # tiempo=int(tiempo)
-        sql="""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
-        values=(f"{salida}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
-        cursor.execute(sql, values)
-        conn.commit()
+            # tiempo=int(tiempo)
+            sql="""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
+            values=(f"{salida}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
+            cursor.execute(sql, values)
+            conn.commit()
 
-        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = ?"""
-        values=(f'{id}',)
-        cursor.execute(sql, values)
-        registros=cursor.fetchall()
+            sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = ?"""
+            values=(f'{id}',)
+            cursor.execute(sql, values)
+            registros=cursor.fetchall()
 
-        entradas=registros[0][13]
-        salidas=registros[0][14]
+            entradas=registros[0][13]
+            salidas=registros[0][14]
 
-        # sql="SELECT consecutivo FROM configuracion"
-        # cursor.execute(sql)
-        # registros=cursor.fetchall()
+            # sql="SELECT consecutivo FROM configuracion"
+            # cursor.execute(sql)
+            # registros=cursor.fetchall()
 
-        # consecutivo=registros[0][0]
+            # consecutivo=registros[0][0]
 
-        # id=1
-        # consecutivo+=1
-        # sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
-        # values=(f"{consecutivo}", f"{id}")
-        # cursor.execute(sql, values)
-        # conn.commit()
+            # id=1
+            # consecutivo+=1
+            # sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
+            # values=(f"{consecutivo}", f"{id}")
+            # cursor.execute(sql, values)
+            # conn.commit()
 
-        # salida=salida.strftime('%d/%m/%Y %H:%M')
-        comentario1=""
-        comentario2=""
-        comentario3=""
+            # salida=salida.strftime('%d/%m/%Y %H:%M')
+            comentario1=""
+            comentario2=""
+            comentario3=""
 
         return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
     except Exception as e:
@@ -536,7 +567,7 @@ def add_register(vehiculo, placa):
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
-        usuario=registros[0][3]
+        usuario=registros[0][4]
 
         id=1
         sql="""SELECT consecutivo FROM configuracion WHERE configuracion_id = ?"""
@@ -586,7 +617,7 @@ def selectRegister(vehiculo, placa):
 
         if registros == []:
             consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas=add_register(vehiculo, placa)
-        else:
+        else:            
             variables = get_variables()
 
             if variables != None:
@@ -1324,26 +1355,26 @@ def selectUsers(search):
     # if settings.username["username"] == "Super Admin":
     if settings.username == "Super Admin":
         if search == "":
-            sql=f"""SELECT usuario, nombre FROM usuarios"""
+            sql=f"""SELECT usuario, nombre, foto FROM usuarios"""
             cursor.execute(sql)
         else:
-            sql="""SELECT usuario, nombre FROM usuarios WHERE usuario LIKE ? OR nombre LIKE ?"""
+            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario LIKE ? OR nombre LIKE ?"""
             values=(f'%{search}%', f'%{search}%')
             cursor.execute(sql, values)
     # elif settings.username["username"] == "Admin":
     elif settings.username == "Admin":
         if search == "":
-            sql="""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> ?"""
+            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ?"""
             values=(f'{user}',)
         else:
-            sql="""SELECT usuarios.usuario, usuarios.nombre FROM usuarios WHERE usuarios.usuario <> ? AND (usuarios.usuario LIKE ? OR usuarios.nombre LIKE ?)"""
+            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ? AND (usuario LIKE ? OR nombre LIKE ?)"""
             values=(f'{user}', f'%{search}%', f'%{search}%')
         cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
-        keys=["usuario", "nombre"]
+        keys=["usuario", "nombre", "foto"]
         result=[dict(zip(keys, values)) for values in registros]
 
         tbu.rows.clear()
@@ -1358,6 +1389,7 @@ def selectUsers(search):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
+                        DataCell(Image(src=f"upload\\img\\" + x["foto"] if settings.tipo_app == 0 else f"img/" + x["foto"], height=50, width=50, fit=ImageFit.COVER, border_radius=150)),
                         DataCell(Text(x["usuario"])),
                         DataCell(Text(x["nombre"])),
                         DataCell(Row([
