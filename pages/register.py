@@ -8,9 +8,12 @@ import sqlite3
 import pandas as pd
 # from flet import Page
 # from app import page
+from dotenv import load_dotenv
+from decouple import config
+from mail import send_mail_billing
 from time import sleep
 from pages.receipt import show_input, show_output
-from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister
+from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister, update_register_mail
 
 conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 
@@ -20,6 +23,12 @@ if settings.tipo_app == 0:
     path=os.path.join(os.getcwd(), "upload\\xls\\")
 else:
     path=os.path.join(os.getcwd(), "assets\\xls\\")
+
+load_dotenv()
+
+SENDER_EMAIL=os.getenv("EMAIL_USER")
+MAIL_PASSWORD=config("EMAIL_PASS")
+RECEIVER_EMAIL=settings.correo_electronico
 
 vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
@@ -49,7 +58,7 @@ if configuracion != None:
     tipo_ambiente=configuracion[0][15]
     settings.cliente_final=configuracion[0][16]
     cliente=configuracion[0][16]
-    consecutivo=configuracion[0][17]
+    # consecutivo=configuracion[0][17]
     settings.preview_register=configuracion[0][18]
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
@@ -369,7 +378,7 @@ def Register(page):
         tipo_ambiente=configuracion[0][15]
         settings.cliente_final=configuracion[0][16]
         cliente=configuracion[0][16]
-        consecutivo=configuracion[0][17]
+        # consecutivo=configuracion[0][17]
         settings.preview_register=configuracion[0][18]
         vista_previa_registro=False if configuracion[0][18] == 0 else True
         settings.print_register_receipt=configuracion[0][19]
@@ -414,7 +423,7 @@ def Register(page):
                     open_dlg_modal(e, title, message)
                     return False
             
-            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
+            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, correo_electronico, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
             if settings.correcto == 1:
                 message="Verifique que la fecha y hora del sistema estén actualizadas"
@@ -426,11 +435,14 @@ def Register(page):
                 placa.focus()
                 placa.update()
                 return False
+            
+            consecutivo=settings.prefijo + str(consecutivo).zfill(7) if str(consecutivo[0:3]) == settings.prefijo else consecutivo
+            
             if comentario1 != "":
                 show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas)
             else:
                 show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas)
-
+            
             # print("Total " + str(vlr_total))
 
             # if vlr_total == None or vlr_total == "":
@@ -465,6 +477,32 @@ def Register(page):
             total.hint_text="Total "+str(vlr_total)
             # card.update()
             total.update()
+
+            settings.placa=placas
+            settings.correo_electronico=correo_electronico
+
+            if settings.correo_electronico == "":
+                open_dlg_modal_email()
+            else:
+                settings.progressBar.visible=True
+                page.open(dlg_modal3)
+                settings.page.update()
+
+                bgcolor="blue"
+                message="Enviando correo"
+                settings.message=message
+                settings.showMessage(bgcolor)
+
+                send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+                bgcolor="green"
+                message="Correo enviado satisfactoriamente"
+                settings.message=message
+                settings.showMessage(bgcolor)
+
+                settings.progressBar.visible=False
+                page.close(dlg_modal3)
+                settings.page.update()
 
     def page_resize(e):
         if page.window.width <= 425:
@@ -691,7 +729,7 @@ def Register(page):
         on_dismiss=lambda _: placa.focus(),
     )
 
-    dlg_modal3 = ft.AlertDialog(
+    dlg_modal3=ft.AlertDialog(
         modal=True,
         bgcolor=ft.colors.TRANSPARENT,
         content=ft.Column(
@@ -701,9 +739,62 @@ def Register(page):
         ),
     )
 
+    def sendMailBilling(e):
+        settings.correo_electronico=dlg_modal4.content.value
+        if settings.correo_electronico != "":
+            close_dlg4()
+
+            settings.progressBar.visible=True
+            page.open(dlg_modal3)
+            settings.page.update()
+
+            bgcolor="blue"
+            message="Enviando correo"
+            settings.message=message
+            settings.showMessage(bgcolor)
+
+            update_register_mail(settings.correo_electronico, settings.placa)
+            send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+            bgcolor="green"
+            message="Correo enviado satisfactoriamente"
+            settings.message=message
+            settings.showMessage(bgcolor)
+
+            settings.progressBar.visible=False
+            page.close(dlg_modal3)
+            settings.page.update()
+        else:
+            dlg_modal4.update()
+            return False
+
+    def close_dlg4():
+        dlg_modal4.open=False
+        page.update()
+
+    def open_dlg_modal_email():
+        dlg_modal4.title=ft.Text("Correo electrónico", text_align="center")
+        dlg_modal4.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left", value=settings.correo_electronico)
+        dlg_modal4.open=True
+        dlg_modal4.update()
+
+    dlg_modal4=ft.AlertDialog(
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+        modal=True,
+        # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+        # title=ft.Text(title, text_align="center"),
+        # content=ft.Text(message, text_align="center"),
+        actions=[
+            ft.TextButton("Enviar", autofocus=True, on_click=sendMailBilling)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        # on_dismiss=lambda _: sendMailBilling,
+    )
+
     page.overlay.append(dlg_modal)
     page.overlay.append(dlg_modal2)
     page.overlay.append(dlg_modal3)
+    page.overlay.append(dlg_modal4)
 
     registros=selectRegisters(search)
     if registros != []:

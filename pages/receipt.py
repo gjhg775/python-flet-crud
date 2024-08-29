@@ -12,6 +12,9 @@ import win32print
 from fpdf import FPDF
 # from datatable import valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro
 from datatable import get_configuration, get_variables
+from mail import send_mail_billing
+from dotenv import load_dotenv
+from decouple import config
 
 title="Parqueadero"
 
@@ -65,7 +68,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=str(consecutivo).zfill(7) if settings.billing == 1 else str(consecutivo)
+    # consecutivo=str(consecutivo).zfill(7) if settings.billing == 1 else str(consecutivo)
     consecutivo="Recibo " + consecutivo
     entrada=str(entrada)
     entrada=str(entrada[0:19])

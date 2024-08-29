@@ -14,6 +14,8 @@ import win32print
 from flet import *
 from fpdf import FPDF
 from pathlib import Path
+from decouple import config
+from mail import send_mail_billing
 
 conn=sqlite3.connect('C:/pdb/database/parqueadero.db',check_same_thread=False)
 
@@ -332,6 +334,16 @@ def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_ca
     except Exception as e:
         print(e)
 
+def update_register_mail(correo_electronico, placa):
+    try:
+        cursor=conn.cursor()
+        sql=f"""UPDATE registro SET correo_electronico = ? WHERE placa = ?"""
+        values=(f"{correo_electronico}", f"{placa}")
+        cursor.execute(sql, values)
+        conn.commit()
+    except Exception as e:
+        print(e)
+
 def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro):
     # usuario=settings.username["username"]
     usuario=settings.username
@@ -511,8 +523,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             cursor.execute(sql, values)
             registros=cursor.fetchall()
 
-            entradas=registros[0][13]
-            salidas=registros[0][14]
+            correo_electronico=registros[0][13]
+            entradas=registros[0][14]
+            salidas=registros[0][15]
 
             # sql="SELECT consecutivo FROM configuracion"
             # cursor.execute(sql)
@@ -532,7 +545,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             comentario2=""
             comentario3=""
 
-        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas
     except Exception as e:
         print(e)
 
@@ -576,9 +589,10 @@ def add_register(vehiculo, placa):
         registros=cursor.fetchall()
 
         consecutivo=registros[0][0]
+        correo_electronico=settings.correo_electronico
 
-        sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, facturacion, valor, tiempo, total, cuadre, ingreso) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-        values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}")
+        sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, facturacion, valor, tiempo, total, cuadre, ingreso, correo_electronico) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}", f"{correo_electronico}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -587,8 +601,9 @@ def add_register(vehiculo, placa):
         cursor.execute(sql, values)
         registros=cursor.fetchall()
 
-        entradas=registros[0][13]
-        salidas=registros[0][14]
+        correo_electronico=registros[0][13]
+        entradas=registros[0][14]
+        salidas=registros[0][15]
 
         id=1
         consecutivos=int(consecutivo)+1
@@ -601,14 +616,19 @@ def add_register(vehiculo, placa):
         comentario2="Después de retirado el automotor no se"
         comentario3="acepta reclamos."
 
-        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
+        return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas
     except Exception as e:
         print(e)
 
 def selectRegister(vehiculo, placa):
     try:
-        total=0
         cursor=conn.cursor()
+        # sql=f"""SELECT * FROM registro WHERE placa = ?"""
+        # values=(f"{placa}",)
+        # cursor.execute(sql, values)
+        # registros=cursor.fetchall()
+
+        total=0
         sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = ?"""
         # sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
         values=(f"{placa}", f"{total}")
@@ -616,7 +636,7 @@ def selectRegister(vehiculo, placa):
         registros=cursor.fetchall()
 
         if registros == []:
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas=add_register(vehiculo, placa)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas=add_register(vehiculo, placa)
         else:            
             variables = get_variables()
 
@@ -630,10 +650,10 @@ def selectRegister(vehiculo, placa):
 
             id=registros[0][0]
             consecutivo=registros[0][1]
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
             if total == None:
                 total=0
-        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, entradas, salidas
+        return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas
 
         # cursor=conn.cursor()
         # sql=f"""SELECT *, (strftime("%s", salida) - strftime("%s", entrada))/60/60 AS tiempo, (strftime("%s", salida) - strftime("%s", entrada))/60/60 * valor AS total FROM registro"""
@@ -650,6 +670,7 @@ def showedit(e):
     # data_edit=e.control.data
     # id_edit=data_edit["id"]
     consecutivo=e.control.data["consecutivo"]
+    settings.correo_electronico=e.control.data["correo_electronico"]
     try:
         cursor=conn.cursor()
         sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
@@ -720,7 +741,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=str(consecutivo).zfill(7) if settings.billing == 1 else str(consecutivo)
+    # consecutivo=str(consecutivo).zfill(7) if settings.billing == 1 else str(consecutivo)
     consecutivo="Recibo " + consecutivo
     entrada=str(entrada)
     entrada=str(entrada[0:19])
@@ -825,6 +846,26 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     # minuto=int(ahora[1])
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
+
+    settings.progressBar.visible=True
+    settings.page.open(dlg_modal2)
+    settings.page.update()
+
+    bgcolor="blue"
+    message="Enviando correo"
+    settings.message=message
+    settings.showMessage(bgcolor)
+
+    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+    bgcolor="green"
+    message="Correo enviado satisfactoriamente"
+    settings.message=message
+    settings.showMessage(bgcolor)
+
+    settings.progressBar.visible=False
+    settings.page.close(dlg_modal2)
+    settings.page.update()
 
 def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
     nit="NIT " + nit
@@ -1192,6 +1233,26 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
+    settings.progressBar.visible=True
+    settings.page.open(dlg_modal2)
+    settings.page.update()
+
+    bgcolor="blue"
+    message="Enviando correo"
+    settings.message=message
+    settings.showMessage(bgcolor)
+
+    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+    bgcolor="green"
+    message="Correo enviado satisfactoriamente"
+    settings.message=message
+    settings.showMessage(bgcolor)
+
+    settings.progressBar.visible=False
+    settings.page.close(dlg_modal2)
+    settings.page.update()
+
 # def show_edit_access(e):
 #     # data_edit=e.control.data
 #     # id_edit=data_edit["id"]
@@ -1431,10 +1492,10 @@ def selectRegisters(search):
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE cuadre = ?"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE cuadre = ?"""
         values=(f'{cuadre}',)
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ?"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ?"""
         values=(f'%{search}%', f'%{search}%', f'{cuadre}')
     cursor.execute(sql, values)
     registros=cursor.fetchall()
@@ -1443,7 +1504,7 @@ def selectRegisters(search):
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
-        keys=["consecutivo", "placa", "entrada", "salida", "total"]
+        keys=["consecutivo", "placa", "entrada", "salida", "total", "correo_electronico"]
         result=[dict(zip(keys, values)) for values in registros]
 
         for x in result:
@@ -1451,11 +1512,12 @@ def selectRegisters(search):
             weight="bold" if x["total"] != 0 else None
             if settings.billing == 1:
                 if x["total"] != 0:
-                    consecutivo=settings.prefijo + str(x["consecutivo"]).zfill(7)
+                    settings.consecutivo=settings.prefijo + str(x["consecutivo"]).zfill(7)
                 else:
-                    consecutivo=str(x["consecutivo"]).zfill(7)
+                    settings.consecutivo=str(x["consecutivo"])
             else:
-                consecutivo=x["consecutivo"]
+                settings.consecutivo=x["consecutivo"]
+            
             tb.rows.append(
                 DataRow(
                     # color=colors.GREEN_100 if x["total"] != 0 else None,
@@ -1466,7 +1528,7 @@ def selectRegisters(search):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(consecutivo, color=color, weight=weight)),
+                        DataCell(Text(x["consecutivo"], color=color, weight=weight)),
                         DataCell(Text(x["placa"], color=color, weight=weight)),
                         DataCell(Text(x["entrada"], color=color, weight=weight)),
                         DataCell(Text(x["salida"], color=color, weight=weight)),
@@ -1611,4 +1673,14 @@ dlg_modal=AlertDialog(
     ],
     actions_alignment=MainAxisAlignment.END,
     # on_dismiss=lambda _: date_button.focus(),
+)
+
+dlg_modal2=AlertDialog(
+    modal=True,
+    bgcolor=colors.TRANSPARENT,
+    content=Column(
+        [ProgressRing(),],
+        height=15,
+        horizontal_alignment=CrossAxisAlignment.CENTER,
+    ),
 )

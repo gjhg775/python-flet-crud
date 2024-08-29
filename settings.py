@@ -1,10 +1,11 @@
 import flet as ft
 
-global username, password, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, textsize, fieldwith, \
-       tipo_app, preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, billing, clave_tecnica, tipo_ambiente, cliente_final, \
-       progressRing, correcto
+global username, correo_electronico, password, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, acceso_cierre, \
+       textsize, fieldwith, tipo_app, preview_register, print_register_receipt, preview_cash, print_cash_receipt, printer, paper_width, prefijo, billing, clave_tecnica, \
+       tipo_ambiente, cliente_final, consecutivo, placa, progressRing, correcto
 
 username=""
+correo_electronico=""
 password=""
 login_nombre=""
 photo=""
@@ -14,6 +15,8 @@ printer=""
 prefijo=""
 clave_tecnica=""
 cliente_final=""
+consecutivo=""
+placa=""
 acceso_configuracion=0
 acceso_variables=0
 acceso_registro=0
@@ -58,3 +61,27 @@ def showMessage(bgcolor):
     page.overlay.append(snack_bar)
     # page.snack_bar.open=True
     page.update()
+
+# def close_dlg(e):
+#     dlg_modal.open=False
+#     page.update()
+
+# def open_dlg_modal_email():
+#     dlg_modal.title=ft.Text("Correo electrónico", text_align="center")
+#     dlg_modal.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left", value=correo_electronico)
+#     dlg_modal.open=True
+#     page.overlay.append(dlg_modal)
+#     page.update()
+
+# dlg_modal=ft.AlertDialog(
+#     bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+#     modal=True,
+#     # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+#     # title=ft.Text(title, text_align="center"),
+#     # content=ft.Text(message, text_align="center"),
+#     actions=[
+#         ft.TextButton("Enviar", autofocus=True, on_click=close_dlg)
+#     ],
+#     actions_alignment=ft.MainAxisAlignment.END,
+#     # on_dismiss=lambda _: date_button.focus(),
+# )

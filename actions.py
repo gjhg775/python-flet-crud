@@ -118,7 +118,8 @@ def create_regist():
         total INTEGER,
         cuadre INTEGER,
         ingreso TEXT,
-        retiro TEXT)
+        retiro TEXT,
+        correo_electronico TEXT)
         """)
     conn.commit()
 
