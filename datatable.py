@@ -614,7 +614,7 @@ def add_register(vehiculo, placa):
 
         comentario1="Sin éste recibo no se entrega el automotor."
         comentario2="Después de retirado el automotor no se"
-        comentario3="acepta reclamos."
+        comentario3="aceptan reclamos."
 
         return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas
     except Exception as e:
@@ -722,12 +722,15 @@ def showedit(e):
         valor=registros[0][7]
         tiempo=registros[0][8]
         vlr_total=registros[0][9]
-        entradas=registros[0][13]
-        salidas=registros[0][14]
+        correo_electronico=registros[0][13]
+        entradas=registros[0][14]
+        salidas=registros[0][15]
+
+        settings.correo_electronico=correo_electronico
 
         comentario1="Sin éste recibo no se entrega el automotor."
         comentario2="Después de retirado el automotor no se"
-        comentario3="acepta reclamos."
+        comentario3="aceptan reclamos."
 
         if vlr_total == 0:
             showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, comentario3, entradas)
