@@ -413,7 +413,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             salida=registros[0][4]
             valor=registros[0][7]
             # tiempo=((registros[0][13])/60)/60
-            tiempo=registros[0][13]
+            tiempo=registros[0][8]
 
             formato=f"%Y-%m-%d %H:%M"
             entrada=str(entrada)
@@ -620,14 +620,20 @@ def add_register(vehiculo, placa):
     except Exception as e:
         print(e)
 
+def exist_email(placa):
+    correo_electronico=""
+    cursor=conn.cursor()
+    sql=f"""SELECT * FROM registro WHERE placa = ? AND correo_electronico != ?"""
+    values=(f"{placa}", f"{correo_electronico}")
+    cursor.execute(sql, values)
+    registros=cursor.fetchone()
+
+    if registros != None:
+        settings.correo_electronico=registros[13]
+
 def selectRegister(vehiculo, placa):
     try:
         cursor=conn.cursor()
-        # sql=f"""SELECT * FROM registro WHERE placa = ?"""
-        # values=(f"{placa}",)
-        # cursor.execute(sql, values)
-        # registros=cursor.fetchall()
-
         total=0
         sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = ?"""
         # sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
@@ -650,6 +656,7 @@ def selectRegister(vehiculo, placa):
 
             id=registros[0][0]
             consecutivo=registros[0][1]
+            settings.consecutivo=registros[0][1]
             consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
             if total == None:
                 total=0
@@ -670,7 +677,6 @@ def showedit(e):
     # data_edit=e.control.data
     # id_edit=data_edit["id"]
     consecutivo=e.control.data["consecutivo"]
-    settings.correo_electronico=e.control.data["correo_electronico"]
     try:
         cursor=conn.cursor()
         sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
@@ -744,7 +750,8 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    # consecutivo=str(consecutivo).zfill(7) if settings.billing == 1 else str(consecutivo)
+    settings.consecutivo2=consecutivo
+    consecutivo=str(consecutivo).zfill(7) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else str(consecutivo)
     consecutivo="Recibo " + consecutivo
     entrada=str(entrada)
     entrada=str(entrada[0:19])
@@ -875,11 +882,13 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
-    consecutivo=str(consecutivo).zfill(7) if settings.billing == 1 else str(consecutivo)
+    settings.consecutivo2=consecutivo
+    # consecutivo=str(settings.consecutivo2).zfill(7) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
     if settings.billing == 0:
         consecutivo="Recibo " + consecutivo
     else:
         consecutivo=settings.prefijo + str(consecutivo).zfill(7)
+        settings.consecutivo2=consecutivo
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
     salida=str(salida)
@@ -1507,7 +1516,7 @@ def selectRegisters(search):
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
-        keys=["consecutivo", "placa", "entrada", "salida", "total", "correo_electronico"]
+        keys=["consecutivo", "placa", "entrada", "salida", "total"]
         result=[dict(zip(keys, values)) for values in registros]
 
         for x in result:

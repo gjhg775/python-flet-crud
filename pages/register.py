@@ -13,7 +13,7 @@ from decouple import config
 from mail import send_mail_billing
 from time import sleep
 from pages.receipt import show_input, show_output
-from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister, update_register_mail
+from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister, update_register_mail, exist_email
 
 conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 
@@ -422,6 +422,8 @@ def Register(page):
                     message=f"La placa {placa.value} no es válida para un carro"
                     open_dlg_modal(e, title, message)
                     return False
+                
+            exist_email(placa.value)
             
             consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, correo_electronico, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
@@ -436,7 +438,8 @@ def Register(page):
                 placa.update()
                 return False
             
-            consecutivo=settings.prefijo + str(consecutivo).zfill(7) if str(consecutivo[0:3]) == settings.prefijo else consecutivo
+            consecutivo=str(consecutivo).zfill(7) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else consecutivo
+            settings.consecutivo2=consecutivo
             
             if comentario1 != "":
                 show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas)
@@ -742,6 +745,9 @@ def Register(page):
     def sendMailBilling(e):
         settings.correo_electronico=dlg_modal4.content.value
         if settings.correo_electronico != "":
+            dlg_modal4.content.error_text=""
+            dlg_modal4.content.update()
+
             close_dlg4()
 
             settings.progressBar.visible=True
@@ -756,6 +762,8 @@ def Register(page):
             update_register_mail(settings.correo_electronico, settings.placa)
             send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
+            settings.correo_electronico=""
+
             bgcolor="green"
             message="Correo enviado satisfactoriamente"
             settings.message=message
@@ -765,7 +773,9 @@ def Register(page):
             page.close(dlg_modal3)
             settings.page.update()
         else:
-            dlg_modal4.update()
+            dlg_modal4.content.error_text="Digite correo electrónico"
+            dlg_modal4.content.update()
+            # dlg_modal4.update()
             return False
 
     def close_dlg4():

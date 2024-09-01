@@ -22,8 +22,8 @@ else:
 # consecutivo="317000"
 
 def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
-    consecutivo=str(settings.consecutivo).zfill(7) if str(settings.consecutivo[0:3]) == settings.prefijo else settings.consecutivo
-    documento="Factura de Venta" if str(settings.consecutivo[0:3]) == settings.prefijo else "Recibo"
+    consecutivo=str(settings.consecutivo2).zfill(7) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else settings.consecutivo2
+    documento="Factura de Venta" if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else "Recibo"
     msg=EmailMessage()
     msg["From"]=SENDER_EMAIL
     msg["To"]=RECEIVER_EMAIL
