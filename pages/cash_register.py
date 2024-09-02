@@ -42,14 +42,16 @@ def Cash_register(page):
         vista_previa_registro=False if configuracion[0][18] == 0 else True
         settings.print_register_receipt=configuracion[0][19]
         imprimir_registro=False if configuracion[0][19] == 0 else True
-        settings.preview_cash=configuracion[0][20]
-        vista_previa_cuadre=False if configuracion[0][20] == 0 else True
-        settings.print_cash_receipt=configuracion[0][21]
-        imprimir_cuadre=False if configuracion[0][21] == 0 else True
-        settings.printer=configuracion[0][22]
-        impresora=configuracion[0][22]
-        settings.paper_width=configuracion[0][23]
-        papel=configuracion[0][23]
+        settings.send_email_register=configuracion[0][20]
+        enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+        settings.preview_cash=configuracion[0][21]
+        vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+        settings.print_cash_receipt=configuracion[0][22]
+        imprimir_cuadre=False if configuracion[0][22] == 0 else True
+        settings.printer=configuracion[0][23]
+        impresora=configuracion[0][23]
+        settings.paper_width=configuracion[0][24]
+        papel=configuracion[0][24]
 
     def cash_register(e):
         total=0

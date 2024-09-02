@@ -54,4 +54,6 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
         smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 
+    settings.correo_electronico=""
+
 # send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL, MAIL_PASSWORD, consecutivo)

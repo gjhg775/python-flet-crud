@@ -272,20 +272,22 @@ if configuracion != None:
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
-    settings.preview_cash=configuracion[0][20]
-    vista_previa_cuadre=False if configuracion[0][20] == 0 else True
-    settings.print_cash_receipt=configuracion[0][21]
-    imprimir_cuadre=False if configuracion[0][21] == 0 else True
-    settings.printer=configuracion[0][22]
-    impresora=configuracion[0][22]
-    settings.paper_width=configuracion[0][23]
-    papel=configuracion[0][23]
+    settings.send_email_register=configuracion[0][20]
+    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+    settings.preview_cash=configuracion[0][21]
+    vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+    settings.print_cash_receipt=configuracion[0][22]
+    imprimir_cuadre=False if configuracion[0][22] == 0 else True
+    settings.printer=configuracion[0][23]
+    impresora=configuracion[0][23]
+    settings.paper_width=configuracion[0][24]
+    papel=configuracion[0][24]
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, enviar_correo_electronico, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
     try:
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, cliente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{cliente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, cliente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, enviar_correo_electronico = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{cliente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{enviar_correo_electronico}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -712,14 +714,16 @@ def showedit(e):
             vista_previa_registro=False if configuracion[0][18] == 0 else True
             settings.print_register_receipt=configuracion[0][19]
             imprimir_registro=False if configuracion[0][19] == 0 else True
-            settings.preview_cash=configuracion[0][20]
-            vista_previa_cuadre=False if configuracion[0][20] == 0 else True
-            settings.print_cash_receipt=configuracion[0][21]
-            imprimir_cuadre=False if configuracion[0][21] == 0 else True
-            settings.printer=configuracion[0][22]
-            impresora=configuracion[0][22]
-            settings.paper_width=configuracion[0][23]
-            papel=configuracion[0][23]
+            settings.send_email_register=configuracion[0][20]
+            enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+            settings.preview_cash=configuracion[0][21]
+            vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+            settings.print_cash_receipt=configuracion[0][22]
+            imprimir_cuadre=False if configuracion[0][22] == 0 else True
+            settings.printer=configuracion[0][23]
+            impresora=configuracion[0][23]
+            settings.paper_width=configuracion[0][24]
+            papel=configuracion[0][24]
 
         placa=registros[0][2]
         entrada=registros[0][3]

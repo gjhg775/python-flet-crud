@@ -159,14 +159,16 @@ def Configuration(page):
         vista_previa_registro=False if configuracion[0][18] == 0 else True
         settings.print_register_receipt=configuracion[0][19]
         imprimir_registro=False if configuracion[0][19] == 0 else True
-        settings.preview_cash=configuracion[0][20]
-        vista_previa_cuadre=False if configuracion[0][20] == 0 else True
-        settings.print_cash_receipt=configuracion[0][21]
-        imprimir_cuadre=False if configuracion[0][21] == 0 else True
-        settings.printer=configuracion[0][22]
-        impresora=configuracion[0][22]
-        settings.paper_width=configuracion[0][23]
-        papel=configuracion[0][23]
+        settings.send_email_register=configuracion[0][20]
+        enviar_correo=False if configuracion[0][20] == 0 else True
+        settings.preview_cash=configuracion[0][21]
+        vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+        settings.print_cash_receipt=configuracion[0][22]
+        imprimir_cuadre=False if configuracion[0][22] == 0 else True
+        settings.printer=configuracion[0][23]
+        impresora=configuracion[0][23]
+        settings.paper_width=configuracion[0][24]
+        papel=configuracion[0][24]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -281,28 +283,52 @@ def Configuration(page):
             else:
                 paper_width.update()
         btn_save.focus()
-        if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and prefijo.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and clave_tecnica.value != "" and environment.value != 0 and client.value != "" and consecutivo.value != "":
-            parqueadero.update()
-            nit.update()
-            regimen.update()
-            direccion.update()
-            telefono.update()
-            servicio.update()
-            resolucion.update()
-            prefijo.update()
-            fecha_desde.update()
-            fecha_hasta.update()
-            autoriza_del.update()
-            autoriza_al.update()
-            clave_tecnica.update()
-            environment.update()
-            client.update()
-            consecutivo.update()
-            message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, settings.cliente_final, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
-            if message != "":
-                bgcolor="green"
-                settings.message=message
-                settings.showMessage(bgcolor)
+        if settings.billing == 1:
+            if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and prefijo.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and clave_tecnica.value != "" and environment.value != 0 and client.value != "" and consecutivo.value != "":
+                parqueadero.update()
+                nit.update()
+                regimen.update()
+                direccion.update()
+                telefono.update()
+                servicio.update()
+                resolucion.update()
+                prefijo.update()
+                fecha_desde.update()
+                fecha_hasta.update()
+                autoriza_del.update()
+                autoriza_al.update()
+                clave_tecnica.update()
+                environment.update()
+                client.update()
+                consecutivo.update()
+                message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, settings.cliente_final, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.send_email_register, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+                if message != "":
+                    bgcolor="green"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+        else:
+            if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "":
+                parqueadero.update()
+                nit.update()
+                regimen.update()
+                direccion.update()
+                telefono.update()
+                servicio.update()
+                resolucion.update()
+                prefijo.update()
+                fecha_desde.update()
+                fecha_hasta.update()
+                autoriza_del.update()
+                autoriza_al.update()
+                clave_tecnica.update()
+                environment.update()
+                client.update()
+                consecutivo.update()
+                message=update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, settings.cliente_final, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.send_email_register, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+                if message != "":
+                    bgcolor="green"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
 
     def search_change(e):
         search=e.control.value
@@ -402,6 +428,9 @@ def Configuration(page):
         paper_width.error_text=""
         printer.update()
         paper_width.update()
+
+    def send_email(e):
+        settings.send_email_register=0 if send_receipt_switch.value == False else 1
 
     def preview_change_cash(e):
         settings.preview_cash=0 if preview_switch_cash.value == False else 1
@@ -581,6 +610,8 @@ def Configuration(page):
     preview_switch=ft.Switch(value=vista_previa_registro, on_change=preview_change)
     lbl_print=ft.Text("Imprimir recibo/factura", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     print_receipt_switch=ft.Switch(value=imprimir_registro, on_change=print_change)
+    lbl_send_email=ft.Text("Enviar recibo/factura al correo electrónico", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
+    send_receipt_switch=ft.Switch(value=enviar_correo, on_change=send_email)
     lblCuadreCaja=ft.Text("Cuadre de Caja", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     lbl_preview_cash=ft.Text("Vista previa recibo", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     preview_switch_cash=ft.Switch(value=vista_previa_cuadre, on_change=preview_change_cash)
@@ -598,7 +629,7 @@ def Configuration(page):
     printer=ft.Dropdown(hint_text="Seleccione impresora", options=printers_list, value=impresora, disabled=True)
     printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
     # papers_list=[{"":"", "58":"58 mm", "80":"80 mm"}]
-    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel", disabled=True), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, on_change=paper_width_change, disabled=False)
+    paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel", disabled=True), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, disabled=False, on_change=paper_width_change)
     paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
     registros=selectUsers(search)
@@ -812,6 +843,15 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                     ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print]),
                     ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch]),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                ]),
+            ),
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                    ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_send_email]),
+                    ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[send_receipt_switch]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),

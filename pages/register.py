@@ -63,14 +63,16 @@ if configuracion != None:
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
-    settings.preview_cash=configuracion[0][20]
-    vista_previa_cuadre=False if configuracion[0][20] == 0 else True
-    settings.print_cash_receipt=configuracion[0][21]
-    imprimir_cuadre=False if configuracion[0][21] == 0 else True
-    settings.printer=configuracion[0][22]
-    impresora=configuracion[0][22]
-    settings.paper_width=configuracion[0][23]
-    papel=configuracion[0][23]
+    settings.send_email_register=configuracion[0][20]
+    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+    settings.preview_cash=configuracion[0][21]
+    vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+    settings.print_cash_receipt=configuracion[0][22]
+    imprimir_cuadre=False if configuracion[0][22] == 0 else True
+    settings.printer=configuracion[0][23]
+    impresora=configuracion[0][23]
+    settings.paper_width=configuracion[0][24]
+    papel=configuracion[0][24]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -383,14 +385,16 @@ def Register(page):
         vista_previa_registro=False if configuracion[0][18] == 0 else True
         settings.print_register_receipt=configuracion[0][19]
         imprimir_registro=False if configuracion[0][19] == 0 else True
-        settings.preview_cash=configuracion[0][20]
-        vista_previa_cuadre=False if configuracion[0][20] == 0 else True
-        settings.print_cash_receipt=configuracion[0][21]
-        imprimir_cuadre=False if configuracion[0][21] == 0 else True
-        settings.printer=configuracion[0][22]
-        impresora=configuracion[0][22]
-        settings.paper_width=configuracion[0][23]
-        papel=configuracion[0][23]
+        settings.send_email_register=configuracion[0][20]
+        enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+        settings.preview_cash=configuracion[0][21]
+        vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+        settings.print_cash_receipt=configuracion[0][22]
+        imprimir_cuadre=False if configuracion[0][22] == 0 else True
+        settings.printer=configuracion[0][23]
+        impresora=configuracion[0][23]
+        settings.paper_width=configuracion[0][24]
+        papel=configuracion[0][24]
     
     def register(e):
         if placa.value != "":
@@ -451,6 +455,33 @@ def Register(page):
             # if vlr_total == None or vlr_total == "":
             #     vlr_total = 0
 
+            settings.placa=placas
+            settings.correo_electronico=correo_electronico
+
+            if settings.send_email_register == 1:
+                if settings.correo_electronico == "":
+                    open_dlg_modal_email()
+                else:
+                    settings.progressBar.visible=True
+                    page.open(dlg_modal3)
+                    settings.page.update()
+
+                    bgcolor="blue"
+                    message="Enviando correo"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+
+                    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+                    bgcolor="green"
+                    message="Correo enviado satisfactoriamente"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+
+                    settings.progressBar.visible=False
+                    page.close(dlg_modal3)
+                    settings.page.update()
+
             if vlr_total == 0:
                 message="Registro creado satisfactoriamente"
                 tblRegistro.height=246
@@ -480,32 +511,6 @@ def Register(page):
             total.hint_text="Total "+str(vlr_total)
             # card.update()
             total.update()
-
-            settings.placa=placas
-            settings.correo_electronico=correo_electronico
-
-            if settings.correo_electronico == "":
-                open_dlg_modal_email()
-            else:
-                settings.progressBar.visible=True
-                page.open(dlg_modal3)
-                settings.page.update()
-
-                bgcolor="blue"
-                message="Enviando correo"
-                settings.message=message
-                settings.showMessage(bgcolor)
-
-                send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
-
-                bgcolor="green"
-                message="Correo enviado satisfactoriamente"
-                settings.message=message
-                settings.showMessage(bgcolor)
-
-                settings.progressBar.visible=False
-                page.close(dlg_modal3)
-                settings.page.update()
 
     def page_resize(e):
         if page.window.width <= 425:
