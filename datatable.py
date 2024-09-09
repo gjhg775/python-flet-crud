@@ -11,6 +11,7 @@ import sqlite3
 import hashlib
 import win32api
 import win32print
+import random
 from flet import *
 from fpdf import FPDF
 from pathlib import Path
@@ -123,8 +124,34 @@ vehiculo_edit=RadioGroup(content=Row([
     Radio(label="Otro", value="Otro")
 ]))
 
+def reset_password(usuario):
+    try:
+        cursor=conn.cursor()
+        settings.token_password=random.randint(100000, 999999)
+        hash=hashlib.sha256(str(settings.token_password).encode()).hexdigest()
+        sql="""UPDATE usuarios SET clave = ? WHERE usuario = ? OR correo_electronico = ?"""
+        values=(f'{hash}', f'{usuario}', f'{usuario}')
+        cursor.execute(sql, values)
+        conn.commit()
+
+        sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ? AND clave = ?"""
+        values=(f'{usuario}', f'{usuario}', f'{hash}')
+        cursor.execute(sql, values)
+        registros=cursor.fetchall()
+
+        login_user=""
+
+        if registros != []:
+            correo_electronico=registros[0][2]
+            password=registros[0][3]
+        else:
+            login_user="Usuario ó correo electrónico no registrado"
+        return login_user, correo_electronico, password
+    except Exception as e:
+        print(e)
+
 def selectUser(usuario, contrasena):
-    hash=hashlib.sha256(contrasena.encode()).hexdigest()
+    hash=hashlib.sha256(str(contrasena).encode()).hexdigest()
     try:
         cursor=conn.cursor()
         sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ?"""
@@ -140,8 +167,6 @@ def selectUser(usuario, contrasena):
         bln_login=False
 
         if registros != []:
-            # print(registros[0])
-
             hashed=registros[0][3]
 
             if hash == hashed:
@@ -154,14 +179,14 @@ def selectUser(usuario, contrasena):
             else:
                 bln_login=False
         else:
-            login_user="Usuario no registrado"
+            login_user="Usuario ó correo electrónico no registrado"
         if bln_login == False:
             login_password="Contraseña inválida"
         return login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login
     except Exception as e:
         print(e)
 
-def add_user(usuario, hashed, nombre, foto):
+def add_user(usuario, correo_electronico, hashed, nombre, foto):
     try:
         cursor=conn.cursor()
         sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ?"""
@@ -173,8 +198,8 @@ def add_user(usuario, hashed, nombre, foto):
             bln_login=False
             return bln_login
 
-        sql="""INSERT INTO usuarios (usuario, clave, nombre, foto) VALUES (?, ?, ?, ?)"""
-        values=(f"{usuario}", f"{hashed}", f"{nombre}", f"{foto}")
+        sql="""INSERT INTO usuarios (usuario, correo_electronico, clave, nombre, foto) VALUES (?, ?, ?, ?, ?)"""
+        values=(f"{usuario}", f"{correo_electronico}", f"{hashed}", f"{nombre}", f"{foto}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -196,13 +221,12 @@ def add_user(usuario, hashed, nombre, foto):
     except Exception as e:
         print(e)
 
-def update_user(usuario, clave, foto):
+def update_user(usuario, clave, foto, token_password):
     hash=hashlib.sha256(clave.encode()).hexdigest()
-    clave=hash
     try:
         cursor=conn.cursor()
         sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ? OR correo_electronico = ?"""
-        values=(f"{clave}", f"{foto}", f"{usuario}", f"{usuario}")
+        values=(f"{hash}", f"{foto}", f"{usuario}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
 

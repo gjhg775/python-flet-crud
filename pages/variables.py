@@ -3,7 +3,7 @@ import settings
 import sqlite3
 from datatable import get_variables, update_variables
 
-conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+conn=sqlite3.connect('C:/pdb/database/parqueadero.db',check_same_thread=False)
 message=""
 
 # class Variables(ft.UserControl):

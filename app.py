@@ -11,7 +11,9 @@ from pages.register import *
 from pages.cash_register import *
 from pages.closing_day import Closing_day
 from pages.developer import Developer
-from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, lblAccesos, tba
+from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, reset_password, lblAccesos, tba
+from decouple import config
+from mail import send_mail_user
 
 # def main(page: ft.Page):
 #     page.drawer = ft.NavigationDrawer(
@@ -213,7 +215,7 @@ def main(page:ft.Page):
 
     def loginMe(e):
         lbl_login.value="Iniciar sesión"
-        user.hint_text="Usuario ó Correo electrónico"
+        user.hint_text="Usuario ó correo electrónico"
         btn_login.text="Iniciar sesión"
         btn_login.on_click=login
         email.visible=False
@@ -222,6 +224,7 @@ def main(page:ft.Page):
         lbl_cuenta.value="¿No tiene una cuenta?"
         btn_cuenta.visible=True
         btn_loginme.visible=False
+        btn_reset_password.visible=True
         user.value=""
         password.value=""
         user.error_text=""
@@ -236,7 +239,7 @@ def main(page:ft.Page):
         bln_login=False
         if user.value != "" and password.value != "":
             usuario=user.value
-            contrasena=password.value
+            contrasena=str(password.value)
             login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login=selectUser(usuario, contrasena)
             if login_user != "" and bln_login == False:
                 user.error_text=login_user
@@ -260,6 +263,7 @@ def main(page:ft.Page):
                 settings.username=page.session.get("username")
                 username=settings.username
                 settings.photo=login_photo
+                settings.correo_electronico=correo_electronico
                 selectAccess(username)
                 # page.go("/register")
                 page.clean()
@@ -284,7 +288,7 @@ def main(page:ft.Page):
             settings.showMessage(bgcolor)
         else:
             if user.value == "":
-                user.error_text="Digite el usuario"
+                user.error_text="Digite usuario ó correo electrónico"
                 btn_login.focus()
             if password.value == "":
                 password.error_text="Digite la contraseña"
@@ -313,6 +317,7 @@ def main(page:ft.Page):
                 bln_login=add_user(usuario, correo_electronico, hash, nombre, foto)
                 if bln_login != False:
                     user.value=""
+                    email.value=""
                     password.value=""
                     confirm_password.value=""
                     name.value=""
@@ -359,6 +364,7 @@ def main(page:ft.Page):
         lbl_cuenta.value="Ya tiene una cuenta"
         btn_cuenta.visible=False
         btn_loginme.visible=True
+        btn_reset_password.visible=False
         user.value=""
         email.value=""
         password.value=""
@@ -369,6 +375,21 @@ def main(page:ft.Page):
         confirm_password.error_text=""
         name.error_text=""
         page.update()
+
+    def resetPassword(e):
+        user.error_text=""
+        if user.value != "":
+            usuario=user.value
+            login_user, correo_electronico, password=reset_password(usuario)
+            if login_user == "":
+                title="Reestablecer contraseña"
+                message="Se ha enviado un código de un solo uso al correo electrónico " + correo_electronico
+                open_dlg_modal2(e, title, message)
+                send_mail_user(config("EMAIL_USER"), correo_electronico, settings.token_password)
+        else:
+            user.error_text="Digite usuario ó correo electrónico"
+            user.focus()
+            page.update()
     
     def logout():
         user.value=""
@@ -399,6 +420,30 @@ def main(page:ft.Page):
         actions=[
             ft.TextButton("Sí", on_click=exit),
             ft.TextButton("No", autofocus=True, on_click=close_dlg)
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        # on_dismiss=lambda _: date_button.focus(),
+    )
+
+    def close_dlg2(e):
+        dlg_modal2.open=False
+        page.update()
+
+    def open_dlg_modal2(e, title, message):
+        dlg_modal2.title=ft.Text(title, text_align="center")
+        dlg_modal2.content=ft.Text(message, text_align="center")
+        page.overlay.append(dlg_modal2)
+        dlg_modal2.open=True
+        page.update()
+
+    dlg_modal2=ft.AlertDialog(
+        bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+        modal=True,
+        icon=ft.Icon(name=ft.icons.INFO_SHARP, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+        # title=ft.Text(title, text_align="center"),
+        # content=ft.Text(message, text_align="center"),
+        actions=[
+            ft.TextButton("Aceptar", autofocus=True, on_click=close_dlg2)
         ],
         actions_alignment=ft.MainAxisAlignment.END,
         # on_dismiss=lambda _: date_button.focus(),
@@ -532,12 +577,13 @@ def main(page:ft.Page):
         )
 
     lbl_login=ft.Text("Iniciar sesión", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
-    user=ft.TextField(width=280, height=60, hint_text="Usuario ó Correo electrónico", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
+    user=ft.TextField(width=280, height=60, hint_text="Usuario ó correo electrónico", border="underline", prefix_icon=ft.icons.PERSON_SHARP)
     email=ft.TextField(width=280, height=60, hint_text="Correo electrónico", border="underline", prefix_icon=ft.icons.EMAIL, visible=False)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
     confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=False)
     name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
+    btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", visible=True, on_click=resetPassword)
     lbl_cuenta=ft.Text("¿No tiene una cuenta?")
     btn_cuenta=ft.TextButton("Crear cuenta", on_click=sign_up)
     btn_loginme=ft.TextButton("Iniciar sesión", visible=False, on_click=loginMe)
@@ -581,6 +627,10 @@ def main(page:ft.Page):
                         ),
                         ft.Container(
                             btn_login,
+                            padding=ft.padding.only(20,20)
+                        ),
+                        ft.Container(
+                            btn_reset_password,
                             padding=ft.padding.only(20,20)
                         ),
                         ft.Container(

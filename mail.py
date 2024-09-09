@@ -56,4 +56,26 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
 
     settings.correo_electronico=""
 
-# send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL, MAIL_PASSWORD, consecutivo)
+def send_mail_user(SENDER_EMAIL, RECEIVER_EMAIL, token_password):    
+    msg=EmailMessage()
+    msg["From"]=SENDER_EMAIL
+    msg["To"]=RECEIVER_EMAIL
+    msg["Subject"]="Reestablecer contraseña"
+    msg.set_content("Reestablecer contraseña")
+    msg.add_alternative(f"""
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <h1 style="color:SlateGray;">Parqueadero</h1>
+            <h3>Tu código de un solo uso es {token_password}</h3>
+            <p>Ingresa en el programa de parqueadero con tu usuario ó correo electrónico y en la contraseña digita tu código de un solo uso. Luego en tu perfíl ingresa y confirma la nueva contraseña.</p>
+        </body>
+    </html>
+    """, subtype="html")
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
+        smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
+        smtp.quit()
+
+    settings.correo_electronico=""

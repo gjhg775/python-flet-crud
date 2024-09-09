@@ -137,7 +137,7 @@ def admin_user():
         conn.commit()
 
         sql="""INSERT INTO usuarios (usuario, correo_electronico, clave, nombre, foto) VALUES (?, ?, ?, ?, ?)"""
-        values=("Admin", "gjhg_69@hotmail.com", f"{hasha}", "Administrador", "default.jpg")
+        values=("Admin", "gjhg775@gmail.com", f"{hasha}", "Administrador", "default.jpg")
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

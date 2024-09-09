@@ -624,11 +624,15 @@ def Configuration(page):
     for p in printers:
         printers_list.append(ft.dropdown.Option(p),)
 
+    lbl_environment=ft.Text("Ambiente", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     environment=ft.Dropdown(hint_text="Seleccione ambiente", options=[ft.dropdown.Option(0, "Seleccione ambiente", disabled=True), ft.dropdown.Option(1, "Producción"), ft.dropdown.Option(2, "Prueba")], value=tipo_ambiente, disabled=True if settings.billing == 0 else False, on_change=environment_change)
+    lbl_client=ft.Text("Cliente", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     client=ft.Dropdown(hint_text="Seleccione cliente", options=[ft.dropdown.Option("", "Seleccione cliente", disabled=True), ft.dropdown.Option("222222222222", "Consumidor final")], value=cliente, disabled=True if settings.billing == 0 else False, on_change=client_change)
+    lbl_printer=ft.Text("Impresora", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     printer=ft.Dropdown(hint_text="Seleccione impresora", options=printers_list, value=impresora, disabled=True)
     printer.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
     # papers_list=[{"":"", "58":"58 mm", "80":"80 mm"}]
+    lbl_paper_width=ft.Text("Ancho de papel", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel", disabled=True), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, disabled=False, on_change=paper_width_change)
     paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
@@ -681,9 +685,9 @@ def Configuration(page):
                         direccion,
                         telefono,
                         servicio,
-                        resolucion
+                        resolucion,                         
                     ]),
-                ], 
+                ],
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
@@ -816,7 +820,7 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                     # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
                     # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
-                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[environment, client]),
+                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_environment, environment, lbl_client, client]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),
@@ -887,7 +891,7 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
                     # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
                     # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
-                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[printer, paper_width]),
+                    ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
                 ]),
             ),

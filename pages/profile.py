@@ -44,12 +44,14 @@ def Profile(page):
         password.error_text=""
         confirm_password.error_text=""
         if current_password.value != "" and password.value != "" and confirm_password.value != "":
-            login_user, login_password, login_nombre, login_photo, bln_login=selectUser(settings.username, current_password.value)
+            login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login=selectUser(settings.username, current_password.value)
             if login_nombre != "":
-                update_user(settings.username, password.value, settings.photo)
+                update_user(settings.username, password.value, settings.photo, login_password)
+                current_password.disabled=False
                 current_password.value=""
                 password.value=""
                 confirm_password.value=""
+                settings.token_password=""
                 settings.page.update()
         else:
             if current_password.value == "":
@@ -93,7 +95,7 @@ def Profile(page):
         # user_avatar=ft.Image(src=f"img/{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
     btn_photo=ft.IconButton(icon=ft.icons.CAMERA_ALT, icon_size=35, on_click=lambda _: file_picker.pick_files(allow_multiple=False, allowed_extensions=["jpg", "jpeg", "png"]))
     change_password=ft.Text("Cambiar contraseña", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
-    current_password=ft.TextField(width=280, height=60, hint_text="Contraseña actual", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
+    current_password=ft.TextField(width=280, height=60, hint_text="Contraseña actual", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, value=settings.token_password if settings.token_password != "" else "", disabled=True if settings.token_password != "" else False)
     password=ft.TextField(width=280, height=60, hint_text="Contraseña nueva", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True)
     confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=True)
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=changePassword)
