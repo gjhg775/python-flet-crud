@@ -97,8 +97,7 @@ def main(page:ft.Page):
             if settings.acceso_usuarios == 1:
                 page.clean()
                 page.add(Users(page))
-                lblAccesos.value="Accesos"
-                tba.rows.clear()
+                # lblAccesos.update()
                 page.update()
             else:
                 acceso=0
@@ -107,9 +106,7 @@ def main(page:ft.Page):
             if settings.acceso_configuracion == 1:
                 page.clean()
                 page.add(Configuration(page))
-                # lblAccesos.value="Accesos"
-                # tba.rows.clear()
-                page.update()
+                # page.update()
             else:
                 acceso=0
         if e.control.selected_index == 3:
@@ -328,9 +325,11 @@ def main(page:ft.Page):
             hash=hashlib.sha256(contrasena.encode()).hexdigest()
             hash2=hashlib.sha256(confirm_contrasena.encode()).hexdigest()
             if hash == hash2:
+                sw=0
                 foto="default.jpg"
                 bln_login=add_user(usuario, correo_electronico, hash, nombre, foto)
                 if bln_login != False:
+                    sw=1
                     user.value=""
                     email.value=""
                     password.value=""
@@ -347,6 +346,8 @@ def main(page:ft.Page):
         if message != "":
             settings.message=message
             settings.showMessage(bgcolor)
+            if sw == 1:
+                loginMe(e)
         else:
             if user.value == "":
                 user.error_text="Digite el usuario"

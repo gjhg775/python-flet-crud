@@ -1456,9 +1456,13 @@ def show_edit_access(e):
     tblAccesos.update()
     # return registros
 
+def delete_user(e):
+    show_edit_access(e)
+    show_delete(e)
+
 def show_delete(e):
-    settings.usuario=e.control.data
-    usuario=e.control.data
+    usuario=e.control.data["usuario"]
+    settings.usuario=usuario
     title="Eliminar"
     message=f"Desea eliminar el usuario {usuario} ?"
     open_dlg_modal(e, title, message) 
@@ -1476,6 +1480,7 @@ def open_dlg_modal(e, title, message):
     settings.page.update()
 
 def user_delete(usuario):
+    usuario2=usuario
     dlg_modal.open=False
     settings.page.update()
     try:
@@ -1500,15 +1505,26 @@ def user_delete(usuario):
             tbu.rows.clear()
             tba.rows.clear()
             search=""
-            selectUsers(search)
-            lblAccesos.value="Accesos"
-            lblAccesos.update()
+            # selectUsers(search)
+            # lblAccesos.value="Accesos"
+            # lblAccesos.update()
             tblUsuarios.update()
             tblAccesos.update()
+
+            registros=selectUsers(search)
+            if registros != []:
+                if len(registros) < 4:
+                    tblUsuarios.height=(len(registros)*50)+50
+                else:
+                    tblUsuarios.height=246
+                # no_registros.visible=False
+                usuario=registros[0][0]
+                show_access(usuario)
 
             if settings.photo != "default.jpg":
                 os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
             bgcolor="green"
+            usuario=usuario2
             settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
             settings.showMessage(bgcolor)
     except Exception as e:
@@ -1564,8 +1580,8 @@ def selectUsers(search):
                         	# 	),
                         	IconButton(icon="delete", icon_color="red",
                         		# data=x["id"],
-                        		data=x["usuario"],
-                        		on_click=show_delete,
+                        		data=x,
+                        		on_click=delete_user,
                                 visible=False if x["usuario"] == "Super Admin" or x["usuario"] == "Admin" else True
                         	),
                             # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
@@ -1576,6 +1592,54 @@ def selectUsers(search):
                     ],
                 ),
             )
+    return registros
+
+def show_access(usuario):
+    cursor=conn.cursor()
+    sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
+    values=(f"{usuario}",)
+    cursor.execute(sql, values)
+    registros=cursor.fetchall()
+
+    if registros != []:
+        # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
+        keys=["programa", "acceso_usuario"]
+        result=[dict(zip(keys, values)) for values in registros]
+
+        tba.rows.clear()
+
+        for x in result:
+            tba.rows.append(
+                DataRow(
+                    selected=False,
+                    # data=x["id"],
+                    data=x,
+                    on_select_changed=lambda _: None,
+                    # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
+                    # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
+                    cells=[
+                        DataCell(Text(x["programa"])),
+                        # DataCell(Text(x["acceso_usuario"])),
+                        # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
+                        DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, disabled=True if usuario == "Super Admin" or usuario == "Admin" else False)),
+                        # DataCell(Row([
+                        #     # IconButton(icon="create",icon_color="blue",
+                        #     # 	data=x,
+                        #     # 	on_click=showedit
+                        #     # 	),
+                        #     # IconButton(icon="delete",icon_color="red",
+                        #     # 	data=x["id"],
+                        #     # 	on_click=showdelete
+                        #     # 	),
+                        #     # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
+                        #     # 	data=x,
+                        #     # 	on_click=showedit
+                        #     # 	),
+                        # ])),
+                    ],
+                ),
+            )
+    lblAccesos.value="Accesos " + usuario
     return registros
 
 def selectAccess(username):

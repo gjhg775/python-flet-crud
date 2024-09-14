@@ -4,7 +4,7 @@ import flet as ft
 import settings
 import sqlite3
 import win32print
-from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, lblAccesos, tba, tblAccesos
+from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, show_access, lblAccesos, tba, tblAccesos
 
 conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 search=""
@@ -209,6 +209,8 @@ def Users(page):
         else:
             tblUsuarios.height=246
         # no_registros.visible=False
+        usuario=registros[0][0]
+        show_access(usuario)
     else:
         bgcolor="blue"
         message="No se encontraron registros"
