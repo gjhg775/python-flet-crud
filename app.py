@@ -4,7 +4,8 @@ import settings
 import hashlib
 from pages.login import Login
 from pages.profile import Profile
-from pages.home import home
+from pages.home import Home
+from pages.users import Users
 from pages.configuration import Configuration
 from pages.variables import Variables
 from pages.register import *
@@ -90,12 +91,12 @@ def main(page:ft.Page):
         if e.control.selected_index == 0:
             hide_drawer(e)
             page.clean()
-            page.add(home(page))
+            page.add(Home(page))
         if e.control.selected_index == 1:
             hide_drawer(e)
-            if settings.acceso_configuracion == 1:
+            if settings.acceso_usuarios == 1:
                 page.clean()
-                page.add(Configuration(page))
+                page.add(Users(page))
                 lblAccesos.value="Accesos"
                 tba.rows.clear()
                 page.update()
@@ -103,13 +104,23 @@ def main(page:ft.Page):
                 acceso=0
         if e.control.selected_index == 2:
             hide_drawer(e)
+            if settings.acceso_configuracion == 1:
+                page.clean()
+                page.add(Configuration(page))
+                # lblAccesos.value="Accesos"
+                # tba.rows.clear()
+                page.update()
+            else:
+                acceso=0
+        if e.control.selected_index == 3:
+            hide_drawer(e)
             if settings.acceso_variables == 1:
                 page.clean()
                 page.add(Variables(page))
                 # page.update()
             else:
                 acceso=0
-        if e.control.selected_index == 3:
+        if e.control.selected_index == 4:
             hide_drawer(e)
             if settings.acceso_registro == 1:
                 page.clean()
@@ -119,7 +130,7 @@ def main(page:ft.Page):
                 page.update()
             else:
                 acceso=0
-        if e.control.selected_index == 4:
+        if e.control.selected_index == 5:
             hide_drawer(e)
             if settings.acceso_cuadre == 1:
                 page.clean()
@@ -129,25 +140,29 @@ def main(page:ft.Page):
                 page.update()
             else:
                 acceso=0
-        if e.control.selected_index == 5:
+        if e.control.selected_index == 6:
             hide_drawer(e)
             if settings.acceso_cierre == 1:
                 page.clean()
                 page.add(Closing_day(page))
             else:
                 acceso=0
-        if e.control.selected_index == 6:
+        if e.control.selected_index == 7:
             hide_drawer(e)
             page.clean()
             page.add(Developer(page))
-        if e.control.selected_index == 7:
+        if e.control.selected_index == 8:
             if settings.tipo_app == 0:
+                page.drawer.open = False
+                page.drawer.update()
                 title="Salir"
                 message="Desea salir de la aplicación ?"
                 open_dlg_modal(e, title, message)
             else:
+                # hide_drawer(e)
+                page.drawer.open = False
+                page.drawer.update()
                 logout()
-                hide_drawer(e)
                 page.clean()
                 page.add(container)
         if acceso == 0:
@@ -269,7 +284,7 @@ def main(page:ft.Page):
                 page.clean()
                 # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
                 page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
-                page.add(home(page))
+                page.add(Home(page))
                 page.update()
                 if settings.tipo_app == 0:
                     settings.user_avatar.src=f"upload\\img\\{login_photo}"
@@ -478,6 +493,11 @@ def main(page:ft.Page):
             ),
             # ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
+                icon_content=ft.Icon(ft.icons.PERSON_OUTLINED),
+                label="Usuarios",
+                selected_icon=ft.icons.PERSON_ROUNDED,
+            ),
+            ft.NavigationDrawerDestination(
                 icon_content=ft.Icon(ft.icons.SETTINGS_OUTLINED),
                 label="Configuración",
                 selected_icon=ft.icons.SETTINGS,
@@ -504,9 +524,9 @@ def main(page:ft.Page):
             ),
             ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
-                icon_content=ft.Icon(ft.icons.PERSON_OUTLINED),
+                icon_content=ft.Icon(ft.icons.CODE_OUTLINED),
                 label="Desarrollador",
-                selected_icon=ft.icons.PERSON_ROUNDED,
+                selected_icon=ft.icons.CODE_ROUNDED,
             ),
             ft.Divider(thickness=2),
             ft.NavigationDrawerDestination(
@@ -583,7 +603,7 @@ def main(page:ft.Page):
     confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=False)
     name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
-    btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", visible=True, on_click=resetPassword)
+    btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", visible=True if settings.tipo_app == 1 else False, on_click=resetPassword)
     lbl_cuenta=ft.Text("¿No tiene una cuenta?")
     btn_cuenta=ft.TextButton("Crear cuenta", on_click=sign_up)
     btn_loginme=ft.TextButton("Iniciar sesión", visible=False, on_click=loginMe)

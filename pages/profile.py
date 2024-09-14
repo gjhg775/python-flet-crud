@@ -46,7 +46,7 @@ def Profile(page):
         if current_password.value != "" and password.value != "" and confirm_password.value != "":
             login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login=selectUser(settings.username, current_password.value)
             if login_nombre != "":
-                update_user(settings.username, password.value, settings.photo, login_password)
+                update_user(settings.username, password.value, settings.photo)
                 current_password.disabled=False
                 current_password.value=""
                 password.value=""

@@ -118,7 +118,7 @@ import flet as ft
 #         horizontal_alignment="center"
 #         )
 
-def home(page):
+def Home(page):
     developer_photo=ft.Image(src=f"img/parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
     return ft.Column([

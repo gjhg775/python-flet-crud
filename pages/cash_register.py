@@ -98,7 +98,10 @@ def Cash_register(page):
                     ft.Row([
                         ft.Column([
                             ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
-                            ft.Text("Cuadre de caja", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                            ft.Row([
+                                ft.Icon(ft.icons.ATTACH_MONEY_OUTLINED, size=32),
+                                ft.Text("Cuadre de caja", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
+                            ], width=300, alignment=ft.MainAxisAlignment.CENTER)
                             # ft.Text(parqueadero, color=ft.colors.BLUE_900, size=28, weight="bold"),
                             # ft.ElevatedButton("Registro", on_click=showInputs)
                         ])

@@ -1,8 +1,9 @@
 import flet as ft
 
-global username, correo_electronico, password, token_password, photo, user_avatar, user_photo, usuario, acceso_configuracion, acceso_variables, acceso_registro, acceso_cuadre, \
-       acceso_cierre, textsize, fieldwith, tipo_app, preview_register, print_register_receipt, send_email_register, preview_cash, print_cash_receipt, printer, paper_width, \
-       prefijo, billing, clave_tecnica, tipo_ambiente, cliente_final, consecutivo, consecutivo2, placa, progressRing, correcto
+global username, correo_electronico, password, token_password, photo, user_avatar, user_photo, usuario, acceso_usuarios, acceso_configuracion, acceso_variables, acceso_registro, \
+       acceso_cuadre, acceso_cierre, textsize, fieldwith, tipo_app, preview_register, print_register_receipt, send_email_register, preview_cash, print_cash_receipt, printer, \
+       paper_width, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, billing, clave_tecnica, tipo_ambiente, cliente_final, consecutivo, consecutivo2, \
+       placa, progressRing, correcto, errors
 
 username=""
 correo_electronico=""
@@ -13,19 +14,25 @@ photo=""
 message=""
 usuario=""
 printer=""
+resolucion=""
+fecha_desde=""
+fecha_hasta=""
 prefijo=""
+autoriza_del=""
+autoriza_al=""
 clave_tecnica=""
 cliente_final=""
 consecutivo=""
 consecutivo2=""
 placa=""
+acceso_usuarios=0
 acceso_configuracion=0
 acceso_variables=0
 acceso_registro=0
 acceso_cuadre=0
 acceso_cierre=0
 textsize=30
-fieldwith=280
+fieldwith=800
 tipo_app=1 # 0=Escritorio 1=Web
 billing=1
 tipo_ambiente=0
@@ -36,6 +43,7 @@ send_email_register=0
 preview_cash=1
 print_cash_receipt=1
 correcto=0
+errors=0
 page=ft.Page
 progressRing=ft.ProgressRing()
 progressBar=ft.ProgressBar(width=page.width, color="amber", bgcolor="#eeeeee", visible=False)

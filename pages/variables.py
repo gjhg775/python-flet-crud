@@ -1,7 +1,7 @@
 import flet as ft
 import settings
 import sqlite3
-from datatable import get_variables, update_variables
+from datatable import get_variables, update_variables, get_configuration
 
 conn=sqlite3.connect('C:/pdb/database/parqueadero.db',check_same_thread=False)
 message=""
@@ -110,6 +110,52 @@ message=""
 #             ]
 #         )
 
+configuracion=get_configuration()
+
+if configuracion != None:
+    parqueadero=configuracion[0][1]
+    nit=configuracion[0][2]
+    regimen=configuracion[0][3]
+    direccion=configuracion[0][4]
+    telefono=configuracion[0][5]
+    servicio=configuracion[0][6]
+    settings.billing=configuracion[0][7]
+    facturacion=False if configuracion[0][7] == 0 else True
+    settings.resolucion=configuracion[0][8]
+    resolucion=configuracion[0][8]
+    settings.fecha_desde=configuracion[0][9]
+    fecha_desde=configuracion[0][9]
+    settings.fecha_hasta=configuracion[0][10]
+    fecha_hasta=configuracion[0][10]
+    settings.prefijo=configuracion[0][11]
+    prefijo=configuracion[0][11]
+    settings.autoriza_del=configuracion[0][12]
+    autoriza_del=configuracion[0][12]
+    settings.autoriza_al=configuracion[0][13]
+    autoriza_al=configuracion[0][13]
+    settings.clave_tecnica=configuracion[0][14]
+    clave_tecnica=configuracion[0][14]
+    settings.tipo_ambiente=configuracion[0][15]
+    tipo_ambiente=configuracion[0][15]
+    settings.cliente_final=configuracion[0][16]
+    cliente=configuracion[0][16]
+    settings.consecutivo=configuracion[0][17]
+    consecutivo=configuracion[0][17]
+    settings.preview_register=configuracion[0][18]
+    vista_previa_registro=False if configuracion[0][18] == 0 else True
+    settings.print_register_receipt=configuracion[0][19]
+    imprimir_registro=False if configuracion[0][19] == 0 else True
+    settings.send_email_register=configuracion[0][20]
+    enviar_correo=False if configuracion[0][20] == 0 else True
+    settings.preview_cash=configuracion[0][21]
+    vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+    settings.print_cash_receipt=configuracion[0][22]
+    imprimir_cuadre=False if configuracion[0][22] == 0 else True
+    settings.printer=configuracion[0][23]
+    impresora=configuracion[0][23]
+    settings.paper_width=configuracion[0][24]
+    papel=configuracion[0][24]
+
 def Variables(page):
     variables=get_variables()
 
@@ -194,7 +240,12 @@ def Variables(page):
                     # ),
                     ft.Row([
                         ft.Column([
-                            ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                            ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
+                            # ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                            ft.Row([
+                                ft.Icon(ft.icons.FACT_CHECK_OUTLINED, size=32),
+                                ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
+                            ], width=300, alignment=ft.MainAxisAlignment.CENTER)
                         ])
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER,

@@ -71,7 +71,7 @@ def create_configuration():
         autoriza_al TEXT,
         clave_tecnica TEXT,
         tipo_ambiente INTEGER,
-        cliente TEXT,
+        cliente INTEGER,
         consecutivo TEXT,
         vista_previa_registro INTEGER,
         imprimir_registro INTEGER,
@@ -145,7 +145,7 @@ def admin_user():
 
 def admin_access():
     try:
-        programs=["Configuración", "Variables", "Registro", "Cuadre", "Cierre"]
+        programs=["Usuarios", "Configuración", "Variables", "Registro", "Cuadre", "Cierre"]
 
         for x in programs:
             cursor=conn.cursor()
@@ -166,7 +166,7 @@ def add_configuration():
     try:
         cursor=conn.cursor()
         sql="""INSERT INTO configuracion (parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, enviar_correo_electronico, vista_previa_cuadre, imprimir_cuadre, impresora, papel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-        values=("", "", "", "", "", "", 0, "", "", "", "", "", "", "", 0, "", "", 1, 1, 0, 1, 1, "", 0)
+        values=("", "", "", "", "", "", 0, "", "", "", "", "", "", "", 0, 0, "", 1, 1, 0, 1, 1, "", 0)
         cursor.execute(sql, values)
         conn.commit()
     except Exception as e:

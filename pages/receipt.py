@@ -36,25 +36,32 @@ if configuracion != None:
     servicio=configuracion[0][6]
     settings.billing=configuracion[0][7]
     facturacion=False if configuracion[0][7] == 0 else True
+    settings.resolucion=configuracion[0][8]
     resolucion=configuracion[0][8]
+    settings.fecha_desde=configuracion[0][9]
     fecha_desde=configuracion[0][9]
+    settings.fecha_hasta=configuracion[0][10]
     fecha_hasta=configuracion[0][10]
     settings.prefijo=configuracion[0][11]
     prefijo=configuracion[0][11]
+    settings.autoriza_del=configuracion[0][12]
     autoriza_del=configuracion[0][12]
+    settings.autoriza_al=configuracion[0][13]
     autoriza_al=configuracion[0][13]
+    settings.clave_tecnica=configuracion[0][14]
     clave_tecnica=configuracion[0][14]
     settings.tipo_ambiente=configuracion[0][15]
     tipo_ambiente=configuracion[0][15]
     settings.cliente_final=configuracion[0][16]
     cliente=configuracion[0][16]
+    settings.consecutivo=configuracion[0][17]
     consecutivo=configuracion[0][17]
     settings.preview_register=configuracion[0][18]
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
     settings.send_email_register=configuracion[0][20]
-    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+    enviar_correo=False if configuracion[0][20] == 0 else True
     settings.preview_cash=configuracion[0][21]
     vista_previa_cuadre=False if configuracion[0][21] == 0 else True
     settings.print_cash_receipt=configuracion[0][22]
@@ -66,7 +73,7 @@ if configuracion != None:
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="NIT " + nit
-    regimen="Régimen " + regimen
+    # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
@@ -178,7 +185,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
 
 def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
     nit="NIT " + nit
-    regimen="Régimen " + regimen
+    # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
@@ -219,8 +226,10 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     salida=f"Salida   " + str(salidas)
 
     if settings.billing == 1:
-        num_fac=consecutivo.split("-")
+        num_fac=consecutivo.split(settings.prefijo)
         num_fac=int(num_fac[1])
+        # num_fac=consecutivo.split("-")
+        # num_fac=int(num_fac[1])
         fec_fac=str(salidas).split("/")
         dia=fec_fac[0]
         mes=fec_fac[1]
@@ -546,7 +555,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
 
 def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
     nit="NIT " + nit
-    regimen="Régimen " + regimen
+    # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     titulo="Reporte de Cuadre"
@@ -676,7 +685,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
 
 def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
     nit="NIT " + nit
-    regimen="Régimen " + regimen
+    # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     titulo="Reporte de Cuadre"

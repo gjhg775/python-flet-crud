@@ -221,7 +221,7 @@ def add_user(usuario, correo_electronico, hashed, nombre, foto):
     except Exception as e:
         print(e)
 
-def update_user(usuario, clave, foto, token_password):
+def update_user(usuario, clave, foto):
     hash=hashlib.sha256(clave.encode()).hexdigest()
     try:
         cursor=conn.cursor()
@@ -279,25 +279,32 @@ if configuracion != None:
     servicio=configuracion[0][6]
     settings.billing=configuracion[0][7]
     facturacion=False if configuracion[0][7] == 0 else True
+    settings.resolucion=configuracion[0][8]
     resolucion=configuracion[0][8]
+    settings.fecha_desde=configuracion[0][9]
     fecha_desde=configuracion[0][9]
+    settings.fecha_hasta=configuracion[0][10]
     fecha_hasta=configuracion[0][10]
     settings.prefijo=configuracion[0][11]
     prefijo=configuracion[0][11]
+    settings.autoriza_del=configuracion[0][12]
     autoriza_del=configuracion[0][12]
+    settings.autoriza_al=configuracion[0][13]
     autoriza_al=configuracion[0][13]
+    settings.clave_tecnica=configuracion[0][14]
     clave_tecnica=configuracion[0][14]
     settings.tipo_ambiente=configuracion[0][15]
     tipo_ambiente=configuracion[0][15]
     settings.cliente_final=configuracion[0][16]
     cliente=configuracion[0][16]
+    settings.consecutivo=configuracion[0][17]
     consecutivo=configuracion[0][17]
     settings.preview_register=configuracion[0][18]
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
     settings.send_email_register=configuracion[0][20]
-    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+    enviar_correo=False if configuracion[0][20] == 0 else True
     settings.preview_cash=configuracion[0][21]
     vista_previa_cuadre=False if configuracion[0][21] == 0 else True
     settings.print_cash_receipt=configuracion[0][22]
@@ -315,13 +322,57 @@ def update_configuration(parqueadero, nit, regimen, direccion, telefono, servici
         cursor.execute(sql, values)
         conn.commit()
 
-        settings.billing=facturacion
-        settings.cliente_final=cliente
-        settings.printer=impresora
-        settings.paper_width=papel
-        
-        message="Configuración actualizada satisfactoriamente"
-        return message
+        # settings.billing=facturacion
+        # settings.cliente_final=cliente
+        # settings.printer=impresora
+        # settings.paper_width=papel
+
+        configuracion=get_configuration()
+
+        if configuracion != None:
+            id=configuracion[0][0]
+            parqueadero=configuracion[0][1]
+            nit=configuracion[0][2]
+            regimen=configuracion[0][3]
+            direccion=configuracion[0][4]
+            telefono=configuracion[0][5]
+            servicio=configuracion[0][6]
+            settings.billing=configuracion[0][7]
+            facturacion=False if configuracion[0][7] == 0 else True
+            settings.resolucion=configuracion[0][8]
+            resolucion=configuracion[0][8]
+            settings.fecha_desde=configuracion[0][9]
+            fecha_desde=configuracion[0][9]
+            settings.fecha_hasta=configuracion[0][10]
+            fecha_hasta=configuracion[0][10]
+            settings.prefijo=configuracion[0][11]
+            prefijo=configuracion[0][11]
+            settings.autoriza_del=configuracion[0][12]
+            autoriza_del=configuracion[0][12]
+            settings.autoriza_al=configuracion[0][13]
+            autoriza_al=configuracion[0][13]
+            settings.clave_tecnica=configuracion[0][14]
+            clave_tecnica=configuracion[0][14]
+            settings.tipo_ambiente=configuracion[0][15]
+            tipo_ambiente=configuracion[0][15]
+            settings.cliente_final=configuracion[0][16]
+            cliente=configuracion[0][16]
+            settings.consecutivo=configuracion[0][17]
+            consecutivo=configuracion[0][17]
+            settings.preview_register=configuracion[0][18]
+            vista_previa_registro=False if configuracion[0][18] == 0 else True
+            settings.print_register_receipt=configuracion[0][19]
+            imprimir_registro=False if configuracion[0][19] == 0 else True
+            settings.send_email_register=configuracion[0][20]
+            enviar_correo=False if configuracion[0][20] == 0 else True
+            settings.preview_cash=configuracion[0][21]
+            vista_previa_cuadre=False if configuracion[0][21] == 0 else True
+            settings.print_cash_receipt=configuracion[0][22]
+            imprimir_cuadre=False if configuracion[0][22] == 0 else True
+            settings.printer=configuracion[0][23]
+            impresora=configuracion[0][23]
+            settings.paper_width=configuracion[0][24]
+            papel=configuracion[0][24]
     except Exception as e:
         print(e)
 
@@ -703,6 +754,7 @@ def showedit(e):
     # data_edit=e.control.data
     # id_edit=data_edit["id"]
     consecutivo=e.control.data["consecutivo"]
+    settings.consecutivo2=consecutivo
     try:
         cursor=conn.cursor()
         sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
@@ -721,25 +773,32 @@ def showedit(e):
             servicio=configuracion[0][6]
             settings.billing=configuracion[0][7]
             facturacion=False if configuracion[0][7] == 0 else True
+            settings.resolucion=configuracion[0][8]
             resolucion=configuracion[0][8]
+            settings.fecha_desde=configuracion[0][9]
             fecha_desde=configuracion[0][9]
+            settings.fecha_hasta=configuracion[0][10]
             fecha_hasta=configuracion[0][10]
             settings.prefijo=configuracion[0][11]
             prefijo=configuracion[0][11]
+            settings.autoriza_del=configuracion[0][12]
             autoriza_del=configuracion[0][12]
+            settings.autoriza_al=configuracion[0][13]
             autoriza_al=configuracion[0][13]
+            settings.clave_tecnica=configuracion[0][14]
             clave_tecnica=configuracion[0][14]
             settings.tipo_ambiente=configuracion[0][15]
             tipo_ambiente=configuracion[0][15]
             settings.cliente_final=configuracion[0][16]
             cliente=configuracion[0][16]
-            # consecutivo=configuracion[0][17]
+            settings.consecutivo=configuracion[0][17]
+            consecutivo=configuracion[0][17]
             settings.preview_register=configuracion[0][18]
             vista_previa_registro=False if configuracion[0][18] == 0 else True
             settings.print_register_receipt=configuracion[0][19]
             imprimir_registro=False if configuracion[0][19] == 0 else True
             settings.send_email_register=configuracion[0][20]
-            enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+            enviar_correo=False if configuracion[0][20] == 0 else True
             settings.preview_cash=configuracion[0][21]
             vista_previa_cuadre=False if configuracion[0][21] == 0 else True
             settings.print_cash_receipt=configuracion[0][22]
@@ -760,6 +819,7 @@ def showedit(e):
         entradas=registros[0][14]
         salidas=registros[0][15]
 
+        consecutivo=settings.consecutivo2
         settings.correo_electronico=correo_electronico
 
         comentario1="Sin éste recibo no se entrega el automotor."
@@ -775,7 +835,7 @@ def showedit(e):
 
 def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="NIT " + nit
-    regimen="Régimen " + regimen
+    # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
@@ -885,29 +945,30 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-    settings.progressBar.visible=True
-    settings.page.open(dlg_modal2)
-    settings.page.update()
+    if settings.send_email_register == 1:
+        settings.progressBar.visible=True
+        settings.page.open(dlg_modal2)
+        settings.page.update()
 
-    bgcolor="blue"
-    message="Enviando correo"
-    settings.message=message
-    settings.showMessage(bgcolor)
+        bgcolor="blue"
+        message="Enviando correo"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
-    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+        send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
-    bgcolor="green"
-    message="Correo enviado satisfactoriamente"
-    settings.message=message
-    settings.showMessage(bgcolor)
+        bgcolor="green"
+        message="Correo enviado satisfactoriamente"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
-    settings.progressBar.visible=False
-    settings.page.close(dlg_modal2)
-    settings.page.update()
+        settings.progressBar.visible=False
+        settings.page.close(dlg_modal2)
+        settings.page.update()
 
 def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
     nit="NIT " + nit
-    regimen="Régimen " + regimen
+    # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
@@ -948,8 +1009,10 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     salida=f"Salida   " + str(salidas)
 
     if settings.billing == 1:
-        num_fac=consecutivo.split("-")
+        num_fac=consecutivo.split(settings.prefijo)
         num_fac=int(num_fac[1])
+        # num_fac=consecutivo.split("-")
+        # num_fac=int(num_fac[1])
         fec_fac=str(salidas).split("/")
         dia=fec_fac[0]
         mes=fec_fac[1]
@@ -1273,25 +1336,26 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-    settings.progressBar.visible=True
-    settings.page.open(dlg_modal2)
-    settings.page.update()
+    if settings.send_email_register == 1:
+        settings.progressBar.visible=True
+        settings.page.open(dlg_modal2)
+        settings.page.update()
 
-    bgcolor="blue"
-    message="Enviando correo"
-    settings.message=message
-    settings.showMessage(bgcolor)
+        bgcolor="blue"
+        message="Enviando correo"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
-    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+        send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
-    bgcolor="green"
-    message="Correo enviado satisfactoriamente"
-    settings.message=message
-    settings.showMessage(bgcolor)
+        bgcolor="green"
+        message="Correo enviado satisfactoriamente"
+        settings.message=message
+        settings.showMessage(bgcolor)
 
-    settings.progressBar.visible=False
-    settings.page.close(dlg_modal2)
-    settings.page.update()
+        settings.progressBar.visible=False
+        settings.page.close(dlg_modal2)
+        settings.page.update()
 
 # def show_edit_access(e):
 #     # data_edit=e.control.data
@@ -1369,7 +1433,7 @@ def show_edit_access(e):
                         DataCell(Text(x["programa"])),
                         # DataCell(Text(x["acceso_usuario"])),
                         # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
-                        DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access)),
+                        DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access, disabled=True if usuario == "Super Admin" or usuario == "Admin" else False)),
                         # DataCell(Row([
                         #     # IconButton(icon="create",icon_color="blue",
                         #     # 	data=x,
@@ -1394,10 +1458,10 @@ def show_edit_access(e):
 
 def show_delete(e):
     settings.usuario=e.control.data
-    usuario=settings.usuario
+    usuario=e.control.data
     title="Eliminar"
     message=f"Desea eliminar el usuario {usuario} ?"
-    open_dlg_modal(e, title, message)        
+    open_dlg_modal(e, title, message) 
 
 def close_dlg(e):
     dlg_modal.open=False
@@ -1406,8 +1470,9 @@ def close_dlg(e):
 def open_dlg_modal(e, title, message):
     dlg_modal.title=Text(title, text_align="center")
     dlg_modal.content=Text(message, text_align="center")
-    settings.page.dialog=dlg_modal
+    # settings.page.dialog=dlg_modal
     dlg_modal.open=True
+    settings.page.overlay.append(dlg_modal)
     settings.page.update()
 
 def user_delete(usuario):
@@ -1419,34 +1484,33 @@ def user_delete(usuario):
             bgcolor="orange"
             settings.message=f"El usuario {usuario} no puede ser eliminado"
             settings.showMessage(bgcolor)
-            return False
-        
-        get_user(usuario)
-        
-        cursor=conn.cursor()
-        sql=f"""DELETE FROM accesos WHERE usuario = ?"""
-        values=(f"{usuario}",)
-        cursor.execute(sql, values)
-        conn.commit()
+        else:
+            get_user(usuario)
+            
+            cursor=conn.cursor()
+            sql=f"""DELETE FROM accesos WHERE usuario = ?"""
+            values=(f"{usuario}",)
+            cursor.execute(sql, values)
+            conn.commit()
 
-        sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
-        values=(f"{usuario}",)
-        cursor.execute(sql, values)
-        conn.commit()
-        tbu.rows.clear()
-        tba.rows.clear()
-        search=""
-        selectUsers(search)
-        lblAccesos.value="Accesos"
-        lblAccesos.update()
-        tblUsuarios.update()
-        tblAccesos.update()
+            sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
+            values=(f"{usuario}",)
+            cursor.execute(sql, values)
+            conn.commit()
+            tbu.rows.clear()
+            tba.rows.clear()
+            search=""
+            selectUsers(search)
+            lblAccesos.value="Accesos"
+            lblAccesos.update()
+            tblUsuarios.update()
+            tblAccesos.update()
 
-        if settings.photo != "default.jpg":
-            os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
-        bgcolor="green"
-        settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
-        settings.showMessage(bgcolor)
+            if settings.photo != "default.jpg":
+                os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
+            bgcolor="green"
+            settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
+            settings.showMessage(bgcolor)
     except Exception as e:
         print(e)
 
@@ -1501,7 +1565,8 @@ def selectUsers(search):
                         	IconButton(icon="delete", icon_color="red",
                         		# data=x["id"],
                         		data=x["usuario"],
-                        		on_click=show_delete
+                        		on_click=show_delete,
+                                visible=False if x["usuario"] == "Super Admin" or x["usuario"] == "Admin" else True
                         	),
                             # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
                         	# 	data=x,
@@ -1521,11 +1586,12 @@ def selectAccess(username):
     registros=cursor.fetchall()
 
     if registros != []:
-        settings.acceso_configuracion=registros[0][1]
-        settings.acceso_variables=registros[1][1]
-        settings.acceso_registro=registros[2][1]
-        settings.acceso_cuadre=registros[3][1]
-        settings.acceso_cierre=registros[4][1]
+        settings.acceso_usuarios=registros[0][1]
+        settings.acceso_configuracion=registros[1][1]
+        settings.acceso_variables=registros[2][1]
+        settings.acceso_registro=registros[3][1]
+        settings.acceso_cuadre=registros[4][1]
+        settings.acceso_cierre=registros[5][1]
 
 def selectRegisters(search):
     cuadre=0
@@ -1691,7 +1757,7 @@ tblUsuarios = Column([
 
 tblAccesos = Column([
     Row([tba], scroll="always")
-], height=300)
+], height=350)
 
 tblRegistro = Column([
     Row([tb], scroll="always")
