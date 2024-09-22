@@ -216,7 +216,7 @@ def Users(page):
         message="No se encontraron registros"
         settings.message=message
         settings.showMessage(bgcolor)
-
+        
     return ft.Column(
         controls=[
             ft.Container(height=20),

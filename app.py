@@ -82,8 +82,11 @@ def main(page:ft.Page):
 
     def profile(e):
         hide_drawer(e)
-        page.clean()
-        page.add(Profile(page))
+        if settings.tipo_app == 0:
+            page.clean()
+            page.add(Profile(page))
+        else:
+            page.go("/profile")
     
     def change_navigation_destination(e):
         # settings.progressRing.visible=True
@@ -98,7 +101,7 @@ def main(page:ft.Page):
                 page.clean()
                 page.add(Users(page))
                 # lblAccesos.update()
-                page.update()
+                # page.update()
             else:
                 acceso=0
         if e.control.selected_index == 2:
@@ -696,7 +699,7 @@ def main(page:ft.Page):
 
     # page.add(Home(page))
     page.add(container)
-
+    
 if __name__ == "__main__":
     if settings.tipo_app == 0:
         ft.app(target=main, assets_dir="assets", upload_dir="upload")

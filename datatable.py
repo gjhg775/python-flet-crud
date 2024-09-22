@@ -1379,6 +1379,7 @@ def update_access(e):
     usuario=lblAccesos.value
     usuario=usuario.split("Accesos ")
     usuario=usuario[1]
+    settings.usuario=usuario
     if usuario != "Super Admin" and usuario != "Admin":
         programa=acceso["programa"]
         acceso_usuario=0 if chk.value == False else 1
@@ -1407,6 +1408,7 @@ def update_access(e):
 
 def show_edit_access(e):
     usuario=e.control.data["usuario"]
+    settings.usuario=usuario
     cursor=conn.cursor()
     sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
     values=(f"{usuario}",)
@@ -1456,77 +1458,90 @@ def show_edit_access(e):
     tblAccesos.update()
     # return registros
 
-def delete_user(e):
-    show_edit_access(e)
-    show_delete(e)
+# def delete_user(e):
+#     usuario=e.control.data["usuario"]
+#     show_edit_access(e)
+#     show_delete(e)
 
 def show_delete(e):
     usuario=e.control.data["usuario"]
     settings.usuario=usuario
+    show_edit_access(e)
+    # usuario=settings.usuario
     title="Eliminar"
     message=f"Desea eliminar el usuario {usuario} ?"
-    open_dlg_modal(e, title, message) 
+    open_dlg_modal(e, title, message)
 
 def close_dlg(e):
     dlg_modal.open=False
-    settings.page.update()
+    dlg_modal.update()
 
 def open_dlg_modal(e, title, message):
     dlg_modal.title=Text(title, text_align="center")
     dlg_modal.content=Text(message, text_align="center")
     # settings.page.dialog=dlg_modal
     dlg_modal.open=True
-    settings.page.overlay.append(dlg_modal)
+    # settings.page.overlay.append(dlg_modal)
+    settings.page.add(dlg_modal)
     settings.page.update()
 
-def user_delete(usuario):
+def user_delete(e):
+    usuario=settings.usuario
     usuario2=usuario
     dlg_modal.open=False
-    settings.page.update()
+    dlg_modal.update()
     try:
         # usuario=e.control.data
-        if usuario == "Super Admin" or usuario == "Admin":
-            bgcolor="orange"
-            settings.message=f"El usuario {usuario} no puede ser eliminado"
-            settings.showMessage(bgcolor)
-        else:
-            get_user(usuario)
-            
-            cursor=conn.cursor()
-            sql=f"""DELETE FROM accesos WHERE usuario = ?"""
-            values=(f"{usuario}",)
-            cursor.execute(sql, values)
-            conn.commit()
+        # if usuario == "Super Admin" or usuario == "Admin":
+        #     bgcolor="orange"
+        #     settings.message=f"El usuario {usuario} no puede ser eliminado"
+        #     settings.showMessage(bgcolor)
+        # else:
 
-            sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
-            values=(f"{usuario}",)
-            cursor.execute(sql, values)
-            conn.commit()
-            tbu.rows.clear()
-            tba.rows.clear()
-            search=""
-            # selectUsers(search)
-            # lblAccesos.value="Accesos"
-            # lblAccesos.update()
+        get_user(usuario)
+
+        if settings.photo != "default.jpg":
+            os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
+        
+        cursor=conn.cursor()
+        sql=f"""DELETE FROM accesos WHERE usuario = ?"""
+        values=(f"{usuario}",)
+        cursor.execute(sql, values)
+        conn.commit()
+
+        sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
+        values=(f"{usuario}",)
+        cursor.execute(sql, values)
+        conn.commit()
+
+        # tbu.rows.clear()
+        # tba.rows.clear()
+        search=""
+        # selectUsers(search)
+        # lblAccesos.value="Accesos"
+        # lblAccesos.update()
+        # tblUsuarios.update()
+        # tblAccesos.update()
+
+        registros=selectUsers(search)
+        if registros != []:
+            if len(registros) < 4:
+                tblUsuarios.height=(len(registros)*50)+50
+            else:
+                tblUsuarios.height=246
+            # no_registros.visible=False
             tblUsuarios.update()
-            tblAccesos.update()
+            # usuario=registros[0][0]
+            # show_access(usuario)
+            # lblAccesos.value="Accesos " + usuario
+            # lblAccesos.update()
+            # tblAccesos.update()
 
-            registros=selectUsers(search)
-            if registros != []:
-                if len(registros) < 4:
-                    tblUsuarios.height=(len(registros)*50)+50
-                else:
-                    tblUsuarios.height=246
-                # no_registros.visible=False
-                usuario=registros[0][0]
-                show_access(usuario)
-
-            if settings.photo != "default.jpg":
-                os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
-            bgcolor="green"
-            usuario=usuario2
-            settings.message=f"Usuario {usuario} eliminado satisfactoriamente"
-            settings.showMessage(bgcolor)
+        usuario=usuario2
+        bgcolor="green"
+        message=f"Usuario {usuario} eliminado satisfactoriamente"
+        settings.message=message
+        settings.showMessage(bgcolor)
     except Exception as e:
         print(e)
 
@@ -1581,7 +1596,7 @@ def selectUsers(search):
                         	IconButton(icon="delete", icon_color="red",
                         		# data=x["id"],
                         		data=x,
-                        		on_click=delete_user,
+                        		on_click=show_delete,
                                 visible=False if x["usuario"] == "Super Admin" or x["usuario"] == "Admin" else True
                         	),
                             # IconButton(icon="picture_as_pdf_rounded",icon_color="blue",
@@ -1838,7 +1853,7 @@ dlg_modal=AlertDialog(
     # title=Text(title, text_align="center"),
     # content=Text(message, text_align="center"),
     actions=[
-        TextButton("Sí", on_click=lambda _: user_delete(settings.usuario)),
+        TextButton("Sí", on_click=user_delete),
         TextButton("No", autofocus=True, on_click=close_dlg)
     ],
     actions_alignment=MainAxisAlignment.END,
