@@ -677,512 +677,1180 @@ def Configuration(page):
     paper_width=ft.Dropdown(hint_text="Seleccione ancho de papel", options=[ft.dropdown.Option(0, "Seleccione ancho de papel", disabled=True), ft.dropdown.Option(58, "58 mm"), ft.dropdown.Option(80, "80 mm")], value=papel, disabled=False, on_change=paper_width_change)
     paper_width.disabled=True if settings.print_register_receipt == 0 and settings.print_cash_receipt == 0 else False
 
-    registros=selectUsers(search)
-    if registros != []:
-        if len(registros) < 4:
-            tblUsuarios.height=(len(registros)*50)+50
-        else:
-            tblUsuarios.height=246
-        # no_registros.visible=False
-    else:
-        bgcolor="blue"
-        message="No se encontraron registros"
-        settings.message=message
-        settings.showMessage(bgcolor)
+    # registros=selectUsers(search)
+    # if registros != []:
+    #     if len(registros) < 4:
+    #         tblUsuarios.height=(len(registros)*50)+50
+    #     else:
+    #         tblUsuarios.height=246
+    #     # no_registros.visible=False
+    # else:
+    #     bgcolor="blue"
+    #     message="No se encontraron registros"
+    #     settings.message=message
+    #     settings.showMessage(bgcolor)
 
     # if message != "":
     #     bgcolor="green"
     #     settings.message=message
     #     settings.showMessage(bgcolor)
 
-    return ft.Column(
-        controls=[
-            ft.Container(height=20),
-            ft.Container(
-                alignment=ft.alignment.center,
-                content=ft.Stack([
-                    # ft.Row([
-                    #     ft.Column([
-                    #         settings.progressRing
-                    #     ]),
-                    # ], 
-                    # alignment=ft.MainAxisAlignment.CENTER,
-                    # ),
+    if settings.tipo_app == 0:
+        body=ft.Column(
+            scroll="auto",
+            controls=[
+                ft.Container(height=20),
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    content=ft.Stack([
+                        # ft.Row([
+                        #     ft.Column([
+                        #         settings.progressRing
+                        #     ]),
+                        # ], 
+                        # alignment=ft.MainAxisAlignment.CENTER,
+                        # ),
+                        ft.Row([
+                            ft.Column([
+                                ft.Row([
+                                    ft.Icon(ft.icons.SETTINGS, size=32),
+                                    ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
+                                ])
+                                # ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                            ]),
+                        ], 
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ]),
+                ),
+                ft.Container(height=10),
+                # ft.Container(
+                #     padding=ft.padding.only(10, 0, 10, 0),
+                #     content=ft.Row([
+                #         ft.Column([
+                #             lblDatos,
+                #             parqueadero,
+                #             nit,
+                #             regimen,
+                #             direccion,
+                #             telefono,
+                #             servicio,
+                #             resolucion,                         
+                #         ]),
+                #     ],
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblDatos, parqueadero]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[nit]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[regimen]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[direccion]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[telefono]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[servicio]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblFacturacion]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                #     ]),
+                # ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lblFacturacion]),
+                        # ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_billing]),
+                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[billing_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[resolucion]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[fecha_desde]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
                     ft.Row([
-                        ft.Column([
-                            ft.Row([
-                                ft.Icon(ft.icons.SETTINGS_OUTLINED, size=32),
-                                ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
-                            ])
-                            # ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
-                        ]),
+                        date_button_from
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER,
                     ),
-                ]),
-            ),
-            ft.Container(height=10),
-            # ft.Container(
-            #     padding=ft.padding.only(10, 0, 10, 0),
-            #     content=ft.Row([
-            #         ft.Column([
-            #             lblDatos,
-            #             parqueadero,
-            #             nit,
-            #             regimen,
-            #             direccion,
-            #             telefono,
-            #             servicio,
-            #             resolucion,                         
-            #         ]),
-            #     ],
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblDatos, parqueadero]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[nit]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[regimen]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[direccion]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[telefono]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[servicio]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-            #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblFacturacion]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-            #     ]),
-            # ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lblFacturacion]),
-                    # ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_billing]),
-                    ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[billing_switch]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[resolucion]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[fecha_desde]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                ft.Row([
-                    date_button_from
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
                 ),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[fecha_hasta]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                ft.Row([
-                    date_button_to
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[fecha_hasta]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
                 ),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[prefijo]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[autoriza_del]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[autoriza_al]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[clave_tecnica]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[consecutivo]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_environment, environment, lbl_client, client]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblRegistro]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_preview]),
-                    ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[preview_switch]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print]),
-                    ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_send_email]),
-                    ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[send_receipt_switch]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblCuadreCaja]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_preview_cash]),
-                    ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[preview_switch_cash]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print_cash]),
-                    ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch_cash]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(
-                padding=ft.padding.only(0, 0, 20, 0),
-                content=ft.ResponsiveRow([
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
-                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                ]),
-            ),
-            ft.Container(height=20),
-            ft.Container(
-                ft.Row([
-                    btn_save
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
+                ft.Container(
+                    ft.Row([
+                        date_button_to
+                    ], 
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    ),
                 ),
-            ),
-            # ft.Container(height=50),
-            
-            # ft.Container(
-            #     padding=ft.padding.only(10, 0, 10, 0),
-            #     content=ft.Row([
-            #         ft.Column([
-            #             fecha_desde,
-            #         ]),
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     ft.Row([
-            #         date_button_from
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(10, 0, 10, 0),
-            #     content=ft.Row([
-            #         ft.Column([
-            #             fecha_hasta, 
-            #         ]),
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     ft.Row([
-            #         date_button_to
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(10, 0, 10, 0),
-            #     content=ft.Row([
-            #         ft.Column([
-            #             prefijo,
-            #             autoriza_del,
-            #             autoriza_al,
-            #             clave_tecnica,
-            #             consecutivo
-            #         ]),
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     ft.Row([
-            #         btn_save
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
-            #     # border_radius=10,
-            #     alignment=ft.alignment.center,
-            #     # padding=ft.padding.only(10, 20, 10, 0),
-            #     padding=ft.padding.only(10, 25, 10, 0),
-            #     content=ft.Stack([
-            #     # content=ft.ResponsiveRow([
-            #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-            #             ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos]),
-            #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
-            #         # ]),
-            #     ]),
-            # ),
-            # ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
-            # ft.Container(
-            #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
-            #     # border_radius=10,
-            #     alignment=ft.alignment.center,
-            #     padding=ft.padding.only(10, 0, 10, 0),
-            #     # content=ft.Stack([
-            #     content=ft.ResponsiveRow([
-            #         # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-            #         # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
-            #         # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
-            #         # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":12, "sm":5, "md":6, "lg":5, "xl":5, "xxl":3}, controls=[lblUsuarios, buscar, tblUsuarios], alignment=ft.alignment.center_right),
-            #         ft.Column(col={"xs":12, "sm":5, "md":5, "lg":5, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":3}),
-            #     ]),
-            #     # ]),
-            # ),
-            ft.Container(height=50),
-            # ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
-            # ft.Container(
-            #     ft.Row([
-            #         ft.Column([
-            #             lblAjustes,
-            #             ft.Row([
-            #                 preview_switch,
-            #                 lbl_preview,
-            #             ]),
-            #             ft.Row([
-            #                 print_receipt_switch,
-            #                 lbl_print,
-            #             ]),
-            #         ]),
-            #     ],
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 10, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblFacturacion]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_billing]),
-            #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[billing_switch]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
-            #         # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
-            #         ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_environment, environment, lbl_client, client]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 10, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblRegistro]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview]),
-            #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print]),
-            #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_send_email]),
-            #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[send_receipt_switch]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 10, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblCuadreCaja]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview_cash]),
-            #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch_cash]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print_cash]),
-            #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch_cash]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(
-            #     padding=ft.padding.only(0, 0, 20, 0),
-            #     content=ft.ResponsiveRow([
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
-            #         # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
-            #         # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
-            #         ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
-            #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
-            #     ]),
-            # ),
-            # ft.Container(height=20),
-            # ft.Container(
-            #     ft.Row([
-            #         btn_save
-            #     ], 
-            #     alignment=ft.MainAxisAlignment.CENTER,
-            #     ),
-            # ),
-            # ft.Container(height=50),
-        ]
-    )
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[prefijo]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[autoriza_del]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[autoriza_al]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[clave_tecnica]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[consecutivo]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_environment, environment, lbl_client, client]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblRegistro]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_preview]),
+                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[preview_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print]),
+                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_send_email]),
+                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[send_receipt_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblCuadreCaja]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_preview_cash]),
+                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[preview_switch_cash], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print_cash]),
+                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch_cash], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(height=20),
+                ft.Container(
+                    ft.Row([
+                        btn_save
+                    ], 
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                ),
+                # ft.Container(height=50),
+                
+                # ft.Container(
+                #     padding=ft.padding.only(10, 0, 10, 0),
+                #     content=ft.Row([
+                #         ft.Column([
+                #             fecha_desde,
+                #         ]),
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     ft.Row([
+                #         date_button_from
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(10, 0, 10, 0),
+                #     content=ft.Row([
+                #         ft.Column([
+                #             fecha_hasta, 
+                #         ]),
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     ft.Row([
+                #         date_button_to
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(10, 0, 10, 0),
+                #     content=ft.Row([
+                #         ft.Column([
+                #             prefijo,
+                #             autoriza_del,
+                #             autoriza_al,
+                #             clave_tecnica,
+                #             consecutivo
+                #         ]),
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     ft.Row([
+                #         btn_save
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
+                #     # border_radius=10,
+                #     alignment=ft.alignment.center,
+                #     # padding=ft.padding.only(10, 20, 10, 0),
+                #     padding=ft.padding.only(10, 25, 10, 0),
+                #     content=ft.Stack([
+                #     # content=ft.ResponsiveRow([
+                #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+                #             ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos]),
+                #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+                #         # ]),
+                #     ]),
+                # ),
+                # ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
+                # ft.Container(
+                #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
+                #     # border_radius=10,
+                #     alignment=ft.alignment.center,
+                #     padding=ft.padding.only(10, 0, 10, 0),
+                #     # content=ft.Stack([
+                #     content=ft.ResponsiveRow([
+                #         # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                #         # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
+                #         # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
+                #         # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":12, "sm":5, "md":6, "lg":5, "xl":5, "xxl":3}, controls=[lblUsuarios, buscar, tblUsuarios], alignment=ft.alignment.center_right),
+                #         ft.Column(col={"xs":12, "sm":5, "md":5, "lg":5, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":3}),
+                #     ]),
+                #     # ]),
+                # ),
+                ft.Container(height=50),
+                # ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
+                # ft.Container(
+                #     ft.Row([
+                #         ft.Column([
+                #             lblAjustes,
+                #             ft.Row([
+                #                 preview_switch,
+                #                 lbl_preview,
+                #             ]),
+                #             ft.Row([
+                #                 print_receipt_switch,
+                #                 lbl_print,
+                #             ]),
+                #         ]),
+                #     ],
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 10, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblFacturacion]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_billing]),
+                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[billing_switch]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
+                #         # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
+                #         ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_environment, environment, lbl_client, client]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 10, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblRegistro]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview]),
+                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print]),
+                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_send_email]),
+                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[send_receipt_switch]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 10, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblCuadreCaja]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview_cash]),
+                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch_cash]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print_cash]),
+                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch_cash]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(
+                #     padding=ft.padding.only(0, 0, 20, 0),
+                #     content=ft.ResponsiveRow([
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                #         # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
+                #         # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
+                #         ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
+                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                #     ]),
+                # ),
+                # ft.Container(height=20),
+                # ft.Container(
+                #     ft.Row([
+                #         btn_save
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                # ft.Container(height=50),
+            ]
+        )
+    else:
+        btn_home=ft.FilledButton("Inicio".ljust(21, " "), icon=ft.icons.HOME, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/"))
+        btn_users=ft.FilledButton("Usuarios".ljust(18, " "), icon=ft.icons.PERSON_ROUNDED, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/users"))
+        btn_settings=ft.FilledButton("Configuración", icon=ft.icons.SETTINGS, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/configuration"))
+        btn_variables=ft.FilledButton("Variables".ljust(18, " "), icon=ft.icons.FACT_CHECK, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/variables"))
+        btn_register=ft.FilledButton("Registro".ljust(18, " "), icon=ft.icons.EDIT_ROUNDED, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/register"))
+        btn_cash_register=ft.FilledButton("Cuadre de caja", icon=ft.icons.ATTACH_MONEY_SHARP, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/cash_register"))
+        btn_closing_day=ft.FilledButton("Cierre de día".ljust(18, " "), icon=ft.icons.CALENDAR_MONTH, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/closing_day"))
+        btn_developer=ft.FilledButton("Desarrollador".ljust(16, " "), icon=ft.icons.CODE_ROUNDED, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/developer"))
+        btn_logout=ft.FilledButton("Cerrar sesión".ljust(16, " "), icon=ft.icons.POWER_SETTINGS_NEW, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/login"))
+
+        body=ft.Column(
+            controls=[
+                ft.Row([
+                    ft.Container(
+                        height=938,
+                        width=200,
+                        shadow=ft.BoxShadow(
+                            spread_radius=1,
+                            blur_radius=15,
+                            color=ft.colors.BLUE_GREY_300,
+                            offset=ft.Offset(0, 0),
+                            blur_style=ft.ShadowBlurStyle.OUTER,
+                        ),
+                        # expand=2,
+                        padding=ft.padding.only(0, 20, 0, 0),
+                        bgcolor=ft.colors.BLUE_900,
+                        border_radius=ft.border_radius.all(10),
+                        # alignment=ft.alignment.center,
+                        content=ft.Column([
+                            # btn_profile,
+                            ft.Container(
+                                padding=ft.padding.only(10, 10, 10, 10),
+                                on_click=lambda e: settings.page.go("/profile"),
+                                content=ft.Row([
+                                    settings.user_avatar,
+                                    # settings.page.user_auth
+                                ]),
+                            ),
+                            ft.Divider(thickness=2),
+                            btn_home,
+                            btn_users,
+                            btn_settings,
+                            btn_variables,
+                            btn_register,
+                            btn_cash_register,
+                            btn_closing_day,
+                            ft.Divider(thickness=2),
+                            btn_developer,
+                            ft.Divider(thickness=2),
+                            btn_logout
+                        ],
+                        horizontal_alignment="center",
+                        ),
+                    ),
+                    ft.Container(
+                        height=938,
+                        expand=10,
+                        padding=ft.padding.only(0, 20, 0, 0),
+                        # bgcolor="blue",
+                        content=ft.Column(
+                            scroll="auto",
+                            controls=[
+                                ft.Container(height=20),
+                                ft.Container(
+                                    alignment=ft.alignment.center,
+                                    content=ft.Stack([
+                                        # ft.Row([
+                                        #     ft.Column([
+                                        #         settings.progressRing
+                                        #     ]),
+                                        # ], 
+                                        # alignment=ft.MainAxisAlignment.CENTER,
+                                        # ),
+                                        ft.Row([
+                                            ft.Column([
+                                                ft.Row([
+                                                    ft.Icon(ft.icons.SETTINGS, size=32),
+                                                    ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
+                                                ])
+                                                # ft.Text("Configuración", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                                            ]),
+                                        ], 
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        ),
+                                    ]),
+                                ),
+                                ft.Container(height=10),
+                                # ft.Container(
+                                #     padding=ft.padding.only(10, 0, 10, 0),
+                                #     content=ft.Row([
+                                #         ft.Column([
+                                #             lblDatos,
+                                #             parqueadero,
+                                #             nit,
+                                #             regimen,
+                                #             direccion,
+                                #             telefono,
+                                #             servicio,
+                                #             resolucion,                         
+                                #         ]),
+                                #     ],
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblDatos, parqueadero]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[nit]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[regimen]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[direccion]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[telefono]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[servicio]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblFacturacion]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                #     ]),
+                                # ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lblFacturacion]),
+                                        # ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_billing]),
+                                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[billing_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[resolucion]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[fecha_desde]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    ft.Row([
+                                        date_button_from
+                                    ], 
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    ),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[fecha_hasta]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    ft.Row([
+                                        date_button_to
+                                    ], 
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    ),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[prefijo]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[autoriza_del]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[autoriza_al]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[clave_tecnica]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[consecutivo]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_environment, environment, lbl_client, client]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblRegistro]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_preview]),
+                                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[preview_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print]),
+                                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_send_email]),
+                                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[send_receipt_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblCuadreCaja]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_preview_cash]),
+                                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[preview_switch_cash], horizontal_alignment=ft.CrossAxisAlignment.END),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print_cash]),
+                                        ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch_cash], horizontal_alignment=ft.CrossAxisAlignment.END),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(height=20),
+                                ft.Container(
+                                    ft.Row([
+                                        btn_save
+                                    ], 
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    ),
+                                ),
+                                # ft.Container(height=50),
+                                
+                                # ft.Container(
+                                #     padding=ft.padding.only(10, 0, 10, 0),
+                                #     content=ft.Row([
+                                #         ft.Column([
+                                #             fecha_desde,
+                                #         ]),
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     ft.Row([
+                                #         date_button_from
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(10, 0, 10, 0),
+                                #     content=ft.Row([
+                                #         ft.Column([
+                                #             fecha_hasta, 
+                                #         ]),
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     ft.Row([
+                                #         date_button_to
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(10, 0, 10, 0),
+                                #     content=ft.Row([
+                                #         ft.Column([
+                                #             prefijo,
+                                #             autoriza_del,
+                                #             autoriza_al,
+                                #             clave_tecnica,
+                                #             consecutivo
+                                #         ]),
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     ft.Row([
+                                #         btn_save
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
+                                #     # border_radius=10,
+                                #     alignment=ft.alignment.center,
+                                #     # padding=ft.padding.only(10, 20, 10, 0),
+                                #     padding=ft.padding.only(10, 25, 10, 0),
+                                #     content=ft.Stack([
+                                #     # content=ft.ResponsiveRow([
+                                #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+                                #             ft.Column(col={"xs":12, "sm":12, "md":12, "lg":12, "xl":10, "xxl":8}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros, lblAccesos, tblAccesos]),
+                                #             ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":1, "xxl":2}),
+                                #         # ]),
+                                #     ]),
+                                # ),
+                                # ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
+                                # ft.Container(
+                                #     # bgcolor=ft.colors.PRIMARY_CONTAINER,
+                                #     # border_radius=10,
+                                #     alignment=ft.alignment.center,
+                                #     padding=ft.padding.only(10, 0, 10, 0),
+                                #     # content=ft.Stack([
+                                #     content=ft.ResponsiveRow([
+                                #         # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                                #         # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios, no_registros]),
+                                #         # ft.Column(col={"xs":12, "sm":12, "md":6, "lg":6, "xl":6, "xxl":5}, controls=[lblAccesos, tblAccesos]),
+                                #         # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":12, "sm":5, "md":6, "lg":5, "xl":5, "xxl":3}, controls=[lblUsuarios, buscar, tblUsuarios], alignment=ft.alignment.center_right),
+                                #         ft.Column(col={"xs":12, "sm":5, "md":5, "lg":5, "xl":3, "xxl":2}, controls=[lblAccesos, tblAccesos]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":3}),
+                                #     ]),
+                                #     # ]),
+                                # ),
+                                ft.Container(height=50),
+                                # ft.Container(height={"xs":0, "sm":0, "md":10, "lg":100, "xl":100, "xxl":100}),
+                                # ft.Container(
+                                #     ft.Row([
+                                #         ft.Column([
+                                #             lblAjustes,
+                                #             ft.Row([
+                                #                 preview_switch,
+                                #                 lbl_preview,
+                                #             ]),
+                                #             ft.Row([
+                                #                 print_receipt_switch,
+                                #                 lbl_print,
+                                #             ]),
+                                #         ]),
+                                #     ],
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 10, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblFacturacion]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_billing]),
+                                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[billing_switch]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
+                                #         # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
+                                #         ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_environment, environment, lbl_client, client]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 10, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblRegistro]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview]),
+                                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print]),
+                                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_send_email]),
+                                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[send_receipt_switch]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 10, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":6, "xl":6, "xxl":4}, controls=[lblCuadreCaja]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_preview_cash]),
+                                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[preview_switch_cash]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_print_cash]),
+                                #         ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[print_receipt_switch_cash]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(
+                                #     padding=ft.padding.only(0, 0, 20, 0),
+                                #     content=ft.ResponsiveRow([
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":3, "xl":3, "xxl":4}),
+                                #         # ft.Column(col={"xs":10, "sm":5, "md":5, "lg":4, "xl":4, "xxl":3}, controls=[lbl_printer]),
+                                #         # ft.Column(col={"xs":2, "sm":5, "md":5, "lg":3, "xl":3, "xxl":2}, controls=[ft.Container(ft.Row([lbl_printer, printer]))]),
+                                #         ft.Column(col={"xs":12, "sm":6, "md":6, "lg":4, "xl":4, "xxl":2}, controls=[lbl_printer, printer, lbl_paper_width, paper_width]),
+                                #         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":2, "xl":2, "xxl":3}),
+                                #     ]),
+                                # ),
+                                # ft.Container(height=20),
+                                # ft.Container(
+                                #     ft.Row([
+                                #         btn_save
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                # ft.Container(height=50),
+                            ]
+                        )
+                    )
+                ]),
+            ]
+        )
+
+    return body

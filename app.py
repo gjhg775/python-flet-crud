@@ -2,6 +2,7 @@ import os
 import flet as ft
 import settings
 import hashlib
+from views import views_handler
 from pages.login import Login
 from pages.profile import Profile
 from pages.home import Home
@@ -82,11 +83,8 @@ def main(page:ft.Page):
 
     def profile(e):
         hide_drawer(e)
-        if settings.tipo_app == 0:
-            page.clean()
-            page.add(Profile(page))
-        else:
-            page.go("/profile")
+        page.clean()
+        page.add(Profile(page))
     
     def change_navigation_destination(e):
         # settings.progressRing.visible=True
@@ -173,6 +171,18 @@ def main(page:ft.Page):
         # time.sleep(1)
         # settings.progressRing.visible=False
         # page.update()
+    
+    def route_change(route):
+        page.views.clear()
+        page.views.append(
+            views_handler(page)[page.route]
+        )
+        page.update()
+
+    def view_pop(view):
+        page.views.pop()
+        top_view=page.views[-1]
+        page.go(top_view.route)
             
     def show_drawer(e):
         if page.session.get("username") != None:
@@ -540,7 +550,14 @@ def main(page:ft.Page):
             )
         ],
         on_change=lambda e: change_navigation_destination(e),
+        #  if settings.tipo_app == 0 else route_change
     )
+
+    if settings.tipo_app == 1:
+        # page.route="/login"
+        page.on_route_change=route_change
+        page.on_view_pop=view_pop
+        page.go(page.route)
 
     toggledarklight=ft.IconButton(
         on_click=change_mode_theme,
@@ -698,6 +715,7 @@ def main(page:ft.Page):
     # )
 
     # page.add(Home(page))
+    page.padding=0
     page.add(container)
     
 if __name__ == "__main__":

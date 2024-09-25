@@ -18,7 +18,7 @@ from pathlib import Path
 from decouple import config
 from mail import send_mail_billing
 
-conn=sqlite3.connect('C:/pdb/database/parqueadero.db',check_same_thread=False)
+conn=sqlite3.connect('C:/pdb/database/parqueadero.db', check_same_thread=False)
 
 valor=0
 

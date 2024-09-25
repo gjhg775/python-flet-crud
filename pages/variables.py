@@ -3,7 +3,7 @@ import settings
 import sqlite3
 from datatable import get_variables, update_variables, get_configuration
 
-conn=sqlite3.connect('C:/pdb/database/parqueadero.db',check_same_thread=False)
+conn=sqlite3.connect('C:/pdb/database/parqueadero.db', check_same_thread=False)
 message=""
 
 # class Variables(ft.UserControl):
@@ -217,56 +217,388 @@ def Variables(page):
                 settings.showMessage(bgcolor)
 
     variable_id=id
-    vlr_hora_moto=ft.TextField(label="Hora Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_hora_moto)
-    vlr_turno_moto=ft.TextField(label="Turno Moto", width=280, prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_turno_moto)
-    vlr_hora_carro=ft.TextField(label="Hora Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_hora_carro)
-    vlr_turno_carro=ft.TextField(label="Turno Carro", width=280, prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_turno_carro)
-    vlr_hora_otro=ft.TextField(label="Hora Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=valor_hora_otro)
-    vlr_turno_otro=ft.TextField(label="Turno Otro", width=280, prefix_icon=ft.icons.VIEW_LIST, value=valor_turno_otro)
+    vlr_hora_moto=ft.TextField(label="Hora Moto", prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_hora_moto)
+    vlr_turno_moto=ft.TextField(label="Turno Moto", prefix_icon=ft.icons.MOTORCYCLE_SHARP, value=valor_turno_moto)
+    vlr_hora_carro=ft.TextField(label="Hora Carro", prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_hora_carro)
+    vlr_turno_carro=ft.TextField(label="Turno Carro", prefix_icon=ft.icons.DIRECTIONS_CAR_SHARP, value=valor_turno_carro)
+    vlr_hora_otro=ft.TextField(label="Hora Otro", prefix_icon=ft.icons.VIEW_LIST, value=valor_hora_otro)
+    vlr_turno_otro=ft.TextField(label="Turno Otro", prefix_icon=ft.icons.VIEW_LIST, value=valor_turno_otro)
     btn_save=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=validateVariables)
 
-    return ft.Column(
-        controls=[
-            ft.Container(height=20),
-            ft.Container(
-                alignment=ft.alignment.center,
-                content=ft.Stack([
-                    # ft.Row([
-                    #     ft.Column([
-                    #         settings.progressRing
-                    #     ]),
-                    # ], 
-                    # alignment=ft.MainAxisAlignment.CENTER,
-                    # ),
+    if settings.tipo_app == 0:
+        body=ft.Column(
+            controls=[
+                ft.Container(height=20),
+                ft.Container(
+                    alignment=ft.alignment.center,
+                    content=ft.Stack([
+                        # ft.Row([
+                        #     ft.Column([
+                        #         settings.progressRing
+                        #     ]),
+                        # ], 
+                        # alignment=ft.MainAxisAlignment.CENTER,
+                        # ),
+                        ft.Row([
+                            ft.Column([
+                                ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
+                                # ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                                ft.Row([
+                                    ft.Icon(ft.icons.FACT_CHECK, size=32),
+                                    ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
+                                ], width=300, alignment=ft.MainAxisAlignment.CENTER)
+                            ])
+                        ], 
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        ),
+                    ]),
+                ),
+                ft.Container(height=10),
+                # ft.Container(
+                #     ft.Row([
+                #         ft.Column([
+                #             vlr_hora_moto,
+                #             vlr_turno_moto,
+                #             vlr_hora_carro,
+                #             vlr_turno_carro,
+                #             vlr_hora_otro,
+                #             vlr_turno_otro,
+                #             btn_save
+                #         ])
+                #     ], 
+                #     alignment=ft.MainAxisAlignment.CENTER,
+                #     ),
+                # ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_hora_moto]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_turno_moto]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_hora_carro]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_turno_carro]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_hora_otro]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_turno_otro]),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(height=20),
+                ft.Container(
                     ft.Row([
-                        ft.Column([
-                            ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
-                            # ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
-                            ft.Row([
-                                ft.Icon(ft.icons.FACT_CHECK_OUTLINED, size=32),
-                                ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
-                            ], width=300, alignment=ft.MainAxisAlignment.CENTER)
-                        ])
+                        btn_save
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER,
                     ),
-                ]),
-            ),
-            ft.Container(height=10),
-            ft.Container(
-                ft.Row([
-                    ft.Column([
-                        vlr_hora_moto,
-                        vlr_turno_moto,
-                        vlr_hora_carro,
-                        vlr_turno_carro,
-                        vlr_hora_otro,
-                        vlr_turno_otro,
-                        btn_save
-                    ])
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
                 ),
-            ),
-        ]
-    )
+            ]
+        )
+    else:
+        btn_home=ft.FilledButton("Inicio".ljust(21, " "), icon=ft.icons.HOME, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/"))
+        btn_users=ft.FilledButton("Usuarios".ljust(18, " "), icon=ft.icons.PERSON_ROUNDED, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/users"))
+        btn_settings=ft.FilledButton("Configuración", icon=ft.icons.SETTINGS, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/configuration"))
+        btn_variables=ft.FilledButton("Variables".ljust(18, " "), icon=ft.icons.FACT_CHECK, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/variables"))
+        btn_register=ft.FilledButton("Registro".ljust(18, " "), icon=ft.icons.EDIT_ROUNDED, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/register"))
+        btn_cash_register=ft.FilledButton("Cuadre de caja", icon=ft.icons.ATTACH_MONEY_SHARP, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/cash_register"))
+        btn_closing_day=ft.FilledButton("Cierre de día".ljust(18, " "), icon=ft.icons.CALENDAR_MONTH, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/closing_day"))
+        btn_developer=ft.FilledButton("Desarrollador".ljust(16, " "), icon=ft.icons.CODE_ROUNDED, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/developer"))
+        btn_logout=ft.FilledButton("Cerrar sesión".ljust(16, " "), icon=ft.icons.POWER_SETTINGS_NEW, icon_color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, style=ft.ButtonStyle(color={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_900,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.WHITE,
+                }, bgcolor={
+                    ft.ControlState.HOVERED: ft.colors.BLUE_50,
+                    ft.ControlState.FOCUSED: ft.colors.BLUE,
+                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
+                }), on_click=lambda _: page.go("/login"))
+
+        body=ft.Column(
+            controls=[
+                ft.Row([
+                    ft.Container(
+                        height=938,
+                        width=200,
+                        shadow=ft.BoxShadow(
+                            spread_radius=1,
+                            blur_radius=15,
+                            color=ft.colors.BLUE_GREY_300,
+                            offset=ft.Offset(0, 0),
+                            blur_style=ft.ShadowBlurStyle.OUTER,
+                        ),
+                        # expand=2,
+                        padding=ft.padding.only(0, 20, 0, 0),
+                        bgcolor=ft.colors.BLUE_900,
+                        border_radius=ft.border_radius.all(10),
+                        # alignment=ft.alignment.center,
+                        content=ft.Column([
+                            # btn_profile,
+                            ft.Container(
+                                padding=ft.padding.only(10, 10, 10, 10),
+                                on_click=lambda e: settings.page.go("/profile"),
+                                content=ft.Row([
+                                    settings.user_avatar,
+                                    # settings.page.user_auth
+                                ]),
+                            ),
+                            ft.Divider(thickness=2),
+                            btn_home,
+                            btn_users,
+                            btn_settings,
+                            btn_variables,
+                            btn_register,
+                            btn_cash_register,
+                            btn_closing_day,
+                            ft.Divider(thickness=2),
+                            btn_developer,
+                            ft.Divider(thickness=2),
+                            btn_logout
+                        ],
+                        horizontal_alignment="center",
+                        ),
+                    ),
+                    ft.Container(
+                        height=938,
+                        expand=10,
+                        padding=ft.padding.only(0, 20, 0, 0),
+                        # bgcolor="blue",
+                        content=ft.Column(
+                            controls=[
+                                ft.Container(height=20),
+                                ft.Container(
+                                    alignment=ft.alignment.center,
+                                    content=ft.Stack([
+                                        # ft.Row([
+                                        #     ft.Column([
+                                        #         settings.progressRing
+                                        #     ]),
+                                        # ], 
+                                        # alignment=ft.MainAxisAlignment.CENTER,
+                                        # ),
+                                        ft.Row([
+                                            ft.Column([
+                                                ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
+                                                # ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", color=ft.colors.PRIMARY)
+                                                ft.Row([
+                                                    ft.Icon(ft.icons.FACT_CHECK, size=32),
+                                                    ft.Text("Variables", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
+                                                ], width=300, alignment=ft.MainAxisAlignment.CENTER)
+                                            ])
+                                        ], 
+                                        alignment=ft.MainAxisAlignment.CENTER,
+                                        ),
+                                    ]),
+                                ),
+                                ft.Container(height=10),
+                                # ft.Container(
+                                #     ft.Row([
+                                #         ft.Column([
+                                #             vlr_hora_moto,
+                                #             vlr_turno_moto,
+                                #             vlr_hora_carro,
+                                #             vlr_turno_carro,
+                                #             vlr_hora_otro,
+                                #             vlr_turno_otro,
+                                #             btn_save
+                                #         ])
+                                #     ], 
+                                #     alignment=ft.MainAxisAlignment.CENTER,
+                                #     ),
+                                # ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_hora_moto]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_turno_moto]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_hora_carro]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_turno_carro]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_hora_otro]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(
+                                    padding=ft.padding.only(0, 0, 20, 0),
+                                    content=ft.ResponsiveRow([
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_turno_otro]),
+                                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                                    ]),
+                                ),
+                                ft.Container(height=20),
+                                ft.Container(
+                                    ft.Row([
+                                        btn_save
+                                    ], 
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                    ),
+                                ),
+                            ]
+                        )
+                    )
+                ]),
+            ]
+        )
+    
+    return body

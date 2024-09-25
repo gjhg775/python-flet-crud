@@ -1,6 +1,7 @@
 import flet as ft
 from pages.home import Home
 from pages.login import Login
+from pages.profile import Profile
 from pages.users import Users
 from pages.configuration import Configuration
 from pages.variables import Variables
@@ -15,12 +16,18 @@ def views_handler(page):
             route="/",
             controls=[
                 Home(page)
-            ]
+            ],
         ),
         "/login":ft.View(
             route="/login",
             controls=[
                 Login(page)
+            ]
+        ),
+        "/profile":ft.View(
+            route="/profile",
+            controls=[
+                Profile(page)
             ]
         ),
         "/users":ft.View(
