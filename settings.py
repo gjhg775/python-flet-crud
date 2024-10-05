@@ -69,9 +69,10 @@ def showMessage(bgcolor):
         duration=2000,
         open=True
     )
-    page.overlay.append(snack_bar)
-    # page.snack_bar.open=True
-    page.update()
+    if tipo_app == 0:
+        page.overlay.append(snack_bar)
+        # page.snack_bar.open=True
+        page.update()
 
 # def close_dlg(e):
 #     dlg_modal.open=False
