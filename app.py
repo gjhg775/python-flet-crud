@@ -379,7 +379,13 @@ if settings.tipo_app == 0:
             page.update()
 
         def open_dlg_modal(e, title, message):
-            dlg_modal.title=ft.Text(title, text_align="center")
+            # dlg_modal.title=ft.Text(title, text_align="center")
+            dlg_modal.title=ft.Row([
+                ft.Icon(ft.icons.LOGOUT_ROUNDED, size=32),
+                ft.Text(title, text_align="center")
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
+            )
             dlg_modal.content=ft.Text(message, text_align="center")
             page.overlay.append(dlg_modal)
             dlg_modal.open=True
@@ -388,7 +394,7 @@ if settings.tipo_app == 0:
         dlg_modal=ft.AlertDialog(
             bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
             modal=True,
-            icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+            # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
             # title=ft.Text(title, text_align="center"),
             # content=ft.Text(message, text_align="center"),
             actions=[

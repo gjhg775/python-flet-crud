@@ -86,7 +86,7 @@ def Profile(page):
     # settings.user_photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     if settings.tipo_app == 0:
     #     # settings.avatar=ft.Image(src=os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}") if settings.photo != "" else f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
-        settings.user_photo=ft.Image(src=f"upload\\img\\{settings.photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+        settings.user_photo=ft.Image(src=f"upload\\img\\{settings.photo}", height=200, width=200, fit=ft.ImageFit.COVER, border_radius=150)
         # user_avatar=ft.Image(src=f"upload\\img\\{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
     else:
     #     # settings.avatar=ft.Image(src=f"img/{settings.photo}" if settings.photo != "" else f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
@@ -113,8 +113,8 @@ def Profile(page):
                         btn_photo
                     ),
                 ],
-                left=220,
-                top=240,
+                left=150,
+                top=150,
                 ),
             ]),
         ),
@@ -144,7 +144,7 @@ def Profile(page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
-            ft.Container(height=50),
+            # ft.Container(height=50),
     ],
     horizontal_alignment="center"
     )
