@@ -1,5 +1,7 @@
 import os
+import sys
 import time
+import flet as ft
 import locale
 import qrcode
 import subprocess
@@ -12,7 +14,8 @@ import hashlib
 import win32api
 import win32print
 import random
-from flet import *
+# from flet import *
+import flet as ft
 from fpdf import FPDF
 from pathlib import Path
 from decouple import config
@@ -26,48 +29,62 @@ title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
-if settings.tipo_app == 0:
-    path=os.path.join(os.getcwd(), "upload\\receipt\\")
+if getattr(sys, 'frozen', False):
+    # Si está corriendo como un ejecutable
+    base_path = sys._MEIPASS
 else:
-    path=os.path.join(os.getcwd(), "assets\\receipt\\")
+    # Si está corriendo como un script en desarrollo
+    base_path = os.path.abspath(".")
 
-tbu = DataTable(
-    bgcolor=colors.PRIMARY_CONTAINER,
+# Para acceder a los archivos en assets o upload:
+assets_path = os.path.join(base_path, "assets")
+# upload_path = os.path.join(base_path, "upload")
+    
+# Ejemplo de uso:
+# icon_path = os.path.join(assets_path, "img", "parqueadero.png")
+
+# if settings.tipo_app == 0:
+#     path=os.path.join(os.getcwd(), "upload\\receipt\\")
+# else:
+#     path=os.path.join(os.getcwd(), "assets\\receipt\\")
+
+tbu = ft.DataTable(
+    bgcolor=ft.colors.PRIMARY_CONTAINER,
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
-        DataColumn(Text("Foto")),
-		DataColumn(Text("Usuario")),
-		DataColumn(Text("Nombre")),
-		DataColumn(Text("Acción")),
+        ft.DataColumn(ft.Text("Foto")),
+		ft.DataColumn(ft.Text("Usuario")),
+		ft.DataColumn(ft.Text("Nombre")),
+		ft.DataColumn(ft.Text("Acción")),
 	],
 	rows=[]
 )
 
-tba = DataTable(
-    bgcolor=colors.PRIMARY_CONTAINER,
+tba = ft.DataTable(
+    bgcolor=ft.colors.PRIMARY_CONTAINER,
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
-		DataColumn(Text("Programa")),
-		DataColumn(Text("Acceso")),
+		ft.DataColumn(ft.Text("Programa")),
+		ft.DataColumn(ft.Text("Acceso")),
 		# DataColumn(Text("Acción")),
 	],
 	rows=[]
 )
 
-tb = DataTable(
-    bgcolor=colors.PRIMARY_CONTAINER,
+tb = ft.DataTable(
+    bgcolor=ft.colors.PRIMARY_CONTAINER,
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
-		DataColumn(Text("Consecutivo")),
-		DataColumn(Text("Placa")),
-		DataColumn(Text("Entrada")),
-		DataColumn(Text("Salida")),
+		ft.DataColumn(ft.Text("Consecutivo")),
+		ft.DataColumn(ft.Text("Placa")),
+		ft.DataColumn(ft.Text("Entrada")),
+		ft.DataColumn(ft.Text("Salida")),
         # DataColumn(Text("Vehiculo")),
         # DataColumn(Text("Valor")),
         # DataColumn(Text("Tiempo")),
@@ -79,20 +96,20 @@ tb = DataTable(
 	rows=[]
 )
 
-tbc = DataTable(
-    bgcolor=colors.PRIMARY_CONTAINER,
+tbc = ft.DataTable(
+    bgcolor=ft.colors.PRIMARY_CONTAINER,
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
 	columns=[
-		DataColumn(Text("Consecutivo")),
-		DataColumn(Text("Placa")),
-		DataColumn(Text("Entrada")),
-		DataColumn(Text("Salida")),
-        DataColumn(Text("Vehículo")),
-        DataColumn(Text("Facturación")),
-        DataColumn(Text("Valor"), numeric=True),
-        DataColumn(Text("Total"), numeric=True),
+		ft.DataColumn(ft.Text("Consecutivo")),
+		ft.DataColumn(ft.Text("Placa")),
+		ft.DataColumn(ft.Text("Entrada")),
+		ft.DataColumn(ft.Text("Salida")),
+        ft.DataColumn(ft.Text("Vehículo")),
+        ft.DataColumn(ft.Text("Facturación")),
+        ft.DataColumn(ft.Text("Valor"), numeric=True),
+        ft.DataColumn(ft.Text("Total"), numeric=True),
         # DataColumn(Text("Cuadre")),
 	],
 	rows=[]
@@ -117,11 +134,11 @@ tbc = DataTable(
 # 	rows=[]
 # )
 
-id_edit=Text()
-vehiculo_edit=RadioGroup(content=Row([
-    Radio(label="Moto", value="Moto"),
-    Radio(label="Moto", value="Moto"),
-    Radio(label="Otro", value="Otro")
+id_edit=ft.Text()
+vehiculo_edit=ft.RadioGroup(content=ft.Row([
+    ft.Radio(label="Moto", value="Moto"),
+    ft.Radio(label="Moto", value="Moto"),
+    ft.Radio(label="Otro", value="Otro")
 ]))
 
 def reset_password(usuario):
@@ -221,12 +238,16 @@ def add_user(usuario, correo_electronico, hashed, nombre, foto):
     except Exception as e:
         print(e)
 
-def update_user(usuario, clave, foto):
-    hash=hashlib.sha256(clave.encode()).hexdigest()
+def update_user(usuario, clave, foto, btn):
     try:
         cursor=conn.cursor()
-        sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ? OR correo_electronico = ?"""
-        values=(f"{hash}", f"{foto}", f"{usuario}", f"{usuario}")
+        if btn == "save":
+            hash=hashlib.sha256(clave.encode()).hexdigest()
+            sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ? OR correo_electronico = ?"""
+            values=(f"{hash}", f"{foto}", f"{usuario}", f"{usuario}")
+        else:
+            sql="""UPDATE usuarios SET foto = ? WHERE usuario = ? OR correo_electronico = ?"""
+            values=(f"{foto}", f"{usuario}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
 
@@ -684,6 +705,7 @@ def add_register(vehiculo, placa):
 
         id=1
         consecutivos=int(consecutivo)+1
+        consecutivos=str(consecutivos).zfill(6)
         sql=f"""UPDATE configuracion SET consecutivo = ? WHERE configuracion_id = ?"""
         values=(f"{consecutivos}", f"{id}")
         cursor.execute(sql, values)
@@ -698,7 +720,8 @@ def add_register(vehiculo, placa):
         print(e)
 
 def exist_email(placa):
-    correo_electronico=""
+    settings.correo_electronico=""
+    correo_electronico=settings.correo_electronico
     cursor=conn.cursor()
     sql=f"""SELECT * FROM registro WHERE placa = ? AND correo_electronico != ?"""
     values=(f"{placa}", f"{correo_electronico}")
@@ -839,7 +862,8 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
-    consecutivo=str(consecutivo).zfill(7) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else str(consecutivo)
+    # consecutivo=str(consecutivo).zfill(6) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else str(consecutivo)
+    consecutivo=str(consecutivo).zfill(6)
     consecutivo="Recibo " + consecutivo
     entrada=str(entrada)
     entrada=str(entrada[0:19])
@@ -871,6 +895,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
     pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
@@ -909,22 +934,22 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     pdf.set_font("helvetica", "", size=8)
-    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
+    impreso=os.getenv("FOOTER") if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     pdf.set_y(120)
     pdf.write(0, impreso)
-    pdf.output(path+"receipt.pdf")
+    pdf.output(f"{assets_path}\\receipt\\receipt.pdf")
 
     if settings.tipo_app == 0:
         if settings.preview_register == 1:
-            subprocess.Popen([path+"receipt.pdf"], shell=True)
+            subprocess.Popen([f"{assets_path}\\receipt\\receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
             # cPrinter=win32print.GetDefaultPrinter()
             cPrinter=settings.printer
-            pdfFile="C:/receipt/receipt.pdf"
+            pdfFile=f"{assets_path}\\receipt\\receipt.pdf"
             win32api.ShellExecute(
                 0,
                 "open",
@@ -934,7 +959,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
                 0
             )
     else:
-        webbrowser.open_new(path+"receipt.pdf")
+        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -946,25 +971,29 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
     if settings.send_email_register == 1:
-        settings.progressBar.visible=True
-        settings.page.open(dlg_modal2)
-        settings.page.update()
-
         bgcolor="blue"
         message="Enviando correo"
         settings.message=message
         settings.showMessage(bgcolor)
 
+        time.sleep(2)
+
+        settings.progressBar.visible=True
+        settings.page.open(dlg_modal2)
+        settings.page.update()
+
         send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+        settings.progressBar.visible=False
+        settings.page.close(dlg_modal2)
+        settings.page.update()
 
         bgcolor="green"
         message="Correo enviado satisfactoriamente"
         settings.message=message
         settings.showMessage(bgcolor)
 
-        settings.progressBar.visible=False
-        settings.page.close(dlg_modal2)
-        settings.page.update()
+        time.sleep(2)
 
 def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placas, entrada, salida, valor, tiempo, vlr_total, entradas, salidas):
     nit="NIT " + nit
@@ -972,11 +1001,12 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
-    # consecutivo=str(settings.consecutivo2).zfill(7) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
+    # consecutivo=str(settings.consecutivo2).zfill(6) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
+    consecutivo=str(consecutivo).zfill(6)
     if settings.billing == 0:
         consecutivo="Recibo " + consecutivo
     else:
-        consecutivo=settings.prefijo + str(consecutivo).zfill(7)
+        consecutivo=settings.prefijo + str(consecutivo)
         settings.consecutivo2=consecutivo
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
@@ -1178,6 +1208,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
     pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
@@ -1263,7 +1294,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         pdf.set_y(184)
         pdf.write(0, cufe)
         img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-        pdf.image(img.get_image(), x=28 if settings.paper_width == 80 else 14, y=204, w=25, h=25)
+        pdf.image(img.get_image(), x=26 if settings.paper_width == 80 else 14, y=204, w=25, h=25)
     else:
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         consecutivo_w=pdf.get_string_width(consecutivo)
@@ -1297,7 +1328,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         pdf.set_x((doc_w - vlr_total_w) / 2)
         pdf.cell(vlr_total_w, 212, vlr_total, align="C")
     pdf.set_font("helvetica", "", size=8)
-    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
+    impreso=os.getenv("FOOTER") if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     if settings.billing == 0:
@@ -1305,17 +1336,17 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     else:
         pdf.set_y(231)
     pdf.write(0, impreso)
-    pdf.output(path+"receipt.pdf")
+    pdf.output(f"{assets_path}\\receipt\\receipt.pdf")
 
     if settings.tipo_app == 0:
         if settings.preview_register == 1:
-            subprocess.Popen([path+"receipt.pdf"], shell=True)
+            subprocess.Popen([f"{assets_path}\\receipt\\receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
             # cPrinter=win32print.GetDefaultPrinter()
             cPrinter=settings.printer
-            pdfFile="C:/receipt/receipt.pdf"
+            pdfFile=f"{assets_path}\\receipt\\receipt.pdf"
             win32api.ShellExecute(
                 0,
                 "open",
@@ -1325,7 +1356,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                 0
             )
     else:
-        webbrowser.open_new(path+"receipt.pdf")
+        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
     
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -1337,25 +1368,29 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
     if settings.send_email_register == 1:
-        settings.progressBar.visible=True
-        settings.page.open(dlg_modal2)
-        settings.page.update()
-
         bgcolor="blue"
         message="Enviando correo"
         settings.message=message
         settings.showMessage(bgcolor)
 
+        time.sleep(2)
+
+        settings.progressBar.visible=True
+        settings.page.open(dlg_modal2)
+        settings.page.update()
+
         send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+        settings.progressBar.visible=False
+        settings.page.close(dlg_modal2)
+        settings.page.update()
 
         bgcolor="green"
         message="Correo enviado satisfactoriamente"
         settings.message=message
         settings.showMessage(bgcolor)
 
-        settings.progressBar.visible=False
-        settings.page.close(dlg_modal2)
-        settings.page.update()
+        time.sleep(2)
 
 # def show_edit_access(e):
 #     # data_edit=e.control.data
@@ -1424,7 +1459,7 @@ def show_edit_access(e):
 
         for x in result:
             tba.rows.append(
-                DataRow(
+                ft.DataRow(
                     selected=False,
                     # data=x["id"],
                     data=x,
@@ -1432,10 +1467,10 @@ def show_edit_access(e):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["programa"])),
+                        ft.DataCell(ft.Text(x["programa"])),
                         # DataCell(Text(x["acceso_usuario"])),
                         # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
-                        DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access, disabled=True if usuario == "Super Admin" or usuario == "Admin" else False)),
+                        ft.DataCell(ft.Checkbox(value=False if x["acceso_usuario"] == 0 else True, data=x, on_change=update_access, disabled=True if usuario == "Super Admin" or usuario == "Admin" else False)),
                         # DataCell(Row([
                         #     # IconButton(icon="create",icon_color="blue",
                         #     # 	data=x,
@@ -1477,8 +1512,8 @@ def close_dlg(e):
     dlg_modal.update()
 
 def open_dlg_modal(e, title, message):
-    dlg_modal.title=Text(title, text_align="center")
-    dlg_modal.content=Text(message, text_align="center")
+    dlg_modal.title=ft.Text(title, text_align="center")
+    dlg_modal.content=ft.Text(message, text_align="center")
     # settings.page.dialog=dlg_modal
     dlg_modal.open=True
     # settings.page.overlay.append(dlg_modal)
@@ -1577,7 +1612,7 @@ def selectUsers(search):
 
         for x in result:
             tbu.rows.append(
-                DataRow(
+                ft.DataRow(
                     selected=False,
                     # data=x["id"],
                     data=x,
@@ -1585,15 +1620,16 @@ def selectUsers(search):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Image(src=f"upload\\img\\" + x["foto"] if settings.tipo_app == 0 else f"img/" + x["foto"], height=50, width=50, fit=ImageFit.COVER, border_radius=150)),
-                        DataCell(Text(x["usuario"])),
-                        DataCell(Text(x["nombre"])),
-                        DataCell(Row([
+                        # ft.DataCell(ft.Image(src=f"{upload_path}\\img\\" + x["foto"] if settings.tipo_app == 0 else f"{upload_path}/img/" + x["foto"], height=50, width=50, fit=ft.ImageFit.COVER, border_radius=150)),
+                        ft.DataCell(ft.Image(src=f"/img/" + x["foto"], height=50, width=50, fit=ft.ImageFit.COVER, border_radius=150)),
+                        ft.DataCell(ft.Text(x["usuario"])),
+                        ft.DataCell(ft.Text(x["nombre"])),
+                        ft.DataCell(ft.Row([
                         	# IconButton(icon="create",icon_color="blue",
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	IconButton(icon="delete", icon_color="red",
+                        	ft.IconButton(icon="delete", icon_color="red",
                         		# data=x["id"],
                         		data=x,
                         		on_click=show_delete,
@@ -1625,7 +1661,7 @@ def show_access(usuario):
 
         for x in result:
             tba.rows.append(
-                DataRow(
+                ft.DataRow(
                     selected=False,
                     # data=x["id"],
                     data=x,
@@ -1633,10 +1669,10 @@ def show_access(usuario):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["programa"])),
+                        ft.DataCell(ft.Text(x["programa"])),
                         # DataCell(Text(x["acceso_usuario"])),
                         # DataCell(Checkbox(label=x["programa"], value=False if x["acceso_usuario"] == 0 else True)),
-                        DataCell(Checkbox(value=False if x["acceso_usuario"] == 0 else True, disabled=True if usuario == "Super Admin" or usuario == "Admin" else False)),
+                        ft.DataCell(ft.Checkbox(value=False if x["acceso_usuario"] == 0 else True, disabled=True if usuario == "Super Admin" or usuario == "Admin" else False)),
                         # DataCell(Row([
                         #     # IconButton(icon="create",icon_color="blue",
                         #     # 	data=x,
@@ -1693,18 +1729,18 @@ def selectRegisters(search):
         result=[dict(zip(keys, values)) for values in registros]
 
         for x in result:
-            color=colors.GREEN_700 if x["total"] != 0 else None
+            color=ft.colors.GREEN_700 if x["total"] != 0 else None
             weight="bold" if x["total"] != 0 else None
             if settings.billing == 1:
                 if x["total"] != 0:
-                    settings.consecutivo=settings.prefijo + str(x["consecutivo"]).zfill(7)
+                    settings.consecutivo=settings.prefijo + str(x["consecutivo"]).zfill(6)
                 else:
                     settings.consecutivo=str(x["consecutivo"])
             else:
                 settings.consecutivo=x["consecutivo"]
             
             tb.rows.append(
-                DataRow(
+                ft.DataRow(
                     # color=colors.GREEN_100 if x["total"] != 0 else None,
                     selected=False,
                     # data=x["id"],
@@ -1713,10 +1749,10 @@ def selectRegisters(search):
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["consecutivo"], color=color, weight=weight)),
-                        DataCell(Text(x["placa"], color=color, weight=weight)),
-                        DataCell(Text(x["entrada"], color=color, weight=weight)),
-                        DataCell(Text(x["salida"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["consecutivo"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["placa"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["entrada"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["salida"], color=color, weight=weight)),
                         # DataCell(Text(x["vehiculo"])),
                         # DataCell(Text(x["valor"])),
                         # DataCell(Text(x["tiempo"])),
@@ -1784,10 +1820,10 @@ def selectCashRegister():
         result=[dict(zip(keys, values)) for values in registros]
 
         for x in result:
-            color=colors.GREEN_700 if x["total"] != 0 else None
+            color=ft.colors.GREEN_700 if x["total"] != 0 else None
             weight="bold" if x["total"] != 0 else None
             tbc.rows.append(
-                DataRow(
+                ft.DataRow(
                     selected=False,
                     # data=x["id"],
                     data=x,
@@ -1795,14 +1831,14 @@ def selectCashRegister():
                     # on_select_changed=lambda e: print(f"ID select: {e.control.data}"),
                     # on_select_changed=lambda e: print(f"row select changed: {e.data}"),
                     cells=[
-                        DataCell(Text(x["consecutivo"], color=color, weight=weight)),
-                        DataCell(Text(x["placa"], color=color, weight=weight)),
-                        DataCell(Text(x["entrada"], color=color, weight=weight)),
-                        DataCell(Text(x["salida"], color=color, weight=weight)),
-                        DataCell(Text(x["vehiculo"], color=color, weight=weight)),
-                        DataCell(Text("Horas" if x["facturacion"] == 0 else "Turnos", color=color, weight=weight)),
-                        DataCell(Text(locale.currency(x["valor"], grouping=True), color=color, weight=weight)),
-                        DataCell(Text(locale.currency(x["total"], grouping=True), color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["consecutivo"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["placa"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["entrada"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["salida"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["vehiculo"], color=color, weight=weight)),
+                        ft.DataCell(ft.Text("Horas" if x["facturacion"] == 0 else "Turnos", color=color, weight=weight)),
+                        ft.DataCell(ft.Text(locale.currency(x["valor"], grouping=True), color=color, weight=weight)),
+                        ft.DataCell(ft.Text(locale.currency(x["total"], grouping=True), color=color, weight=weight)),
                         # DataCell(Text(x["cuadre"])),
                         # DataCell(Row([
                         # 	# IconButton(icon="create",icon_color="blue",
@@ -1828,44 +1864,44 @@ def selectCashRegister():
         settings.showMessage(bgcolor)
     return registros
 
-lblAccesos=Text("Accesos", theme_style=TextThemeStyle.HEADLINE_SMALL, text_align="left", color=colors.PRIMARY)
+lblAccesos=ft.Text("Accesos", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
 
-tblUsuarios = Column([
-    Row([tbu], scroll="always")
+tblUsuarios = ft.Column([
+    ft.Row([tbu], scroll="always")
 ], height=60, scroll="always")
 
-tblAccesos = Column([
-    Row([tba], scroll="always")
+tblAccesos = ft.Column([
+    ft.Row([tba], scroll="always")
 ], height=350)
 
-tblRegistro = Column([
-    Row([tb], scroll="always")
+tblRegistro = ft.Column([
+    ft.Row([tb], scroll="always")
 ], height=60)
 
-tblCuadre = Column([
-    Row([tbc], scroll="always")
+tblCuadre = ft.Column([
+    ft.Row([tbc], scroll="always")
 ], height=60)
 
-dlg_modal=AlertDialog(
-    bgcolor=colors.with_opacity(opacity=0.8, color=colors.PRIMARY_CONTAINER),
+dlg_modal=ft.AlertDialog(
+    bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
     modal=True,
-    icon=Icon(name=icons.QUESTION_MARK, color=colors.with_opacity(opacity=0.8, color=colors.BLUE_900), size=50),
+    icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
     # title=Text(title, text_align="center"),
     # content=Text(message, text_align="center"),
     actions=[
-        TextButton("Sí", on_click=user_delete),
-        TextButton("No", autofocus=True, on_click=close_dlg)
+        ft.TextButton("Sí", on_click=user_delete),
+        ft.TextButton("No", autofocus=True, on_click=close_dlg)
     ],
-    actions_alignment=MainAxisAlignment.END,
+    actions_alignment=ft.MainAxisAlignment.END,
     # on_dismiss=lambda _: date_button.focus(),
 )
 
-dlg_modal2=AlertDialog(
+dlg_modal2=ft.AlertDialog(
     modal=True,
-    bgcolor=colors.TRANSPARENT,
-    content=Column(
-        [ProgressRing(),],
+    bgcolor=ft.colors.TRANSPARENT,
+    content=ft.Column(
+        [ft.ProgressRing(),],
         height=15,
-        horizontal_alignment=CrossAxisAlignment.CENTER,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     ),
 )

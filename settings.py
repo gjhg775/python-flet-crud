@@ -55,12 +55,15 @@ progressBar=ft.ProgressBar(width=page.width, color="amber", bgcolor="#eeeeee", v
 #     user_avatar=ft.Image(src=f"img/{photo}" if photo != "" else f"img/default.jpg", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
 #     user_photo=ft.Image(src=f"img/{photo}" if photo != "" else f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
-if tipo_app == 0:
-    user_avatar=ft.Image(src=f"upload\\img\\{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-    user_photo=ft.Image(src=f"upload\\img\\{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
-else:
-    user_avatar=ft.Image(src=f"img/{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-    user_photo=ft.Image(src=f"img/{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+user_avatar=ft.Image(src=f"/img/{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+user_photo=ft.Image(src=f"/img/{photo}", height=200, width=200, fit=ft.ImageFit.COVER, border_radius=150)
+
+# if tipo_app == 0:
+#     user_avatar=ft.Image(src=f"img\\{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+#     user_photo=ft.Image(src=f"img\\{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+# else:
+#     user_avatar=ft.Image(src=f"img/{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+#     user_photo=ft.Image(src=f"img/{photo}", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
 def showMessage(bgcolor):
     snack_bar=ft.SnackBar(

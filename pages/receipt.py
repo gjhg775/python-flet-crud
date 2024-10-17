@@ -1,4 +1,5 @@
 import os
+import sys
 import locale
 import qrcode
 import datetime
@@ -19,10 +20,24 @@ title="Parqueadero"
 
 locale.setlocale(locale.LC_ALL, "")
 
-if settings.tipo_app == 0:
-    path=os.path.join(os.getcwd(), "upload\\receipt\\")
+if getattr(sys, 'frozen', False):
+    # Si está corriendo como un ejecutable
+    base_path = sys._MEIPASS
 else:
-    path=os.path.join(os.getcwd(), "assets\\receipt\\")
+    # Si está corriendo como un script en desarrollo
+    base_path = os.path.abspath(".")
+
+# Para acceder a los archivos en assets o upload:
+assets_path = os.path.join(base_path, "assets")
+# upload_path = os.path.join(base_path, "upload")
+    
+# Ejemplo de uso:
+# icon_path = os.path.join(assets_path, "img", "parqueadero.png")
+
+# if settings.tipo_app == 0:
+#     path=os.path.join(os.getcwd(), "upload\\receipt\\")
+# else:
+#     path=os.path.join(os.getcwd(), "assets\\receipt\\")
 
 configuracion=get_configuration()
 
@@ -77,7 +92,8 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
-    consecutivo=str(consecutivo).zfill(7) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else str(consecutivo)
+    # consecutivo=str(consecutivo).zfill(6) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else str(consecutivo)
+    consecutivo=str(consecutivo).zfill(6)
     consecutivo="Recibo " + consecutivo
     entrada=str(entrada)
     entrada=str(entrada[0:19])
@@ -109,6 +125,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
     pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
@@ -147,22 +164,22 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     if vehiculo == "Otro":
         pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
     pdf.set_font("helvetica", "", size=8)
-    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
+    impreso=os.getenv("FOOTER") if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     pdf.set_y(123)
     pdf.write(0, impreso)
-    pdf.output(path+"receipt.pdf")
+    pdf.output(f"{assets_path}\\receipt\\receipt.pdf")
 
     if settings.tipo_app == 0:
         if settings.preview_register == 1:
-            subprocess.Popen([path+"receipt.pdf"], shell=True)
+            subprocess.Popen([f"{assets_path}\\receipt\\receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
             # cPrinter=win32print.GetDefaultPrinter()
             cPrinter=settings.printer
-            pdfFile=path
+            pdfFile=f"{assets_path}\\receipt\\receipt.pdf"
             win32api.ShellExecute(
                 0,
                 "open",
@@ -172,7 +189,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
                 0
             )
     else:
-        webbrowser.open_new(path+"receipt.pdf")
+        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -189,11 +206,12 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     telefono="Teléfono " + telefono
     servicio= "Servicio " + servicio
     settings.consecutivo2=consecutivo
-    # consecutivo=str(settings.consecutivo2).zfill(7) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
+    # consecutivo=str(settings.consecutivo2).zfill(6) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
+    consecutivo=str(consecutivo).zfill(6)
     if settings.billing == 0:
         consecutivo="Recibo " + consecutivo
     else:
-        consecutivo=settings.prefijo + str(consecutivo).zfill(7)
+        consecutivo=settings.prefijo + str(consecutivo)
         settings.consecutivo2=consecutivo
     formato=f"%Y-%m-%d %H:%M"
     entrada=str(entrada)
@@ -395,6 +413,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
     pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
@@ -480,7 +499,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         pdf.set_y(184)
         pdf.write(0, cufe)
         img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-        pdf.image(img.get_image(), x=28 if settings.paper_width == 80 else 14, y=204, w=25, h=25)
+        pdf.image(img.get_image(), x=26 if settings.paper_width == 80 else 14, y=204, w=25, h=25)
     else:
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         consecutivo_w=pdf.get_string_width(consecutivo)
@@ -514,7 +533,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         pdf.set_x((doc_w - vlr_total_w) / 2)
         pdf.cell(vlr_total_w, 212, vlr_total, align="C")
     pdf.set_font("helvetica", "", size=8)
-    impreso="                        Software Propio\nImpreso por Gabriel J Hoyos G NIT 98573207" if settings.billing == 1 else ""
+    impreso=os.getenv("FOOTER") if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     if settings.billing == 0:
@@ -522,17 +541,17 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     else:
         pdf.set_y(231)
     pdf.write(0, impreso)
-    pdf.output(path+"receipt.pdf")
+    pdf.output(f"{assets_path}\\receipt\\receipt.pdf")
 
     if settings.tipo_app == 0:
         if settings.preview_register == 1:
-            subprocess.Popen([path+"receipt.pdf"], shell=True)
+            subprocess.Popen([f"{assets_path}\\receipt\\receipt.pdf"], shell=True)
         if settings.print_register_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
             # cPrinter=win32print.GetDefaultPrinter()
             cPrinter=settings.printer
-            pdfFile=path
+            pdfFile=f"{assets_path}\\receipt\\receipt.pdf"
             win32api.ShellExecute(
                 0,
                 "open",
@@ -542,7 +561,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                 0
             )
     else:
-        webbrowser.open_new(path+"receipt.pdf")
+        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -594,6 +613,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
     pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
@@ -618,8 +638,8 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         pos+=10
         pagina+=1
         contador+=1
-        # consecutivo=settings.prefijo + str(registro[0]).zfill(7)
-        consecutivo=str(registro[0]) if settings.billing == 0 else settings.prefijo + str(registro[0]).zfill(7)
+        # consecutivo=settings.prefijo + str(registro[0]).zfill(6)
+        consecutivo=str(registro[0]).zfill(6) if settings.billing == 0 else settings.prefijo + str(registro[0]).zfill(6)
         placa=registro[1]
         entrada=registro[2]
         salida=registro[3]
@@ -632,13 +652,13 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         valor=locale.currency(registro[6], grouping=True)
         total=locale.currency(registro[8], grouping=True)
         pdf.set_font("helvetica", "", size=9 if settings.billing == 0 else 8)
-        row=consecutivo + "  " + placa + "  " + entrada + "  " + salida
+        row=consecutivo + "  " + entrada + "  " + salida
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
         pos+=10
         pdf.set_font("helvetica", "", size=9)
-        row=vehiculo + "  " + facturacion + "  " + str(valor) + "  " + str(total)
+        row=placa + "  " + vehiculo + "  " + facturacion + "  " + str(valor) + "  " + str(total)
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
@@ -661,17 +681,17 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     # pdf.set_x((doc_w - efectivo_w) / 2)
     # pdf.cell(efectivo_w, pos, efectivo, align="C")
     pdf.cell(0, pos, efectivo, align="R")
-    pdf.output(path+"cash_register.pdf")
+    pdf.output(f"{assets_path}\\receipt\\cash_register.pdf")
 
     if settings.tipo_app == 0:
         if settings.preview_cash == 1:
-            subprocess.Popen([path+"cash_register.pdf"], shell=True)
+            subprocess.Popen([f"{assets_path}\\receipt\\cash_register.pdf"], shell=True)
         if settings.print_cash_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
             # cPrinter=win32print.GetDefaultPrinter()
             cPrinter=settings.printer
-            pdfFile=path
+            pdfFile=f"{assets_path}\\receipt\\cash_register.pdf"
             win32api.ShellExecute(
                 0,
                 "open",
@@ -681,7 +701,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
                 0
             )
     else:
-        webbrowser.open_new(path+"cash_register.pdf")
+        webbrowser.open_new(f"{assets_path}\\receipt\\cash_register.pdf")
 
 def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
     nit="NIT " + nit
@@ -724,6 +744,7 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
     pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
@@ -747,7 +768,8 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         pos+=10
         contador+=1
         pendiente+=1
-        consecutivo=str(registro[0]) if settings.billing == 0 else str(registro[0]).zfill(7)
+        # consecutivo=str(registro[0]) if settings.billing == 0 else str(registro[0]).zfill(6)
+        consecutivo=str(registro[0]).zfill(6)
         placa=registro[1]
         entrada=registro[2]
         vehiculo=registro[4]
@@ -759,12 +781,12 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         # row_w=pdf.get_string_width(row)
         # pdf.set_x((doc_w - row_w) / 2)
         # pdf.cell(row_w, pos, row, align="C")
-        row=consecutivo + "  " + placa + "  " + entrada
+        row=consecutivo + "  " + entrada
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
         pos+=10
-        row=vehiculo + "  " + facturacion + "  " + str(valor)
+        row=placa + "  " + vehiculo + "  " + facturacion + "  " + str(valor)
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
@@ -777,17 +799,17 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pendiente_w=pdf.get_string_width(pendiente)
     pdf.set_x((doc_w - pendiente_w) / 2)
     pdf.cell(pendiente_w, pos, pendiente, align="C")
-    pdf.output(path+"cash_register2.pdf")
+    pdf.output(f"{assets_path}\\receipt\\cash_register2.pdf")
 
     if settings.tipo_app == 0:
         if settings.preview_cash == 1:
-            subprocess.Popen([path+"cash_register2.pdf"], shell=True)
+            subprocess.Popen([f"{assets_path}\\receipt\\cash_register2.pdf"], shell=True)
         if settings.print_cash_receipt == 1:
             ghostscript="C:\\GHOST\\GHOSTSCRIPTx64\\gs10031w64.exe"
             gsprint="C:\\GHOST\\GSPRINT\\gsprint.exe"
             # cPrinter=win32print.GetDefaultPrinter()
             cPrinter=settings.printer
-            pdfFile=path
+            pdfFile=f"{assets_path}\\receipt\\cash_register2.pdf"
             win32api.ShellExecute(
                 0,
                 "open",
@@ -797,4 +819,4 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
                 0
             )
     else:
-        webbrowser.open_new(path+"cash_register2.pdf")
+        webbrowser.open_new(f"{assets_path}\\receipt\\cash_register2.pdf")

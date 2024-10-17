@@ -132,7 +132,7 @@ def admin_user():
     try:
         cursor=conn.cursor()
         sql="""INSERT INTO usuarios (usuario, correo_electronico, clave, nombre, foto) VALUES (?, ?, ?, ?, ?)"""
-        values=("Super Admin", "gjhg_69@hotmail.com", f"{hashsa}", "Super Administrador", "default.jpg")
+        values=("Super Admin", "gjhg_69@hotmail.com", f"{hashsa}", "Super Administrador", "default1.jpg")
         cursor.execute(sql, values)
         conn.commit()
 

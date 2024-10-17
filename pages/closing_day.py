@@ -55,11 +55,11 @@ def Closing_day(page):
 
     def cancel(e):
         close_dlg(e)
-        fecha.value="dd/mm/aaaa"
+        fecha.hint_text="dd/mm/aaaa"
         fecha.update()
 
     def close_day(e):
-        dia=fecha.value
+        dia=fecha.hint_text
         if dia != "dd/mm/aaaa":
             title="Cierre de día"
             message="Desea cerrar el día ?"
@@ -67,7 +67,7 @@ def Closing_day(page):
     
     def closing_day(e):
         close_dlg(e)
-        dia=fecha.value
+        dia=fecha.hint_text
         if dia != "dd/mm/aaaa":
             cuadre=1
             cursor=conn.cursor()
@@ -104,7 +104,7 @@ def Closing_day(page):
                     message="Día a cerrar no encontrado ó ya está cerrado. Favor verificar"
                     bg_color="red"
 
-            fecha.value="dd/mm/aaaa"
+            fecha.hint_text="dd/mm/aaaa"
             fecha.update()
             date_button.focus()
 
@@ -142,7 +142,7 @@ def Closing_day(page):
         ano=fecha_cierre[0]
         mes=fecha_cierre[1]
         dia=fecha_cierre[2]
-        fecha.value=dia + "/" + mes + "/" + ano
+        fecha.hint_text=dia + "/" + mes + "/" + ano
         fecha.update()
         # fecha.value=dia + "/" + mes + "/" + ano
         # fecha.focus()
@@ -189,7 +189,13 @@ def Closing_day(page):
         # total.update()
 
     def open_dlg_modal(e, title, message):
-        dlg_modal.title=ft.Text(title, text_align="center")
+        # dlg_modal.title=ft.Text(title, text_align="center")
+        dlg_modal.title=ft.Row([
+            ft.Icon(ft.icons.CALENDAR_MONTH, size=32),
+            ft.Text(title, text_align="center", color=ft.colors.PRIMARY)
+        ],
+        alignment=ft.MainAxisAlignment.CENTER
+        )
         dlg_modal.content=ft.Text(message, text_align="center")
         dlg_modal.open=True
         # page.overlay.append(dlg_modal)
@@ -198,7 +204,7 @@ def Closing_day(page):
     dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
         modal=True,
-        icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+        # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
         # title=ft.Text(title, text_align="center"),
         # content=ft.Text(message, text_align="center"),
         actions=[
@@ -227,7 +233,8 @@ def Closing_day(page):
         textsize=90
 
     # fecha=ft.TextField(hint_text="dd/mm/aaaa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=close_day)
-    fecha=ft.Text("dd/mm/aaaa", size=textsize, width=600, text_align="center")
+    # fecha=ft.Text("dd/mm/aaaa", size=textsize, width=600, text_align="center")
+    fecha=ft.TextField(hint_text="dd/mm/aaaa", border="none", text_size=textsize, width=600, text_align="center", autofocus=False, read_only=True)
     # btn_cierre=ft.ElevatedButton(text="Cerrar día", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=close_day)
     
     # if settings.tipo_app == 0:

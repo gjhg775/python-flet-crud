@@ -1,6 +1,6 @@
 import flet as ft
-from flet import icons
 import settings
+from flet import icons
 from datatable import selectUser
 
 def validateUser(e):

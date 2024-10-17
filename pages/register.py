@@ -1,4 +1,5 @@
 import os
+import sys
 import datetime
 import time
 import locale
@@ -19,10 +20,24 @@ conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
 
-if settings.tipo_app == 0:
-    path=os.path.join(os.getcwd(), "upload\\xls\\")
+if getattr(sys, 'frozen', False):
+    # Si está corriendo como un ejecutable
+    base_path = sys._MEIPASS
 else:
-    path=os.path.join(os.getcwd(), "assets\\xls\\")
+    # Si está corriendo como un script en desarrollo
+    base_path = os.path.abspath(".")
+
+# Para acceder a los archivos en assets o upload:
+assets_path = os.path.join(base_path, "assets")
+# upload_path = os.path.join(base_path, "upload")
+
+# Ejemplo de uso:
+# icon_path = os.path.join(assets_path, "img", "parqueadero.png")
+
+# if settings.tipo_app == 0:
+#     path=os.path.join(os.getcwd(), "upload\\xls\\")
+# else:
+#     path=os.path.join(os.getcwd(), "assets\\xls\\")
 
 load_dotenv()
 
@@ -58,7 +73,7 @@ if configuracion != None:
     tipo_ambiente=configuracion[0][15]
     settings.cliente_final=configuracion[0][16]
     cliente=configuracion[0][16]
-    # consecutivo=configuracion[0][17]
+    consecutivo=configuracion[0][17]
     settings.preview_register=configuracion[0][18]
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
@@ -450,7 +465,8 @@ def Register(page):
                 placa.update()
                 return False
             
-            consecutivo=str(consecutivo).zfill(7) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else consecutivo
+            # consecutivo=str(consecutivo).zfill(6) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else consecutivo
+            consecutivo=str(consecutivo).zfill(6)
             settings.consecutivo2=consecutivo
             
             if comentario1 != "":
@@ -465,30 +481,6 @@ def Register(page):
 
             settings.placa=placas
             settings.correo_electronico=correo_electronico
-
-            if settings.send_email_register == 1:
-                if settings.correo_electronico == "":
-                    open_dlg_modal_email()
-                else:
-                    settings.progressBar.visible=True
-                    page.open(dlg_modal3)
-                    settings.page.update()
-
-                    bgcolor="blue"
-                    message="Enviando correo"
-                    settings.message=message
-                    settings.showMessage(bgcolor)
-
-                    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
-
-                    bgcolor="green"
-                    message="Correo enviado satisfactoriamente"
-                    settings.message=message
-                    settings.showMessage(bgcolor)
-
-                    settings.progressBar.visible=False
-                    page.close(dlg_modal3)
-                    settings.page.update()
 
             if vlr_total == 0:
                 message="Registro creado satisfactoriamente"
@@ -512,7 +504,37 @@ def Register(page):
             settings.message=message
             settings.showMessage(bgcolor)
 
-            time.sleep(4)
+            time.sleep(2)
+
+            if settings.send_email_register == 1:
+                if settings.correo_electronico == "":
+                    open_dlg_modal_email(e)
+                else:
+                    bgcolor="blue"
+                    message="Enviando correo"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+
+                    time.sleep(2)
+
+                    settings.progressBar.visible=True
+                    page.open(dlg_modal3)
+                    page.update()
+
+                    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+                    settings.progressBar.visible=False
+                    page.close(dlg_modal3)
+                    page.update()
+
+                    bgcolor="green"
+                    message="Correo enviado satisfactoriamente"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+
+                    time.sleep(2)
+
+            time.sleep(2)
 
             vlr_total=0
             vlr_total=locale.currency(vlr_total, grouping=True)
@@ -545,7 +567,13 @@ def Register(page):
         total.update()
 
     def open_dlg_modal(e, title, message):
-        dlg_modal.title=ft.Text(title, text_align="center")
+        dlg_modal.title=ft.Row([
+            # ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=32),
+            ft.Icon(name=ft.icons.WARNING_ROUNDED, size=32),
+            ft.Text(title, text_align="center")
+        ],
+        alignment=ft.MainAxisAlignment.CENTER
+        )
         dlg_modal.content=ft.Text(message, text_align="center")
         dlg_modal.open=True
         dlg_modal.update()
@@ -553,36 +581,46 @@ def Register(page):
     def export_excel(e):
         dlg_modal2.open=False
         dlg_modal2.update()
-        settings.progressBar.visible=True
-        page.open(dlg_modal3)
-        settings.page.update()
+       
         data=exportRegister(fecha_desde.value, fecha_hasta.value)
         if data != []:
             message="Exportando registros"
             bgcolor="blue"
             settings.message=message
             settings.showMessage(bgcolor)
-            time.sleep(1)
+            
+            time.sleep(2)
+
+            settings.progressBar.visible=True
+            settings.page.open(dlg_modal3)
+            settings.page.update()
+
             file_name="register.xlsx"
             df=pd.DataFrame(data, columns=["Factura" if settings.billing == 1 else "Recibo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
-            df.to_excel(path+file_name, index=False)
+            df.to_excel(f"{assets_path}\\xls\\{file_name}", index=False)
+
+            settings.progressBar.visible=False
+            settings.page.close(dlg_modal3)
+            settings.page.update()
+
             message="Registros exportados satisfactoriamente"
             bgcolor="green"
             settings.message=message
             settings.showMessage(bgcolor)
-            time.sleep(1)
-            os.system("start " + path+file_name)
+
+            time.sleep(2)
+
+            os.system(f"start {assets_path}\\xls\\{file_name}")
         else:
             message="No hay registros para exportar"
             bgcolor="blue"
             settings.message=message
             settings.showMessage(bgcolor)
+
+            time.sleep(2)
+
         fecha_desde.value="dd/mm/aaaa"
         fecha_hasta.value="dd/mm/aaaa"
-        time.sleep(2)
-        settings.progressBar.visible=False
-        page.close(dlg_modal3)
-        settings.page.update()
 
     def close_dlg2(e):
         dlg_modal2.open=False
@@ -623,8 +661,8 @@ def Register(page):
         tblRegistro.update()
         # no_registros.update()
     
-    def text_to_upper(e):
-        placa.value=placa.value.upper()
+    def placa_change(e):
+        placa.value=e.control.value.upper()
         placa.update()
 
     def radiogroup_changed(e):
@@ -711,17 +749,18 @@ def Register(page):
     
     buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change)
     export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
-    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=text_to_upper, on_blur=register)
+    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
-    fecha_desde=ft.Text("dd/mm/aaaa", text_align="center")
+    fecha_desde=ft.Text("dd/mm/aaaa", size=24, text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
     date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from))
     date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_to))
+    correo=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
 
     dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
         modal=True,
-        icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
+        # icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
         # title=ft.Text(title, text_align="center"),
         # content=ft.Text(message, text_align="center"),
         actions=[
@@ -734,9 +773,18 @@ def Register(page):
     dlg_modal2=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
         modal=True,
-        title=ft.Row([fecha_desde, date_button_from]),
-        content=ft.Container(
-            ft.Row([fecha_hasta, date_button_to])
+        # title=ft.Row([fecha_desde, date_button_from]),
+        title=ft.Row([
+            ft.Icon(ft.icons.FILE_DOWNLOAD_OUTLINED, size=32),
+            ft.Text("Exportar a Excel", text_align="center", color=ft.colors.PRIMARY)
+        ],
+        alignment=ft.MainAxisAlignment.CENTER
+        ),
+        content=ft.ResponsiveRow([
+            ft.ResponsiveRow([fecha_desde, date_button_from]),
+            ft.ResponsiveRow([fecha_hasta, date_button_to])
+        ],
+        alignment=ft.MainAxisAlignment.START,
         ),
         # icon=ft.Icon(name=ft.icons.WARNING_ROUNDED, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.ORANGE_900), size=50),
         # title=ft.Text(title, text_align="center"),
@@ -745,7 +793,7 @@ def Register(page):
             ft.TextButton("Aceptar", on_click=export_excel),
             ft.TextButton("Cancelar", autofocus=True, on_click=close_dlg2)
         ],
-        actions_alignment=ft.MainAxisAlignment.END,
+        actions_alignment=ft.MainAxisAlignment.CENTER,
         on_dismiss=lambda _: placa.focus(),
     )
 
@@ -760,48 +808,60 @@ def Register(page):
     )
 
     def sendMailBilling(e):
-        settings.correo_electronico=dlg_modal4.content.value
+        settings.correo_electronico=correo.value
         if settings.correo_electronico != "":
             dlg_modal4.content.error_text=""
             dlg_modal4.content.update()
 
-            close_dlg4()
-
-            settings.progressBar.visible=True
-            page.open(dlg_modal3)
-            settings.page.update()
+            close_dlg4(e)
 
             bgcolor="blue"
             message="Enviando correo"
             settings.message=message
             settings.showMessage(bgcolor)
 
+            time.sleep(2)
+
+            settings.progressBar.visible=True
+            page.open(dlg_modal3)
+            page.update()
+
             update_register_mail(settings.correo_electronico, settings.placa)
             send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
-            settings.correo_electronico=""
+            correo.value=""
+            correo.update()
+
+            settings.progressBar.visible=False
+            page.close(dlg_modal3)
+            page.update()
 
             bgcolor="green"
             message="Correo enviado satisfactoriamente"
             settings.message=message
             settings.showMessage(bgcolor)
 
-            settings.progressBar.visible=False
-            page.close(dlg_modal3)
-            settings.page.update()
+            time.sleep(2)
         else:
             dlg_modal4.content.error_text="Digite correo electrónico"
             dlg_modal4.content.update()
             # dlg_modal4.update()
             return False
 
-    def close_dlg4():
+    def close_dlg4(e):
+        correo.update()
         dlg_modal4.open=False
         page.update()
 
-    def open_dlg_modal_email():
-        dlg_modal4.title=ft.Text("Correo electrónico", text_align="center")
-        dlg_modal4.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left", value=settings.correo_electronico)
+    def open_dlg_modal_email(e):
+        dlg_modal4.title=ft.Row([
+                ft.Icon(ft.icons.EMAIL, size=32),
+                ft.Text("Correo electrónico", text_align="center", color=ft.colors.PRIMARY)
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+        # dlg_modal4.title=ft.Text("Correo electrónico", text_align="center")
+        # dlg_modal4.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
         dlg_modal4.open=True
         dlg_modal4.update()
 
@@ -811,6 +871,7 @@ def Register(page):
         # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
         # title=ft.Text(title, text_align="center"),
         # content=ft.Text(message, text_align="center"),
+        content=correo,
         actions=[
             ft.TextButton("Enviar", autofocus=True, on_click=sendMailBilling)
         ],

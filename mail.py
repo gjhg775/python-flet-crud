@@ -1,28 +1,40 @@
 import os
+import sys
 import settings
 import smtplib
 # import ssl
 from pathlib import Path
 from email.message import EmailMessage
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from decouple import config
 
-if settings.tipo_app == 0:
-    path=os.path.join(os.getcwd(), "upload\\receipt\\")
+if getattr(sys, 'frozen', False):
+    # Si está corriendo como un ejecutable
+    base_path = sys._MEIPASS
 else:
-    path=os.path.join(os.getcwd(), "assets\\receipt\\")
+    # Si está corriendo como un script en desarrollo
+    base_path = os.path.abspath(".")
 
-# load_dotenv()
+# Para acceder a los archivos en assets o upload:
+assets_path = os.path.join(base_path, "assets")
+# upload_path = os.path.join(base_path, "upload")
 
-# SENDER_EMAIL=os.getenv("EMAIL_USER")
-# MAIL_PASSWORD=os.getenv("EMAIL_PASS")
-# RECEIVER_EMAIL="gjhg_69@hotmail.com"
+# Ejemplo de uso:
+# icon_path = os.path.join(assets_path, "img", "parqueadero.png")
 
-# settings.prefijo="FE-"
-# consecutivo="317000"
+# if settings.tipo_app == 0:
+#     path=os.path.join(os.getcwd(), "upload\\receipt\\")
+# else:
+#     path=os.path.join(os.getcwd(), "assets\\receipt\\")
+
+load_dotenv()
+
+SENDER_EMAIL=os.getenv("EMAIL_USER")
+MAIL_PASSWORD=config("EMAIL_PASS")
+RECEIVER_EMAIL=settings.correo_electronico
 
 def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
-    consecutivo=str(settings.consecutivo2).zfill(7) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else settings.consecutivo2
+    consecutivo=str(settings.consecutivo2).zfill(6) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else settings.consecutivo2
     documento="Factura de Venta" if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else "Recibo"
     msg=EmailMessage()
     msg["From"]=SENDER_EMAIL
@@ -42,7 +54,7 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
 
     # contexto=ssl.create_default_context()
 
-    with open(path+file, "rb") as f:
+    with open(f"{assets_path}\\receipt\\"+file, "rb") as f:
         file_data=f.read()
         # file_name=f.name
         file_name=documento + " " + consecutivo+Path(f.name).suffix

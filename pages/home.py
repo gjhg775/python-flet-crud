@@ -1,3 +1,5 @@
+import os
+import sys
 import flet as ft
 import settings
 # from datatable import get_configuration
@@ -118,7 +120,26 @@ import settings
 #         )
 
 def Home(page):
-    developer_photo=ft.Image(src=f"img/\parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+    if getattr(sys, 'frozen', False):
+        # Si está corriendo como un ejecutable
+        base_path = sys._MEIPASS
+    else:
+        # Si está corriendo como un script en desarrollo
+        base_path = os.path.abspath(".")
+
+    # Para acceder a los archivos en assets o upload:
+    assets_path = os.path.join(base_path, "assets")
+    upload_path = os.path.join(base_path, "upload")
+        
+    # Ejemplo de uso:
+    # icon_path = os.path.join(assets_path, "img", "parqueadero.png")
+
+    # developer_photo=ft.Image(src=f"{assets_path}/img/parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+    developer_photo=ft.Image(src=f"/img/parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+    # if settings.tipo_app == 0:
+    #     developer_photo=ft.Image(src=f"img\\parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
+    # else:
+    #     developer_photo=ft.Image(src=f"img/parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
 
     return ft.Column([
         ft.Container(height=100),

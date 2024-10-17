@@ -20,10 +20,11 @@ from mail import send_mail_user
 
 if settings.tipo_app == 0:
     def main(page:ft.Page):
-        if settings.tipo_app == 0:
-            settings.user_avatar=ft.Image(src=f"upload\\img\\{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-        else:
-            settings.user_avatar=ft.Image(src=f"img/{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+        # if settings.tipo_app == 0:
+        #     settings.user_avatar=ft.Image(src=f"img\\{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+        # else:
+        #     settings.user_avatar=ft.Image(src=f"img/{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+        settings.user_avatar=ft.Image(src=f"/img/{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
         user_auth=ft.Text("")
 
         def profile(e):
@@ -241,12 +242,14 @@ if settings.tipo_app == 0:
                     page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
                     page.add(Home(page))
                     page.update()
-                    if settings.tipo_app == 0:
-                        settings.user_avatar.src=f"upload\\img\\{login_photo}"
-                        settings.user_photo.src=f"upload\\img\\{login_photo}"
-                    else:
-                        settings.user_avatar.src=f"img/{login_photo}"
-                        settings.user_photo.src=f"img/{login_photo}"
+                    # if settings.tipo_app == 0:
+                    #     settings.user_avatar.src=f"img\\{login_photo}"
+                    #     settings.user_photo.src=f"img\\{login_photo}"
+                    # else:
+                    #     settings.user_avatar.src=f"img/{login_photo}"
+                    #     settings.user_photo.src=f"img/{login_photo}"
+                    settings.user_avatar.src=f"/img/{login_photo}"
+                    settings.user_photo.src=f"/img/{login_photo}"
                     settings.login_nombre=login_nombre
                     user_auth.value=settings.login_nombre
                     user_auth.update()
@@ -382,7 +385,7 @@ if settings.tipo_app == 0:
             # dlg_modal.title=ft.Text(title, text_align="center")
             dlg_modal.title=ft.Row([
                 ft.Icon(ft.icons.LOGOUT_ROUNDED, size=32),
-                ft.Text(title, text_align="center")
+                ft.Text(title, text_align="center", color=ft.colors.PRIMARY)
             ],
             alignment=ft.MainAxisAlignment.CENTER
             )
@@ -1574,9 +1577,9 @@ else:
         #     self.change_page(None, 8)
 
 
-if __name__ == "__main__":
-    if settings.tipo_app == 0:
-        ft.app(target=main, assets_dir="assets", upload_dir="upload")
-    else:
-        # ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)
-        ft.app(target=AnimatedApp, assets_dir="assets", route_url_strategy="path", port=9000, view=ft.WEB_BROWSER)
+# if __name__ == "__main__":
+if settings.tipo_app == 0:
+    ft.app(target=main, assets_dir="assets")
+else:
+    # ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)
+    ft.app(target=AnimatedApp, assets_dir="assets", upload_dir="upload", route_url_strategy="path", port=9000, view=ft.WEB_BROWSER)
