@@ -1503,7 +1503,6 @@ def show_delete(e):
     settings.usuario=usuario
     show_edit_access(e)
     # usuario=settings.usuario
-    title="Eliminar"
     message=f"Desea eliminar el usuario {usuario} ?"
     open_dlg_modal(e, title, message)
 
@@ -1512,7 +1511,13 @@ def close_dlg(e):
     dlg_modal.update()
 
 def open_dlg_modal(e, title, message):
-    dlg_modal.title=ft.Text(title, text_align="center")
+    # dlg_modal.title=ft.Text(title, text_align="center")
+    dlg_modal.title=ft.Row([
+        ft.Icon(ft.icons.DELETE, size=32),
+        ft.Text("Eliminar", text_align="center", color=ft.colors.PRIMARY)
+    ],
+    alignment=ft.MainAxisAlignment.CENTER
+    )
     dlg_modal.content=ft.Text(message, text_align="center")
     # settings.page.dialog=dlg_modal
     dlg_modal.open=True
@@ -1630,7 +1635,7 @@ def selectUsers(search):
                         	# 	data=x,
                         	# 	on_click=showedit
                         	# 	),
-                        	ft.IconButton(icon="delete", icon_color="red",
+                        	ft.IconButton(icon="delete", icon_color=ft.colors.PRIMARY,
                         		# data=x["id"],
                         		data=x,
                         		on_click=show_delete,
@@ -1891,7 +1896,7 @@ tblCuadre = ft.Column([
 dlg_modal=ft.AlertDialog(
     bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
     modal=True,
-    icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+    # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
     # title=Text(title, text_align="center"),
     # content=Text(message, text_align="center"),
     actions=[
