@@ -21,7 +21,7 @@ from pathlib import Path
 from decouple import config
 from mail import send_mail_billing
 
-conn=sqlite3.connect('C:/pdb/database/parqueadero.db', check_same_thread=False)
+conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
 
 valor=0
 
@@ -1567,7 +1567,8 @@ def user_delete(e):
             # no_registros.visible=False
             tblUsuarios.update()
             # usuario=registros[0][0]
-            # show_access(usuario)
+            usuario=settings.username
+            show_access(usuario)
             # lblAccesos.value="Accesos " + usuario
             # lblAccesos.update()
             # tblAccesos.update()
@@ -1589,17 +1590,17 @@ def selectUsers(search):
             sql=f"""SELECT usuario, nombre, foto FROM usuarios"""
             cursor.execute(sql)
         else:
-            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario LIKE ? OR nombre LIKE ?"""
-            values=(f'%{search}%', f'%{search}%')
+            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario LIKE ?"""
+            values=(f"%{search}%",)
             cursor.execute(sql, values)
     # elif settings.username["username"] == "Admin":
     elif settings.username == "Admin":
         if search == "":
             sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ?"""
-            values=(f'{user}',)
+            values=(f"{user}",)
         else:
-            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ? AND (usuario LIKE ? OR nombre LIKE ?)"""
-            values=(f'{user}', f'%{search}%', f'%{search}%')
+            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ? AND usuario LIKE ?"""
+            values=(f"{user}", f"%{search}%")
         cursor.execute(sql, values)
     registros=cursor.fetchall()
 
@@ -1646,9 +1647,14 @@ def selectUsers(search):
     return registros
 
 def show_access(usuario):
+    user="Super Admin"
     cursor=conn.cursor()
-    sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
-    values=(f"{usuario}",)
+    if settings.username == user:
+        sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario LIKE ?"""
+        values=(f"{usuario}",)
+    else:
+        sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario LIKE ? AND usuario <> ?"""
+        values=(f"{usuario}", f"{user}")
     cursor.execute(sql, values)
     registros=cursor.fetchall()
 

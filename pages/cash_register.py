@@ -4,9 +4,9 @@ import flet as ft
 import settings
 import sqlite3
 from pages.receipt import show_cash_register, show_cash_register2
-from datatable import tblCuadre, tbc, get_configuration, get_variables, selectCashRegister
+from datatable import conn, tblCuadre, tbc, get_configuration, get_variables, selectCashRegister
 
-conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
+# conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
 

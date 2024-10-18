@@ -16,7 +16,7 @@ from time import sleep
 from pages.receipt import show_input, show_output
 from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister, update_register_mail, exist_email
 
-conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
+# conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -1293,7 +1293,7 @@ def Register(page):
 # from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister
 # import sqlite3
 
-# conn=sqlite3.connect("database/parqueadero.db", check_same_thread=False)
+# conn=sqlite3.connect("data/parqueadero.db", check_same_thread=False)
 
 # locale.setlocale(locale.LC_ALL, "")
 

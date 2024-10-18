@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
+conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
 password=os.getenv("PSWSA")
 # bytes=password.encode('utf-8')

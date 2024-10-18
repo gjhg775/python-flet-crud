@@ -6,7 +6,7 @@ import sqlite3
 import win32print
 from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, show_access, lblAccesos, tba, tblAccesos
 
-conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
+# conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 search=""
 message=""
 fieldwith=settings.fieldwith
@@ -179,11 +179,16 @@ def Users(page):
 
     def search_change(e):
         search=e.control.value
-        # if search == "":
-        #     no_registros.visible=False
         tbu.rows.clear()
         tba.rows.clear()
         selectUsers(search)
+        if search == "":
+            usuario=settings.username
+        else:
+            usuario=search
+        show_access(usuario)
+        lblAccesos.value="Accesos " + usuario
+        lblAccesos.update()
         if tbu.rows != []:
             tblUsuarios.height=246
             # no_registros.visible=False
@@ -200,7 +205,7 @@ def Users(page):
         # no_registros.update()
 
     lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
-    buscar=ft.TextField(hint_text="Buscar usuario ó nombre", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar usuario", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)
 
     registros=selectUsers(search)
     if registros != []:

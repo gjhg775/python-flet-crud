@@ -3,9 +3,9 @@ import locale
 import flet as ft
 import settings
 import sqlite3
-from datatable import get_configuration, tblRegistro, tblCuadre
+from datatable import conn, get_configuration, tblRegistro, tblCuadre
 
-conn=sqlite3.connect("C:/pdb/database/parqueadero.db", check_same_thread=False)
+# conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
 locale.setlocale(locale.LC_ALL, "")
 

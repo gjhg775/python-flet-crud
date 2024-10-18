@@ -326,6 +326,7 @@ if settings.tipo_app == 0:
                     name.error_text="Digite el nombre"
                     btn_login.focus()
                 user.update()
+                email.update()
                 password.update()
                 confirm_password.update()
                 name.update()
@@ -1581,5 +1582,5 @@ else:
 if settings.tipo_app == 0:
     ft.app(target=main, assets_dir="assets")
 else:
-    # ft.app(target=main, port=9000, assets_dir="assets", upload_dir="upload", view=ft.AppView.WEB_BROWSER)
-    ft.app(target=AnimatedApp, assets_dir="assets", upload_dir="upload", route_url_strategy="path", port=9000, view=ft.WEB_BROWSER)
+    # ft.app(target=main, assets_dir="assets", port=9000, view=ft.AppView.WEB_BROWSER)
+    ft.app(target=AnimatedApp, assets_dir="assets", route_url_strategy="path", port=9000, view=ft.WEB_BROWSER)
