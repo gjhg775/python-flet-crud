@@ -7,6 +7,7 @@ import flet as ft
 import settings
 import sqlite3
 import pandas as pd
+import re
 # from flet import Page
 # from app import page
 from dotenv import load_dotenv
@@ -49,6 +50,8 @@ vlr_total=0
 vlr_total=locale.currency(vlr_total, grouping=True)
 search=""
 textsize=settings.textsize
+
+email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 
 configuracion=get_configuration()
 
@@ -542,6 +545,14 @@ def Register(page):
             # card.update()
             total.update()
 
+    def validate_email(e):
+        dlg_modal4.content.error_text=""
+        email = correo.value
+        if not re.match(email_regex, email):
+            dlg_modal4.content.error_text="Correo electrónico no válido"
+            dlg_modal4.update()
+            return False
+
     def page_resize(e):
         if page.window.width <= 425:
             settings.textsize=30
@@ -810,38 +821,41 @@ def Register(page):
     def sendMailBilling(e):
         settings.correo_electronico=correo.value
         if settings.correo_electronico != "":
-            dlg_modal4.content.error_text=""
-            dlg_modal4.content.update()
+            validate_email(e)
 
-            close_dlg4(e)
+            if dlg_modal4.content.error_text == "":
+                # dlg_modal4.content.error_text=""
+                # dlg_modal4.content.update()
 
-            bgcolor="blue"
-            message="Enviando correo"
-            settings.message=message
-            settings.showMessage(bgcolor)
+                close_dlg4(e)
 
-            time.sleep(2)
+                bgcolor="blue"
+                message="Enviando correo"
+                settings.message=message
+                settings.showMessage(bgcolor)
 
-            settings.progressBar.visible=True
-            page.open(dlg_modal3)
-            page.update()
+                time.sleep(2)
 
-            update_register_mail(settings.correo_electronico, settings.placa)
-            send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+                settings.progressBar.visible=True
+                page.open(dlg_modal3)
+                page.update()
 
-            correo.value=""
-            correo.update()
+                update_register_mail(settings.correo_electronico, settings.placa)
+                send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
-            settings.progressBar.visible=False
-            page.close(dlg_modal3)
-            page.update()
+                correo.value=""
+                correo.update()
 
-            bgcolor="green"
-            message="Correo enviado satisfactoriamente"
-            settings.message=message
-            settings.showMessage(bgcolor)
+                settings.progressBar.visible=False
+                page.close(dlg_modal3)
+                page.update()
 
-            time.sleep(2)
+                bgcolor="green"
+                message="Correo enviado satisfactoriamente"
+                settings.message=message
+                settings.showMessage(bgcolor)
+
+                time.sleep(2)
         else:
             dlg_modal4.content.error_text="Digite correo electrónico"
             dlg_modal4.content.update()
