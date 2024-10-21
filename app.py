@@ -14,7 +14,7 @@ from pages.register import *
 from pages.cash_register import *
 from pages.closing_day import Closing_day
 from pages.developer import Developer
-from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, reset_password, lblAccesos, tba
+from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, reset_password, update_user, lblAccesos, tba
 from decouple import config
 from mail import send_mail_user
 
@@ -234,6 +234,8 @@ if settings.tipo_app == 0:
                     settings.username=page.session.get("username")
                     username=settings.username
                     settings.photo=login_photo
+                    if correo_electronico == "":
+                        open_dlg_modal_email(e)
                     settings.correo_electronico=correo_electronico
                     selectAccess(username)
                     # page.go("/register")
@@ -433,6 +435,57 @@ if settings.tipo_app == 0:
             # on_dismiss=lambda _: date_button.focus(),
         )
 
+        def validate_email(e):
+            dlg_modal3.content.error_text=""
+            email = correo.value
+            if email == "":
+                dlg_modal3.content.error_text="Digite correo electrónico"
+                dlg_modal3.update()
+                return False
+            if not re.match(email_regex, email):
+                dlg_modal3.content.error_text="Correo electrónico no válido"
+                dlg_modal3.update()
+                return False
+            else:
+                update_user(settings.username, correo.value, settings.password, settings.photo, "update")
+                close_dlg3(e)
+                
+        correo=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
+
+        def close_dlg3(e):
+            correo.value=""
+            correo.update()
+            dlg_modal3.content.error_text=""
+            dlg_modal3.open=False
+            dlg_modal3.update()
+
+        def open_dlg_modal_email(e):
+            dlg_modal3.title=ft.Row([
+                    ft.Icon(ft.icons.EMAIL, size=32),
+                    ft.Text("Correo electrónico", text_align="center", color=ft.colors.PRIMARY)
+                ],
+                alignment=ft.MainAxisAlignment.CENTER
+            )
+            # dlg_modal4.title=ft.Text("Correo electrónico", text_align="center")
+            # dlg_modal3.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
+            page.overlay.append(dlg_modal3)
+            dlg_modal3.open=True
+            page.update()
+
+        dlg_modal3=ft.AlertDialog(
+            bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
+            modal=True,
+            # icon=ft.Icon(name=ft.icons.QUESTION_MARK, color=ft.colors.with_opacity(opacity=0.8, color=ft.colors.BLUE_900), size=50),
+            # title=ft.Text(title, text_align="center"),
+            # content=ft.Text(message, text_align="center"),
+            content=correo,
+            actions=[
+                ft.TextButton("Enviar", autofocus=True, on_click=validate_email)
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+            # on_dismiss=lambda _: sendMailBilling,
+        )
+
         # mode_switch=ft.Switch(
         #     value=False,
         #     on_change=change_mode_theme,
@@ -549,30 +602,30 @@ if settings.tipo_app == 0:
         
         if settings.tipo_app == 0:
             page.appbar = ft.AppBar(
-                    leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
-                    leading_width=55,
-                    title=ft.Text("Parqueadero", color=ft.colors.WHITE),
-                    # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
-                    center_title=False,
-                    # bgcolor=ft.colors.PRIMARY_CONTAINER,
-                    bgcolor=ft.colors.BLUE_900,
-                    actions=[
-                        toggledarklight,
-                        # mode_switch
-                        # ft.IconButton(ft.icons.WB_SUNNY_OUTLINED, icon_color="white", padding=ft.padding.only(right=20), on_click=change_mode_theme),
-                    #     ft.IconButton(ft.icons.FILTER_3),
-                    #     ft.PopupMenuButton(
-                    #         items=[
-                    #             ft.PopupMenuItem(text="Registro"),
-                    #             ft.PopupMenuItem(),  # divider
-                    #             ft.PopupMenuItem(
-                    #                 text="Checked item", checked=False, on_click=check_item_clicked
-                    #             ),
-                    #         ]
-                    #     ),
-                    ft.Container(width=10)
-                    ],
-                )
+                leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
+                leading_width=55,
+                title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+                # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
+                center_title=False,
+                # bgcolor=ft.colors.PRIMARY_CONTAINER,
+                bgcolor=ft.colors.BLUE_900,
+                actions=[
+                    toggledarklight,
+                    # mode_switch
+                    # ft.IconButton(ft.icons.WB_SUNNY_OUTLINED, icon_color="white", padding=ft.padding.only(right=20), on_click=change_mode_theme),
+                #     ft.IconButton(ft.icons.FILTER_3),
+                #     ft.PopupMenuButton(
+                #         items=[
+                #             ft.PopupMenuItem(text="Registro"),
+                #             ft.PopupMenuItem(),  # divider
+                #             ft.PopupMenuItem(
+                #                 text="Checked item", checked=False, on_click=check_item_clicked
+                #             ),
+                #         ]
+                #     ),
+                ft.Container(width=10)
+                ],
+            )
         # else:
         #     frame_appbar=ft.Container(
         #         # expand=True,

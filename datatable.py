@@ -56,6 +56,7 @@ tbu = ft.DataTable(
 	columns=[
         ft.DataColumn(ft.Text("Foto")),
 		ft.DataColumn(ft.Text("Usuario")),
+        ft.DataColumn(ft.Text("Correo electrónico")),
 		ft.DataColumn(ft.Text("Nombre")),
 		ft.DataColumn(ft.Text("Acción")),
 	],
@@ -238,13 +239,16 @@ def add_user(usuario, correo_electronico, hashed, nombre, foto):
     except Exception as e:
         print(e)
 
-def update_user(usuario, clave, foto, btn):
+def update_user(usuario, correo_electronico, clave, foto, btn):
     try:
         cursor=conn.cursor()
         if btn == "save":
             hash=hashlib.sha256(clave.encode()).hexdigest()
             sql="""UPDATE usuarios SET clave = ?, foto = ? WHERE usuario = ? OR correo_electronico = ?"""
             values=(f"{hash}", f"{foto}", f"{usuario}", f"{usuario}")
+        elif btn == "update":
+            sql="""UPDATE usuarios SET correo_electronico = ? WHERE usuario = ?"""
+            values=(f"{correo_electronico}", f"{usuario}")
         else:
             sql="""UPDATE usuarios SET foto = ? WHERE usuario = ? OR correo_electronico = ?"""
             values=(f"{foto}", f"{usuario}", f"{usuario}")
@@ -252,7 +256,10 @@ def update_user(usuario, clave, foto, btn):
         conn.commit()
 
         bgcolor="green"
-        settings.message="Perfíl actualizado satisfactoriamente"
+        if btn != "update":
+            settings.message="Perfíl actualizado satisfactoriamente"
+        else:
+            settings.message="Correo electrónico actualizado satisfactoriamente"
         settings.showMessage(bgcolor)
     except Exception as e:
         print(e)
@@ -1601,17 +1608,17 @@ def selectUsers(search):
     # elif settings.username["username"] == "Admin":
     elif settings.username == "Admin":
         if search == "":
-            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ?"""
+            sql="""SELECT usuario, correo_electronico, nombre, foto FROM usuarios WHERE usuario <> ?"""
             values=(f"{user}",)
         else:
-            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario <> ? AND usuario LIKE ?"""
+            sql="""SELECT usuario, correo_electronico, nombre, foto FROM usuarios WHERE usuario <> ? AND usuario LIKE ?"""
             values=(f"{user}", f"%{search}%")
         cursor.execute(sql, values)
     registros=cursor.fetchall()
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
-        keys=["usuario", "nombre", "foto"]
+        keys=["usuario", "correo_electronico", "nombre", "foto"]
         result=[dict(zip(keys, values)) for values in registros]
 
         tbu.rows.clear()
@@ -1629,6 +1636,7 @@ def selectUsers(search):
                         # ft.DataCell(ft.Image(src=f"{upload_path}\\img\\" + x["foto"] if settings.tipo_app == 0 else f"{upload_path}/img/" + x["foto"], height=50, width=50, fit=ft.ImageFit.COVER, border_radius=150)),
                         ft.DataCell(ft.Image(src=f"/img/" + x["foto"], height=50, width=50, fit=ft.ImageFit.COVER, border_radius=150)),
                         ft.DataCell(ft.Text(x["usuario"])),
+                        ft.DataCell(ft.Text(x["correo_electronico"])),
                         ft.DataCell(ft.Text(x["nombre"])),
                         ft.DataCell(ft.Row([
                         	# IconButton(icon="create",icon_color="blue",
