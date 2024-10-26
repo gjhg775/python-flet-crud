@@ -23,6 +23,11 @@ from mail import send_mail_billing
 
 conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
 
+# if settings.tipo_app == 0:
+#     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+# else:
+#     conn=sqlite3.connect('C:\\pdb\\data\\parqueadero.db', check_same_thread=False)
+
 valor=0
 
 title="Parqueadero"

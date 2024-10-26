@@ -523,7 +523,7 @@ def Configuration(page):
         # clave_tecnica.update()
         # environment.update()
         # client.update()
-        page.update()
+        settings.page.update()
 
     def change_date_from(e):
         fecha_cierre=str(date_picker_from.value)

@@ -140,7 +140,7 @@ if settings.tipo_app == 0:
             page.drawer.update()
 
         def change_mode_theme(e):
-            page.theme_mode="light" if page.theme_mode == "dark" else "dark"
+            page.theme_mode=ft.ThemeMode.LIGHT if page.theme_mode == ft.ThemeMode.DARK else ft.ThemeMode.DARK
             toggledarklight.selected = not toggledarklight.selected
             page.update()
 
@@ -579,7 +579,7 @@ if settings.tipo_app == 0:
         settings.page=page
         page.title="Parqueadero"
         page.scroll="auto"
-        page.theme_mode="light"
+        page.theme_mode=ft.ThemeMode.LIGHT
         page.window.opacity=0.8
         page.opacity=0.0
         page.window.min_width=378
@@ -915,7 +915,7 @@ if settings.tipo_app == 0:
         page.add(container)
 else:
     message=""
-    bgcolor=""
+    bgcolor=""           
     # class AnimatedApp(ft.UserControl):
     class AnimatedApp(ft.Row):
         def __init__(self, page):
@@ -931,29 +931,45 @@ else:
                 current_locale=ft.Locale("es"),
             )
 
-            self.page.padding=0
+            self.page.title="Parqueadero"
+            self.page.theme_mode=ft.ThemeMode.LIGHT
+            self.page.padding=10
             self.page.add()
 
-            snack_bar=ft.SnackBar(
-                ft.Text(message, text_align="center"),
-                bgcolor=bgcolor,
-                duration=2000,
-                open=True
-            )
 
-            if message != "":
-                self.page.add(snack_bar)
-                self.page.update()
+            # snack_bar=ft.SnackBar(
+            #     ft.Text(message, text_align="center"),
+            #     bgcolor=bgcolor,
+            #     duration=2000,
+            #     open=True
+            # )
+
+            # if message != "":
+            #     self.page.add(snack_bar)
+            #     self.page.update()
+
+            # self.routes = {
+            #     "/": 0,
+            #     "/usuarios": 1,
+            #     "/configuracion": 2,
+            #     "/variables": 3,
+            #     "/registro": 4,
+            #     "/cuadre_caja": 5,
+            #     "/cierre_dia": 6,
+            #     "/desarrollador": 7,
+            #     # "/cerrar_sesion": 8,
+            #     "/login": 8
+            # }
 
             self.routes = {
                 "/": 0,
-                "/usuarios": 1,
-                "/configuracion": 2,
+                "/users": 1,
+                "/configuration": 2,
                 "/variables": 3,
-                "/registro": 4,
-                "/cuadre_caja": 5,
-                "/cierre_dia": 6,
-                "/desarrollador": 7,
+                "/register": 4,
+                "/cash_register": 5,
+                "/closing_day": 6,
+                "/developer": 7,
                 # "/cerrar_sesion": 8,
                 "/login": 8
             }
@@ -968,16 +984,29 @@ else:
             # self.animation_style=ft.animation.Animation(400, ft.AnimationCurve.EASE_IN_TO_LINEAR)
             self.animation_style=ft.animation.Animation(100, ft.AnimationCurve.EASE_IN_TO_LINEAR)
 
-            self.mode_switch=ft.Switch(
-                value=False,
-                on_change=self.mode_change_update,
-                thumb_color=self.color_selected_item,
-                track_color=self.color_items,
-                thumb_icon={
-                    ft.MaterialState.DEFAULT: ft.icons.LIGHT_MODE,
-                    ft.MaterialState.SELECTED: ft.icons.DARK_MODE,
-                },
-            )
+            self.label_0=ft.Text("Inicio", color=self.color_icons_dark, width=120)
+            self.label_1=ft.Text("Usuarios", color=self.color_icons_dark, width=120)
+            self.label_2=ft.Text("Configuración", color=self.color_icons_dark, width=120)
+            self.label_3=ft.Text("Variables", color=self.color_icons_dark, width=120)
+            self.label_4=ft.Text("Registro", color=self.color_icons_dark, width=120)
+            self.label_5=ft.Text("Cuadre de caja", color=self.color_icons_dark, width=120)
+            self.label_6=ft.Text("Cierre de día", color=self.color_icons_dark, width=120)
+            self.label_7=ft.Text("Desarrollador", color=self.color_icons_dark, width=120)
+            self.label_8=ft.Text("Cerrar sesión", color=self.color_icons_dark, width=120)
+            self.label_title=ft.Text("Parqueadero", color=self.color_icons_dark, size=30)
+
+            self.mode_switch=ft.Switch(value=True, on_change=self.mode_change_update)
+
+            # self.mode_switch=ft.Switch(
+            #     value=True,
+            #     on_change=self.mode_change_update,
+            #     thumb_color=self.color_selected_item,
+            #     track_color=self.color_items,
+            #     thumb_icon={
+            #         ft.MaterialState.DEFAULT: ft.icons.LIGHT_MODE,
+            #         ft.MaterialState.SELECTED: ft.icons.DARK_MODE,
+            #     },
+            # )
 
             self.btn_home=ft.Container(
                 width=70,
@@ -987,7 +1016,7 @@ else:
                 border_radius=10,
                 alignment=ft.alignment.center,
                 content=ft.IconButton(icon=ft.icons.MENU,
-                                    icon_color=self.color_icons_light,
+                                    icon_color=self.color_icons_dark,
                                     on_click=self.bar_icons)
             )
 
@@ -1164,8 +1193,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.HOME, color=self.color_icons_light),
-                        ft.Text("Inicio", width=120)
+                        ft.Icon(ft.icons.HOME, color=self.color_icons_dark),
+                        # ft.Text("Inicio", width=120)
+                        self.label_0
                     ],
                 )
             )
@@ -1185,8 +1215,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.PERSON_ROUNDED, color=self.color_icons_light),
-                        ft.Text("Usuarios", width=120)
+                        ft.Icon(ft.icons.PERSON_ROUNDED, color=self.color_icons_dark),
+                        # ft.Text("Usuarios", width=120)
+                        self.label_1
                     ]
                 )
             )
@@ -1206,8 +1237,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.SETTINGS, color=self.color_icons_light),
-                        ft.Text("Configuración", width=120)
+                        ft.Icon(ft.icons.SETTINGS, color=self.color_icons_dark),
+                        # ft.Text("Configuración", width=120)
+                        self.label_2
                     ]
                 )
             )
@@ -1227,8 +1259,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.FACT_CHECK, color=self.color_icons_light),
-                        ft.Text("Variables", width=120)
+                        ft.Icon(ft.icons.FACT_CHECK, color=self.color_icons_dark),
+                        # ft.Text("Variables", width=120)
+                        self.label_3
                     ]
                 )
             )
@@ -1248,8 +1281,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.EDIT_ROUNDED, color=self.color_icons_light),
-                        ft.Text("Registro", width=120)
+                        ft.Icon(ft.icons.EDIT_ROUNDED, color=self.color_icons_dark),
+                        # ft.Text("Registro", width=120)
+                        self.label_4
                     ]
                 )
             )
@@ -1269,8 +1303,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.ATTACH_MONEY_SHARP, color=self.color_icons_light),
-                        ft.Text("Cuadre de caja", width=120)
+                        ft.Icon(ft.icons.ATTACH_MONEY_SHARP, color=self.color_icons_dark),
+                        # ft.Text("Cuadre de caja", width=120)
+                        self.label_5
                     ]
                 )
             )
@@ -1290,8 +1325,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.CALENDAR_MONTH, color=self.color_icons_light),
-                        ft.Text("Cierre de día", width=120)
+                        ft.Icon(ft.icons.CALENDAR_MONTH, color=self.color_icons_dark),
+                        # ft.Text("Cierre de día", width=120)
+                        self.label_6
                     ]
                 )
             )
@@ -1311,8 +1347,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.CODE_ROUNDED, color=self.color_icons_light),
-                        ft.Text("Desarrollador", width=120)
+                        ft.Icon(ft.icons.CODE_ROUNDED, color=self.color_icons_dark),
+                        # ft.Text("Desarrollador", width=120)
+                        self.label_7
                     ]
                 )
             )
@@ -1333,8 +1370,9 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.POWER_SETTINGS_NEW, color=self.color_icons_light),
-                        ft.Text("Cerrar sesión", width=120)
+                        ft.Icon(ft.icons.POWER_SETTINGS_NEW, color=self.color_icons_dark),
+                        # ft.Text("Cerrar sesión", width=120)
+                        self.label_8
                     ]
                 )
             )
@@ -1345,7 +1383,8 @@ else:
                 bgcolor=self.color_container,
                 border_radius=10,
                 alignment=ft.alignment.center,
-                content=ft.Text("Python - Flet", size=30)
+                # content=ft.Text("Parqueadero", color=self.color_icons_dark, size=30)
+                content=self.label_title
             )
 
             self.navigation=ft.Container(
@@ -1418,7 +1457,10 @@ else:
                 ]
             ))
 
-            self.page.route="/"
+            self.btn_home.visible=False
+            self.frame_title.visible=False
+            self.navigation.visible=False
+            self.page.route="/login"
             self.page.go(self.page.route)
         
         def on_hover_change(self, e, index):
@@ -1469,7 +1511,7 @@ else:
 
         def mode_change_update(self, e):
             if e.control.value:
-                self.page.theme_mode="dark"
+                self.page.theme_mode=ft.ThemeMode.LIGHT
                 self.option_0.content.controls[0].color=self.color_icons_dark
                 self.option_1.content.controls[0].color=self.color_icons_dark
                 self.option_2.content.controls[0].color=self.color_icons_dark
@@ -1480,8 +1522,18 @@ else:
                 self.option_7.content.controls[0].color=self.color_icons_dark
                 self.option_8.content.controls[0].color=self.color_icons_dark
                 self.btn_home.content.icon_color=self.color_icons_dark
+                self.label_0.color=self.color_icons_dark
+                self.label_1.color=self.color_icons_dark
+                self.label_2.color=self.color_icons_dark
+                self.label_3.color=self.color_icons_dark
+                self.label_4.color=self.color_icons_dark
+                self.label_5.color=self.color_icons_dark
+                self.label_6.color=self.color_icons_dark
+                self.label_7.color=self.color_icons_dark
+                self.label_8.color=self.color_icons_dark
+                self.label_title.color=self.color_icons_dark
             else:
-                self.page.theme_mode="ligth"
+                self.page.theme_mode=ft.ThemeMode.DARK
                 self.option_0.content.controls[0].color=self.color_icons_light
                 self.option_1.content.controls[0].color=self.color_icons_light
                 self.option_2.content.controls[0].color=self.color_icons_light
@@ -1492,136 +1544,181 @@ else:
                 self.option_7.content.controls[0].color=self.color_icons_light
                 self.option_8.content.controls[0].color=self.color_icons_light
                 self.btn_home.content.icon_color=self.color_icons_light
-            self.update()
+                self.label_0.color=self.color_icons_light
+                self.label_1.color=self.color_icons_light
+                self.label_2.color=self.color_icons_light
+                self.label_3.color=self.color_icons_light
+                self.label_4.color=self.color_icons_light
+                self.label_5.color=self.color_icons_light
+                self.label_6.color=self.color_icons_light
+                self.label_7.color=self.color_icons_light
+                self.label_8.color=self.color_icons_light
+                self.label_title.color=self.color_icons_light
             self.page.update()
 
         def change_page(self, e, n):
-            for route, idx in self.routes.items():
-                if idx == n:
-                    self.page.go(route)
-                    break
-            for page in self.switch_control:
-                self.switch_control[page].offset.y=2
-                self.switch_control[page].update()
-                self.option_0.bgcolor=self.color_items
-                self.option_1.bgcolor=self.color_items
-                self.option_2.bgcolor=self.color_items
-                self.option_3.bgcolor=self.color_items
-                self.option_4.bgcolor=self.color_items
-                self.option_5.bgcolor=self.color_items
-                self.option_6.bgcolor=self.color_items
-                self.option_7.bgcolor=self.color_items
-                self.option_8.bgcolor=self.color_items
-            if n == 0:
-                self.option_0.scale=1.2
-                self.option_0.bgcolor=self.color_selected_item
-                self.option_0.update()
-                
-                self.container_0.content.controls.clear()
-                self.container_0.content.controls.append(Home(page))
-                self.container_0.update()
-            elif n == 1:
-                self.option_1.scale=1.2
-                self.option_1.bgcolor=self.color_selected_item
-                self.option_1.update()
+            if n == 8:
+                self.btn_home.visible=False
+                self.frame_title.visible=False
+                self.navigation.visible=False
+            else:
+                self.btn_home.visible=True
+                self.frame_title.visible=True
+                self.navigation.visible=True
 
-                # self.container_1.content.controls.clear()
-                self.container_1.content.controls=[]
-                self.container_1.content.controls.append(Users(page))
-                self.container_1.update()
-            elif n == 2:
-                self.option_2.scale=1.2
-                self.option_2.bgcolor=self.color_selected_item
-                self.option_2.update()
+            settings.acceso=1
+            if n == 1 and settings.acceso_usuarios == 0:
+                settings.acceso=0
+            if n == 2 and settings.acceso_configuracion == 0:
+                settings.acceso=0
+            if n == 3 and settings.acceso_variables == 0:
+                settings.acceso=0
+            if n == 4 and settings.acceso_registro == 0:
+                settings.acceso=0
+            if n == 5 and settings.acceso_cuadre == 0:
+                settings.acceso=0
+            if n == 6 and settings.acceso_cierre == 0:
+                settings.acceso=0
 
-                # self.container_2.content.controls.clear()
-                self.container_2.content.controls=[]
-                self.container_2.content.controls.append(Configuration(page))
-                self.container_2.update()
-            elif n == 3:
-                self.option_3.scale=1.2
-                self.option_3.bgcolor=self.color_selected_item
-                self.option_3.update()
+            if settings.acceso == 1:
+                for route, idx in self.routes.items():
+                    if idx == n:
+                        self.page.go(route)
+                        break
+                for pag in self.switch_control:
+                    self.switch_control[pag].offset.y=2
+                    self.switch_control[pag].update()
+                    self.option_0.bgcolor=self.color_items
+                    self.option_1.bgcolor=self.color_items
+                    self.option_2.bgcolor=self.color_items
+                    self.option_3.bgcolor=self.color_items
+                    self.option_4.bgcolor=self.color_items
+                    self.option_5.bgcolor=self.color_items
+                    self.option_6.bgcolor=self.color_items
+                    self.option_7.bgcolor=self.color_items
+                    self.option_8.bgcolor=self.color_items
+                if n == 0:
+                    self.option_0.scale=1.2
+                    self.option_0.bgcolor=self.color_selected_item
+                    self.option_0.update()
+                    
+                    self.container_0.content.controls.clear()
+                    self.container_0.content.controls.append(Home(pag))
+                    self.container_0.update()
+                elif n == 1:
+                    self.option_1.scale=1.2
+                    self.option_1.bgcolor=self.color_selected_item
+                    self.option_1.update()
 
-                # self.container_3.content.controls.clear()
-                self.container_3.content.controls=[]
-                self.container_3.content.controls.append(Variables(page))
-                self.container_3.update()
-            elif n == 4:
-                self.option_4.scale=1.2
-                self.option_4.bgcolor=self.color_selected_item
-                self.option_4.update()
+                    # self.container_1.content.controls.clear()
+                    self.container_1.content.controls=[]
+                    self.container_1.content.controls.append(Users(pag))
+                    self.container_1.update()
+                elif n == 2:
+                    self.option_2.scale=1.2
+                    self.option_2.bgcolor=self.color_selected_item
+                    self.option_2.update()
 
-                # self.container_4.content.controls.clear()
-                self.container_4.content.controls=[]
-                self.container_4.content.controls.append(Register(page))
-                self.container_4.update()
-            elif n == 5:
-                self.option_5.scale=1.2
-                self.option_5.bgcolor=self.color_selected_item
-                self.option_5.update()
+                    # self.container_2.content.controls.clear()
+                    self.container_2.content.controls=[]
+                    self.container_2.content.controls.append(Configuration(pag))
+                    self.container_2.update()
+                elif n == 3:
+                    self.option_3.scale=1.2
+                    self.option_3.bgcolor=self.color_selected_item
+                    self.option_3.update()
 
-                # self.container_5.content.controls.clear()
-                self.container_5.content.controls=[]
-                self.container_5.content.controls.append(Cash_register(page))
-                self.container_5.update()
-            elif n == 6:
-                self.option_6.scale=1.2
-                self.option_6.bgcolor=self.color_selected_item
-                self.option_6.update()
+                    # self.container_3.content.controls.clear()
+                    self.container_3.content.controls=[]
+                    self.container_3.content.controls.append(Variables(pag))
+                    self.container_3.update()
+                elif n == 4:
+                    self.option_4.scale=1.2
+                    self.option_4.bgcolor=self.color_selected_item
+                    self.option_4.update()
 
-                # self.container_6.content.controls.clear()
-                self.container_6.content.controls=[]
-                self.container_6.content.controls.append(Closing_day(page))
-                self.container_6.update()
-            elif n == 7:
-                self.option_7.scale=1.2
-                self.option_7.bgcolor=self.color_selected_item
-                self.option_7.update()
+                    # self.container_4.content.controls.clear()
+                    self.container_4.content.controls=[]
+                    self.container_4.content.controls.append(Register(pag))
+                    self.container_4.update()
+                elif n == 5:
+                    self.option_5.scale=1.2
+                    self.option_5.bgcolor=self.color_selected_item
+                    self.option_5.update()
 
-                # self.container_7.content.controls.clear()
-                self.container_7.content.controls=[]
-                self.container_7.content.controls.append(Developer(page))
-                self.container_7.update()
-            elif n == 8:
-                self.option_8.scale=1.2
-                self.option_8.bgcolor=self.color_selected_item
-                self.option_8.update()
+                    # self.container_5.content.controls.clear()
+                    self.container_5.content.controls=[]
+                    self.container_5.content.controls.append(Cash_register(pag))
+                    self.container_5.update()
+                elif n == 6:
+                    self.option_6.scale=1.2
+                    self.option_6.bgcolor=self.color_selected_item
+                    self.option_6.update()
 
-                # user.value=""
-                # password.value=""
-                # self.page.session.clear()
-                self.page.clean()
-                self.page.controls.append(Login(page))
+                    # self.container_6.content.controls.clear()
+                    self.container_6.content.controls=[]
+                    self.container_6.content.controls.append(Closing_day(pag))
+                    self.container_6.update()
+                elif n == 7:
+                    self.option_7.scale=1.2
+                    self.option_7.bgcolor=self.color_selected_item
+                    self.option_7.update()
 
-            self.switch_control[n].offset.y=0
-            self.switch_control[n].update()
+                    # self.container_7.content.controls.clear()
+                    self.container_7.content.controls=[]
+                    self.container_7.content.controls.append(Developer(pag))
+                    self.container_7.update()
+                elif n == 8:
+                    self.option_8.scale=1.2
+                    self.option_8.bgcolor=self.color_selected_item
+                    self.option_8.update()
 
-            # time.sleep(0.5)
-            time.sleep(0.1)
+                    # user.value=""
+                    # password.value=""
+                    settings.username=""
+                    settings.password=""
+                    self.page.session.clear()
+                    # self.container_8.content.controls.clear()
+                    self.container_8.content.controls=[]
+                    self.container_8.content.controls.append(Login(pag))
+                    self.container_8.update()
 
-            self.option_0.scale=1
-            self.option_1.scale=1
-            self.option_2.scale=1
-            self.option_3.scale=1
-            self.option_4.scale=1
-            self.option_5.scale=1
-            self.option_6.scale=1
-            self.option_7.scale=1
-            self.option_8.scale=1
+                self.switch_control[n].offset.y=0
+                self.switch_control[n].update()
 
-            self.page.update()
-            settings.page=self.page
+                # time.sleep(0.5)
+                time.sleep(0.1)
+
+                self.option_0.scale=1
+                self.option_1.scale=1
+                self.option_2.scale=1
+                self.option_3.scale=1
+                self.option_4.scale=1
+                self.option_5.scale=1
+                self.option_6.scale=1
+                self.option_7.scale=1
+                self.option_8.scale=1
+
+                self.page.update()
+                settings.page=self.page
+            else:
+                bgcolor="orange"
+                message="Acceso no permitido"
+                settings.message=message
+                settings.showMessage(bgcolor)
 
         def route_change(self, e):
             # Lógica para cambiar la página según la ruta
-            route = self.page.route
-            if route in self.routes:
-                self.change_page(None, self.routes[route])
+            if settings.username != "":
+                route=self.page.route
+                if route in self.routes:
+                    self.change_page(None, self.routes[route])
+                else:
+                    # Si la ruta no existe, redirigir a una ruta predeterminada
+                    self.page.go("/")
+                    self.change_page(None, 0)
             else:
-                # Si la ruta no existe, redirigir a una ruta predeterminada
-                self.page.go("/")
-                self.change_page(None, 0)
+                self.change_page(None, 8)
         
         # def logout(self, e):
         #     # user.value=""
@@ -1629,7 +1726,6 @@ else:
         #     # page.session.clear()
         #     self.page.go("/login")
         #     self.change_page(None, 8)
-
 
 # if __name__ == "__main__":
 if settings.tipo_app == 0:

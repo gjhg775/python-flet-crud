@@ -1,12 +1,18 @@
 import os
 import bcrypt
+import settings
 import sqlite3
 import hashlib
 from dotenv import load_dotenv
 
 load_dotenv()
 
-conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
+conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+
+# if settings.tipo_app == 0:
+#     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+# else:
+#     conn=sqlite3.connect('C:\\pdb\\data\\parqueadero.db', check_same_thread=False)
 
 password=os.getenv("PSWSA")
 # bytes=password.encode('utf-8')

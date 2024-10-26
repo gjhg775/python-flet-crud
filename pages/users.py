@@ -130,6 +130,8 @@ fieldwith=settings.fieldwith
 #         )
 
 def Users(page):
+    # settings.page=ft.Page
+
     configuracion=get_configuration()
 
     if configuracion != None:
@@ -196,13 +198,18 @@ def Users(page):
             tblUsuarios.height=60
             # no_registros.visible=True
             lblAccesos.value="Accesos"
-            bgcolor="blue"
-            message="No se encontraron registros"
-            settings.message=message
-            settings.showMessage(bgcolor)
-        tblUsuarios.update()
-        tblAccesos.update()
-        # no_registros.update()
+            lblAccesos.update()
+            if settings.tipo_app == 0:
+                bgcolor="blue"
+                message="No se encontraron registros"
+                settings.message=message
+                settings.showMessage(bgcolor)
+        if settings.tipo_app == 0:
+            tblUsuarios.update()
+            tblAccesos.update()
+        else:
+            # no_registros.update()
+            settings.page.update()
 
     lblUsuarios=ft.Text("Usuarios", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     buscar=ft.TextField(hint_text="Buscar usuario", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=245, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change)

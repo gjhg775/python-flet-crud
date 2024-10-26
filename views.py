@@ -18,12 +18,6 @@ def views_handler(page):
                 Home(page)
             ],
         ),
-        "/login":ft.View(
-            route="/login",
-            controls=[
-                Login(page)
-            ]
-        ),
         "/profile":ft.View(
             route="/profile",
             controls=[
@@ -70,6 +64,12 @@ def views_handler(page):
             route="/developer",
             controls=[
                 Developer(page)
+            ]
+        ),
+        "/login":ft.View(
+            route="/login",
+            controls=[
+                Login(page)
             ]
         ),
     }

@@ -424,6 +424,9 @@ def Register(page):
     
     def register(e):
         if placa.value != "":
+            if settings.tipo_app == 1:
+                placa.value=e.control.value.upper()
+                placa.update()
             buscar.value=""
             if rdbVehiculo.value == "Moto":
                 for i in placa.value:
@@ -651,8 +654,16 @@ def Register(page):
             bgcolor="orange"
             settings.message=message
             settings.showMessage(bgcolor)
+
+    def search_blur(e):
+        if settings.tipo_app == 1:
+            search_data(e)
     
     def search_change(e):
+        if settings.tipo_app == 0:
+            search_data(e)
+
+    def search_data(e):
         search=e.control.value.upper()
         buscar.value=search
         buscar.update()
@@ -673,8 +684,9 @@ def Register(page):
         # no_registros.update()
     
     def placa_change(e):
-        placa.value=e.control.value.upper()
-        placa.update()
+        if settings.tipo_app == 0:
+            placa.value=e.control.value.upper()
+            placa.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -758,7 +770,7 @@ def Register(page):
     else:
         textsize=90
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change)
+    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change, on_blur=search_blur)
     export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
     placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
