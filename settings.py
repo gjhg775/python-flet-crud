@@ -78,6 +78,25 @@ def showMessage(bgcolor):
     # page.snack_bar.open=True
     page.update()
 
+def close_banner(e):
+    page.close(banner)
+
+def show_banner():
+    page.open(banner)
+
+action_button_style = ft.ButtonStyle(color=ft.colors.BLUE)
+banner = ft.Banner(
+    bgcolor=ft.colors.AMBER_100,
+    leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color=ft.colors.AMBER, size=40),
+    content=ft.Text(
+        value="Se presentaron algunos errores mientras se trataba de abrir la base de datos. Para soporte técnico por favor comuníquese con el Desarrollador de la aplicación.",
+        color=ft.colors.BLACK,
+    ),
+    actions=[
+        ft.TextButton(text="Cerrar", style=action_button_style, on_click=close_banner),
+    ],
+)
+
 # def close_dlg(e):
 #     dlg_modal.open=False
 #     page.update()

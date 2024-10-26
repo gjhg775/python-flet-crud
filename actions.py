@@ -7,7 +7,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+try:
+    conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+except Exception as e:
+    print(e)
 
 # if settings.tipo_app == 0:
 #     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)

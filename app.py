@@ -3,18 +3,33 @@ import time
 import flet as ft
 import settings
 import hashlib
-from views import views_handler
+try:
+    from views import views_handler
+except Exception as e:
+    print(e)
 from pages.login import Login
 from pages.profile import Profile
 from pages.home import Home
 from pages.users import Users
-from pages.configuration import Configuration
+try:
+    from pages.configuration import Configuration
+except Exception as e:
+    print(e)
 from pages.variables import Variables
 from pages.register import *
-from pages.cash_register import *
-from pages.closing_day import Closing_day
+try:
+    from pages.cash_register import *
+except Exception as e:
+    print(e)
+try:
+    from pages.closing_day import Closing_day
+except Exception as e:
+    print(e)
 from pages.developer import Developer
-from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, reset_password, update_user, lblAccesos, tba
+try:
+    from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, reset_password, update_user, lblAccesos, tba
+except Exception as e:
+    print(e)
 from decouple import config
 from mail import send_mail_user
 
