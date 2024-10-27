@@ -135,6 +135,8 @@ def Login(page):
                 settings.showMessage(bgcolor)
                 settings.page.update()
             except Exception as e:
+                user.value=""
+                password.value=""
                 settings.show_banner()
                 bgcolor="red"
                 message="No se puede abrir la base de datos"

@@ -226,56 +226,66 @@ if settings.tipo_app == 0:
             if user.value != "" and password.value != "":
                 usuario=user.value
                 contrasena=str(password.value)
-                login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login=selectUser(usuario, contrasena)
-                if login_user != "" and bln_login == False:
-                    user.error_text=login_user
-                    # user.focus()
-                    btn_login.focus()
-                    user.update()
-                else:
-                    user.error_text=""
-                    user.update()
-                if login_password != "" and bln_login == False:
-                    password.error_text=login_password
-                    # password.focus()
-                    btn_login.focus()
-                    password.update()
-                else:
-                    password.error_text=""
-                    password.update()
-                if bln_login == True:
-                    datalogin={"logged":bln_login, "username":login_user}
-                    page.session.set("username", datalogin["username"])
-                    settings.username=page.session.get("username")
-                    username=settings.username
-                    settings.photo=login_photo
-                    if correo_electronico == "":
-                        open_dlg_modal_email(e)
-                    settings.correo_electronico=correo_electronico
-                    selectAccess(username)
-                    # page.go("/register")
-                    page.clean()
-                    # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
-                    page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
-                    page.add(Home(page))
-                    page.update()
-                    # if settings.tipo_app == 0:
-                    #     settings.user_avatar.src=f"img\\{login_photo}"
-                    #     settings.user_photo.src=f"img\\{login_photo}"
-                    # else:
-                    #     settings.user_avatar.src=f"img/{login_photo}"
-                    #     settings.user_photo.src=f"img/{login_photo}"
-                    settings.user_avatar.src=f"/img/{login_photo}"
-                    settings.user_photo.src=f"/img/{login_photo}"
-                    settings.login_nombre=login_nombre
-                    user_auth.value=settings.login_nombre
-                    user_auth.update()
-                    settings.message=f"Bienvenido {login_nombre}"
-                    bgcolor="blue"
-                else:
-                    settings.message="Acceso denegado"
+                try:
+                    login_user, correo_electronico, login_password, login_nombre, login_photo, bln_login=selectUser(usuario, contrasena)
+                    if login_user != "" and bln_login == False:
+                        user.error_text=login_user
+                        # user.focus()
+                        btn_login.focus()
+                        user.update()
+                    else:
+                        user.error_text=""
+                        user.update()
+                    if login_password != "" and bln_login == False:
+                        password.error_text=login_password
+                        # password.focus()
+                        btn_login.focus()
+                        password.update()
+                    else:
+                        password.error_text=""
+                        password.update()
+                    if bln_login == True:
+                        datalogin={"logged":bln_login, "username":login_user}
+                        page.session.set("username", datalogin["username"])
+                        settings.username=page.session.get("username")
+                        username=settings.username
+                        settings.photo=login_photo
+                        if correo_electronico == "":
+                            open_dlg_modal_email(e)
+                        settings.correo_electronico=correo_electronico
+                        selectAccess(username)
+                        # page.go("/register")
+                        page.clean()
+                        # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
+                        page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
+                        page.add(Home(page))
+                        page.update()
+                        # if settings.tipo_app == 0:
+                        #     settings.user_avatar.src=f"img\\{login_photo}"
+                        #     settings.user_photo.src=f"img\\{login_photo}"
+                        # else:
+                        #     settings.user_avatar.src=f"img/{login_photo}"
+                        #     settings.user_photo.src=f"img/{login_photo}"
+                        settings.user_avatar.src=f"/img/{login_photo}"
+                        settings.user_photo.src=f"/img/{login_photo}"
+                        settings.login_nombre=login_nombre
+                        user_auth.value=settings.login_nombre
+                        user_auth.update()
+                        settings.message=f"Bienvenido {login_nombre}"
+                        bgcolor="blue"
+                    else:
+                        settings.message="Acceso denegado"
+                        bgcolor="red"
+                    settings.showMessage(bgcolor)
+                except Exception as e:
+                    user.value=""
+                    password.value=""
+                    settings.show_banner()
                     bgcolor="red"
-                settings.showMessage(bgcolor)
+                    message="No se puede abrir la base de datos"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+                    # print(e)
             else:
                 if user.value == "":
                     user.error_text="Digite usuario ó correo electrónico"
