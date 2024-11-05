@@ -21,15 +21,21 @@ from pathlib import Path
 from decouple import config
 from mail import send_mail_billing
 
-try:
-    conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
-except Exception as e:
-    print(e)
+# try:
+#     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+# except Exception as e:
+#     print(e)
 
 # if settings.tipo_app == 0:
 #     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
 # else:
 #     conn=sqlite3.connect('C:\\pdb\\data\\parqueadero.db', check_same_thread=False)
+
+def get_connection():
+    try:
+        return sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+    except Exception as e:
+        print(e)
 
 valor=0
 
@@ -152,6 +158,7 @@ vehiculo_edit=ft.RadioGroup(content=ft.Row([
 
 def reset_password(usuario):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         settings.token_password=random.randint(100000, 999999)
         hash=hashlib.sha256(str(settings.token_password).encode()).hexdigest()
@@ -164,6 +171,7 @@ def reset_password(usuario):
         values=(f'{usuario}', f'{usuario}', f'{hash}')
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         login_user=""
 
@@ -179,11 +187,13 @@ def reset_password(usuario):
 def selectUser(usuario, contrasena):
     hash=hashlib.sha256(str(contrasena).encode()).hexdigest()
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ?"""
         values=(f'{usuario}', f'{usuario}')
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         login_user=""
         correo_electronico=""
@@ -214,41 +224,53 @@ def selectUser(usuario, contrasena):
 
 def add_user(usuario, correo_electronico, hashed, nombre, foto):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql="""SELECT * FROM usuarios WHERE usuario = ? OR correo_electronico = ?"""
         values=(f'{usuario}', f'{usuario}')
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         if registros != []:
             bln_login=False
             return bln_login
 
+        conn=get_connection()
+        cursor=conn.cursor()
         sql="""INSERT INTO usuarios (usuario, correo_electronico, clave, nombre, foto) VALUES (?, ?, ?, ?, ?)"""
         values=(f"{usuario}", f"{correo_electronico}", f"{hashed}", f"{nombre}", f"{foto}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
+        conn=get_connection()
+        cursor=conn.cursor()
         user="Admin"
         sql="""SELECT * FROM accesos WHERE usuario = ?"""
         values=(f'{user}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         for registro in registros:
             acceso_usuario=0
             programa=registro[2]
             if programa == "Registro":
                 acceso_usuario=1
+            conn=get_connection()
+            cursor=conn.cursor()
             sql="""INSERT INTO accesos (usuario, programa, acceso_usuario) VALUES (?, ?, ?)"""
             values=(f"{usuario}", f"{programa}", f"{acceso_usuario}")
             cursor.execute(sql, values)
             conn.commit()
+            conn.close()
     except Exception as e:
         print(e)
 
 def update_user(usuario, correo_electronico, clave, foto, btn):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         if btn == "save":
             hash=hashlib.sha256(clave.encode()).hexdigest()
@@ -262,6 +284,7 @@ def update_user(usuario, correo_electronico, clave, foto, btn):
             values=(f"{foto}", f"{usuario}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
         bgcolor="green"
         if btn != "update":
@@ -274,13 +297,16 @@ def update_user(usuario, correo_electronico, clave, foto, btn):
 
 def get_user(usuario):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""SELECT * FROM usuarios WHERE usuario = ?"""
         values=(f"{usuario}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         if registros != []:
+            settings.correo_electronico=registros[0][2]
             settings.password=registros[0][3]
             settings.photo=registros[0][5]
             # settings.photo=photo
@@ -294,10 +320,12 @@ def get_user(usuario):
 
 def get_configuration():
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql="SELECT * FROM configuracion"
         cursor.execute(sql)
         configuracion=cursor.fetchall()
+        conn.close()
 
         if configuracion != []:
             return configuracion
@@ -352,11 +380,13 @@ if configuracion != None:
 
 def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, enviar_correo_electronico, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, cliente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, enviar_correo_electronico = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
         values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{cliente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{enviar_correo_electronico}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
         # settings.billing=facturacion
         # settings.cliente_final=cliente
@@ -414,10 +444,12 @@ def update_configuration(parqueadero, nit, regimen, direccion, telefono, servici
 
 def get_variables():
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql="SELECT * FROM variables"
         cursor.execute(sql)
         variables=cursor.fetchall()
+        conn.close()
 
         if variables != []:
             return variables
@@ -435,12 +467,14 @@ if variables != None:
     valor_turno_otro=variables[0][6]
 
 def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_carro, vlr_hora_otro, vlr_turno_otro, id):
-    try:        
+    try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""UPDATE variables SET vlr_hora_moto = ?, vlr_turno_moto = ?, vlr_hora_carro = ?, vlr_turno_carro = ?, vlr_hora_otro = ?, vlr_turno_otro = ? WHERE variable_id = ?"""
         values=(f"{vlr_hora_moto}", f"{vlr_turno_moto}", f"{vlr_hora_carro}", f"{vlr_turno_carro}", f"{vlr_hora_otro}", f"{vlr_turno_otro}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
         message="Variables actualizadas satisfactoriamente"
         return message
@@ -449,11 +483,13 @@ def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_ca
 
 def update_register_mail(correo_electronico, placa):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""UPDATE registro SET correo_electronico = ? WHERE placa = ?"""
         values=(f"{correo_electronico}", f"{placa}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
     except Exception as e:
         print(e)
 
@@ -475,12 +511,13 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
         if vehiculo == "Otro":
             valor=valor_hora_otro
 
+        conn=get_connection()
         cursor=conn.cursor()
-
         sql=f"""SELECT entrada AS ent, datetime() AS sal FROM registro WHERE registro_id = ?"""
         values=(f"{id}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         ent=registros[0][0]
         sal=registros[0][1]
@@ -503,22 +540,31 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             salidas=""
 
         if settings.correcto == 0:
+            conn=get_connection()
+            cursor=conn.cursor()
             sql="""SELECT * FROM usuarios WHERE usuario = ?"""
             values=(f'{usuario}',)
             cursor.execute(sql, values)
             registros=cursor.fetchall()
+            conn.close()
 
             usuario=registros[0][4]
 
+            conn=get_connection()
+            cursor=conn.cursor()
             sql=f"""UPDATE registro SET salida = ?, valor = ?, retiro = ? WHERE registro_id = ?"""
             values=(f"{salida}", f"{valor}", f"{usuario}", f"{id}")
             cursor.execute(sql, values)
             conn.commit()
+            conn.close()
 
+            conn=get_connection()
+            cursor=conn.cursor()
             sql=f"""SELECT *, strftime("%s", salida) - strftime("%s", entrada) AS tiempo FROM registro WHERE registro_id = ?"""
             values=(f'{id}',)
             cursor.execute(sql, values)
             registros=cursor.fetchall()
+            conn.close()
 
             id=registros[0][0]
             placa=registros[0][2]
@@ -626,15 +672,21 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 facturacion=1
 
             # tiempo=int(tiempo)
+            conn=get_connection()
+            cursor=conn.cursor()
             sql="""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
             values=(f"{salida}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{id}")
             cursor.execute(sql, values)
             conn.commit()
+            conn.close()
 
+            conn=get_connection()
+            cursor=conn.cursor()
             sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = ?"""
             values=(f'{id}',)
             cursor.execute(sql, values)
             registros=cursor.fetchall()
+            conn.close()
 
             correo_electronico=registros[0][13]
             entradas=registros[0][14]
@@ -686,38 +738,50 @@ def add_register(vehiculo, placa):
     usuario=settings.username
 
     try:
+        conn=get_connection()
         cursor=conn.cursor()
-
         sql="""SELECT * FROM usuarios WHERE usuario = ?"""
         values=(f'{usuario}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         usuario=registros[0][4]
 
+        conn=get_connection()
+        cursor=conn.cursor()
         id=1
         sql="""SELECT consecutivo FROM configuracion WHERE configuracion_id = ?"""
         values=(f'{id}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         consecutivo=registros[0][0]
         correo_electronico=settings.correo_electronico
 
+        conn=get_connection()
+        cursor=conn.cursor()
         sql=f"""INSERT INTO registro (consecutivo, placa, entrada, salida, vehiculo, facturacion, valor, tiempo, total, cuadre, ingreso, correo_electronico) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         values=(f"{consecutivo}", f"{placa}", f"{entrada}", f"{salida}", f"{vehiculo}", f"{facturacion}", f"{valor}", f"{tiempo}", f"{total}", f"{cuadre}", f"{usuario}", f"{correo_electronico}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
+        conn=get_connection()
+        cursor=conn.cursor()
         sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
         values=(f'{placa}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         correo_electronico=registros[0][13]
         entradas=registros[0][14]
         salidas=registros[0][15]
 
+        conn=get_connection()
+        cursor=conn.cursor()
         id=1
         consecutivos=int(consecutivo)+1
         consecutivos=str(consecutivos).zfill(6)
@@ -725,6 +789,7 @@ def add_register(vehiculo, placa):
         values=(f"{consecutivos}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
         comentario1="Sin éste recibo no se entrega el automotor."
         comentario2="Después de retirado el automotor no se"
@@ -737,17 +802,20 @@ def add_register(vehiculo, placa):
 def exist_email(placa):
     settings.correo_electronico=""
     correo_electronico=settings.correo_electronico
+    conn=get_connection()
     cursor=conn.cursor()
     sql=f"""SELECT * FROM registro WHERE placa = ? AND correo_electronico != ?"""
     values=(f"{placa}", f"{correo_electronico}")
     cursor.execute(sql, values)
     registros=cursor.fetchone()
+    conn.close()
 
     if registros != None:
         settings.correo_electronico=registros[13]
 
 def selectRegister(vehiculo, placa):
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         total=0
         sql=f"""SELECT * FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = ?"""
@@ -755,6 +823,7 @@ def selectRegister(vehiculo, placa):
         values=(f"{placa}", f"{total}")
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         if registros == []:
             consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas=add_register(vehiculo, placa)
@@ -794,11 +863,13 @@ def showedit(e):
     consecutivo=e.control.data["consecutivo"]
     settings.consecutivo2=consecutivo
     try:
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
         values=(f"{consecutivo}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
+        conn.close()
 
         configuracion=get_configuration()
         
@@ -974,7 +1045,8 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
                 0
             )
     else:
-        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
+        if settings.preview_register == 1:
+            webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -1371,7 +1443,8 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
                 0
             )
     else:
-        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
+        if settings.preview_register == 1:
+            webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
     
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -1433,11 +1506,13 @@ def update_access(e):
     if usuario != "Super Admin" and usuario != "Admin":
         programa=acceso["programa"]
         acceso_usuario=0 if chk.value == False else 1
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""UPDATE accesos SET acceso_usuario = ? WHERE programa = ? AND usuario = ?"""
         values=(f"{acceso_usuario}", f"{programa}", f"{usuario}")
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
         # lblAccessUpdate.visible=True
         # lblAccessUpdate.update()
@@ -1459,11 +1534,13 @@ def update_access(e):
 def show_edit_access(e):
     usuario=e.control.data["usuario"]
     settings.usuario=usuario
+    conn=get_connection()
     cursor=conn.cursor()
     sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
     values=(f"{usuario}",)
     cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
@@ -1558,16 +1635,21 @@ def user_delete(e):
         if settings.photo != "default.jpg":
             os.remove(os.path.join(os.getcwd(), f"upload\\img\\{settings.photo}"))
         
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""DELETE FROM accesos WHERE usuario = ?"""
         values=(f"{usuario}",)
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
+        conn=get_connection()
+        cursor=conn.cursor()
         sql=f"""DELETE FROM usuarios WHERE usuario = ?"""
         values=(f"{usuario}",)
         cursor.execute(sql, values)
         conn.commit()
+        conn.close()
 
         # tbu.rows.clear()
         # tba.rows.clear()
@@ -1603,14 +1685,15 @@ def user_delete(e):
 
 def selectUsers(search):
     user="Super Admin"
+    conn=get_connection()
     cursor=conn.cursor()
     # if settings.username["username"] == "Super Admin":
     if settings.username == "Super Admin":
         if search == "":
-            sql=f"""SELECT usuario, nombre, foto FROM usuarios"""
+            sql=f"""SELECT usuario, correo_electronico, nombre, foto FROM usuarios"""
             cursor.execute(sql)
         else:
-            sql="""SELECT usuario, nombre, foto FROM usuarios WHERE usuario LIKE ?"""
+            sql="""SELECT usuario, correo_electronico, nombre, foto FROM usuarios WHERE usuario LIKE ?"""
             values=(f"%{search}%",)
             cursor.execute(sql, values)
     # elif settings.username["username"] == "Admin":
@@ -1623,6 +1706,7 @@ def selectUsers(search):
             values=(f"{user}", f"%{search}%")
         cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
@@ -1669,6 +1753,7 @@ def selectUsers(search):
 
 def show_access(usuario):
     user="Super Admin"
+    conn=get_connection()
     cursor=conn.cursor()
     if settings.username == user:
         sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario LIKE ?"""
@@ -1678,6 +1763,7 @@ def show_access(usuario):
         values=(f"{usuario}", f"{user}")
     cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
 
     if registros != []:
         # keys=["id", "placa", "entrada", "salida", "vehiculo", "valor", "tiempo", "total", "cuadre", "usuario"]
@@ -1721,11 +1807,13 @@ def show_access(usuario):
     return registros
 
 def selectAccess(username):
+    conn=get_connection()
     cursor=conn.cursor()
     sql="""SELECT programa, acceso_usuario FROM accesos WHERE usuario = ?"""
     values=(f'{username}',)
     cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
 
     if registros != []:
         settings.acceso_usuarios=registros[0][1]
@@ -1737,6 +1825,7 @@ def selectAccess(username):
 
 def selectRegisters(search):
     cuadre=0
+    conn=get_connection()
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
@@ -1747,6 +1836,7 @@ def selectRegisters(search):
         values=(f'%{search}%', f'%{search}%', f'{cuadre}')
     cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
 
     tb.rows.clear()
 
@@ -1812,6 +1902,7 @@ def selectRegisters(search):
 
 def exportRegister(fecha_desde, fecha_hasta):
     cuadre=1
+    conn=get_connection()
     cursor=conn.cursor()
     if fecha_desde == "dd/mm/aaaa" and fecha_hasta == "dd/mm/aaaa":
         if settings.billing == 1:
@@ -1829,16 +1920,19 @@ def exportRegister(fecha_desde, fecha_hasta):
             values=(f'{fecha_desde}', f'{fecha_hasta}', f'{cuadre}')
     cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
     return registros
 
 def selectCashRegister():
     cuadre=0
+    conn=get_connection()
     cursor=conn.cursor()    
     # sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = 0 AND cuadre = 0"""
     sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = ?"""
     values=(f'{cuadre}',)
     cursor.execute(sql, values)
     registros=cursor.fetchall()
+    conn.close()
 
     tbc.rows.clear()
 
@@ -1903,7 +1997,7 @@ tblAccesos = ft.Column([
 
 tblRegistro = ft.Column([
     ft.Row([tb], scroll="always")
-], height=60)
+], height=60, scroll="always")
 
 tblCuadre = ft.Column([
     ft.Row([tbc], scroll="always")

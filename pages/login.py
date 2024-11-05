@@ -49,8 +49,8 @@ from mail import send_mail_user
 # )
 
 def Login(page):
-    settings.user_avatar=ft.Image(src=f"\\img\\{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
-    user_auth=ft.Text("")
+    # settings.user_avatar=ft.Image(src=f"/img/{settings.photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
+    # user_auth=ft.Text("")
 
     def loginMe(e):
         lbl_login.value="Iniciar sesión"
@@ -98,9 +98,10 @@ def Login(page):
                     password.error_text=""
                     password.update()
                 if bln_login == True:
-                    datalogin={"logged":bln_login, "username":login_user}
-                    settings.page.session.set("username", datalogin["username"])
-                    settings.username=settings.page.session.get("username")
+                    # datalogin={"logged":bln_login, "username":login_user}
+                    settings.page.session.set("login_user", login_user)
+                    settings.page.session.set("login_photo", login_photo)
+                    settings.username=settings.page.session.get("login_user")
                     username=settings.username
                     settings.photo=login_photo
                     if correo_electronico == "":
@@ -122,10 +123,19 @@ def Login(page):
                     # else:
                     #     settings.user_avatar.src=f"img/{login_photo}"
                     #     settings.user_photo.src=f"img/{login_photo}"
-                    settings.user_avatar.src=f"/img/{login_photo}"
-                    settings.user_photo.src=f"/img/{login_photo}"
+                    # settings.user_avatar=ft.Image(src=f"/img/{login_photo}", height=50, width=50, fit=ft.ImageFit.COVER, border_radius=150)
+                    # settings.user_avatar=ft.Image()
+                    settings.user_avatar.src=f"img/{login_photo}"
+                    # settings.user_avatar.height=50
+                    # settings.user_avatar.width=50
+                    # settings.user_avatar.fit=ft.ImageFit.COVER
+                    # settings.user_avatar.border_radius=150
+                    # settings.page.overlay.append(settings.user_avatar)
+                    # settings.user_photo=f"/img/{login_photo}"
                     settings.login_nombre=login_nombre
-                    # user_auth.value=settings.login_nombre
+                    settings.user_auth=login_nombre
+                    settings.label_0.value=login_nombre
+                    settings.page.update()
                     # user_auth.update()
                     settings.message=f"Bienvenido {login_nombre}"
                     bgcolor="blue"

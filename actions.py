@@ -7,15 +7,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-try:
-    conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
-except Exception as e:
-    print(e)
+# try:
+#     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+# except Exception as e:
+#     print(e)
 
 # if settings.tipo_app == 0:
 #     conn=sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
 # else:
-#     conn=sqlite3.connect('C:\\pdb\\data\\parqueadero.db', check_same_thread=False)
+#     conn=sqlite3.connect('FILE C:\\pdb\\data\\parqueadero.db', check_same_thread=False)
 
 password=os.getenv("PSWSA")
 # bytes=password.encode('utf-8')
@@ -29,6 +29,14 @@ hasha=password
 
 # # salt=bcrypt.gensalt()
 # # hash=bcrypt.hashpw(bytes, salt)
+
+def get_connection():
+    try:
+        return sqlite3.connect('C:/pdb/data/parqueadero.db', check_same_thread=False)
+    except Exception as e:
+        print(e)
+
+conn=get_connection()
 
 def create_users():
     cursor=conn.cursor()
@@ -114,28 +122,34 @@ def drop_variables():
     cursor.execute("DROP TABLE IF EXISTS variables")
 
 def create_regist():
-    cursor=conn.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS registro(
-        registro_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        consecutivo TEXT,
-        placa TEXT,
-        entrada TEXT,
-        salida TEXT,
-        vehiculo TEXT,
-        facturacion INTEGER,
-        valor INTEGER,
-        tiempo INTEGER,
-        total INTEGER,
-        cuadre INTEGER,
-        ingreso TEXT,
-        retiro TEXT,
-        correo_electronico TEXT)
-        """)
-    conn.commit()
+    try:
+        cursor=conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS registro(
+            registro_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            consecutivo TEXT,
+            placa TEXT,
+            entrada TEXT,
+            salida TEXT,
+            vehiculo TEXT,
+            facturacion INTEGER,
+            valor INTEGER,
+            tiempo INTEGER,
+            total INTEGER,
+            cuadre INTEGER,
+            ingreso TEXT,
+            retiro TEXT,
+            correo_electronico TEXT)
+            """)
+        conn.commit()
+    except Exception as e:
+        print(e)
 
 def drop_regist():
-    cursor=conn.cursor()
-    cursor.execute("DROP TABLE IF EXISTS registro")
+    try:
+        cursor=conn.cursor()
+        cursor.execute("DROP TABLE IF EXISTS registro")
+    except Exception as e:
+        print(e)
 
 def admin_user():
     try:
@@ -207,4 +221,7 @@ create_regist()
 # add_configuration()
 # add_variables()
 
-conn.close()
+try:
+    conn.close()
+except Exception as e:
+        print(e)

@@ -50,7 +50,7 @@ def Profile(page):
                 # settings.user_photo.src=f"upload\\img\\{photo}"
                 # settings.user_photo.update()
                 # settings.page.update()
-                update_user(username, settings.password, settings.photo, "photo")
+                update_user(username, settings.correo_electronico, settings.password, settings.photo, "photo")
                 get_user(username)
                 # photo=settings.photo
                 # settings.user_avatar.src=f"upload\\img\\{photo}"

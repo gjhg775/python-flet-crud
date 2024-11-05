@@ -1,9 +1,10 @@
+import time
 import datetime
 import locale
 import flet as ft
 import settings
 import sqlite3
-from datatable import conn, get_configuration, tblRegistro, tblCuadre
+from datatable import get_connection, get_configuration, tblRegistro, tblCuadre
 
 # conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
@@ -55,101 +56,174 @@ def Closing_day(page):
 
     def cancel(e):
         close_dlg(e)
+        # date_picker.value=None
+        # date_picker.current_date=date_picker.value
         fecha.hint_text="dd/mm/aaaa"
-        fecha.update()
+        if settings.tipo_app == 0:
+            page.update()
+        else:
+            settings.page.update()
 
     def close_day(e):
-        dia=fecha.hint_text
-        if dia != "dd/mm/aaaa":
+        # if fecha.hint_text != "dd/mm/aaaa":
+        if date_picker.current_date == date_picker.value:
             title="Cierre de día"
             message="Desea cerrar el día ?"
             open_dlg_modal(e, title, message)
     
     def closing_day(e):
-        close_dlg(e)
-        dia=fecha.hint_text
-        if dia != "dd/mm/aaaa":
+        # close_dlg(e)
+        # if fecha.hint_text != "dd/mm/aaaa":
+        if date_picker.current_date == date_picker.value:
+            dia=fecha.hint_text
             cuadre=1
+            conn=get_connection()
             cursor=conn.cursor()
             sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre}"""
             cursor.execute(sql)
             registros=cursor.fetchall()
+            conn.close()
 
             if registros != []:
                 message="El día ya fué cerrado con anterioridad"
                 bg_color="blue"
             else:
                 cuadre=0
+                total=0
+                conn=get_connection()
                 cursor=conn.cursor()
-                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre}"""
+                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre} AND total = {total}"""
                 cursor.execute(sql)
                 registros=cursor.fetchall()
+                conn.close()
 
                 if registros != []:
-                    cuadre=1
-                    total=0
-                    sql=f"""UPDATE registro SET cuadre = ? WHERE strftime('%d/%m/%Y', salida) <= ? AND total > ?"""
-                    values=(f"{cuadre}", f"{dia}", f"{total}")
-                    cursor.execute(sql, values)
-                    conn.commit()
-
-                    # fecha.value=""
-                    # fecha.update()
-
-                    message="Cierre de día realizado satisfactoriamente"
-                    bg_color="green"
-                    tblRegistro.height=60
-                    tblCuadre.height=60
+                    message=f"No se han registrado salidas"
+                    bg_color="orange"
                 else:
-                    message="Día a cerrar no encontrado ó ya está cerrado. Favor verificar"
-                    bg_color="red"
+                    conn=get_connection()
+                    cursor=conn.cursor()
+                    sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre} AND total > {total}"""
+                    cursor.execute(sql)
+                    registros=cursor.fetchall()
+                    conn.close()
 
-            fecha.hint_text="dd/mm/aaaa"
+                    if registros != []:
+                        cuadre=1
+                        # total=0
+                        conn=get_connection()
+                        cursor=conn.cursor()
+                        sql=f"""UPDATE registro SET cuadre = {cuadre} WHERE strftime('%d/%m/%Y', salida) <= '{dia}' AND total > {total}"""
+                        # values=({cuadre}, f'{dia}', {total})
+                        cursor.execute(sql)
+                        conn.commit()
+                        conn.close()
+
+                        # fecha.value=""
+                        # fecha.update()
+
+                        message="Cierre de día realizado satisfactoriamente"
+                        bg_color="green"
+                        tblRegistro.height=60
+                        tblCuadre.height=60
+                    else:
+                        message="Día a cerrar no encontrado. Favor verificar"
+                        bg_color="red"
+
+        date_picker.value=None
+        date_picker.current_date=date_picker.value
+        # fecha.hint_text="dd/mm/aaaa"
+        # if settings.tipo_app == 0:
+        # fecha.update()
+        # date_button.focus()
+
+        snack_bar=ft.SnackBar(
+            ft.Text(message, color="white", text_align="center"),
+            bgcolor=bg_color,
+            open=True
+        )
+        
+        if settings.tipo_app == 0:
             fecha.update()
-            date_button.focus()
-
-            snack_bar=ft.SnackBar(
-                ft.Text(message, color="white", text_align="center"),
-                bgcolor=bg_color,
-                open=True
-            )
+            # date_button.focus()
             page.overlay.append(snack_bar)
             # page.snack_bar.open=True
             page.update()
-
-    def page_resize(e):
-        if page.window.width <= 425:
-            settings.textsize=30
-        elif page.window.width > 425 and page.window.width <= 678:
-            settings.textsize=50
-        elif page.window.width >= 768 and page.window.width < 992:
-            settings.textsize=70
-        elif page.window.width >= 992 and page.window.width <= 1400:
-            settings.textsize=90
-        if settings.tipo_app == 0:
-            fecha.text_size=settings.textsize
         else:
-            textsize=settings.textsize
-            textsize=settings.textsize
-        fecha.update()
-        page.update()
+            settings.page.overlay.append(snack_bar)
+            # bgcolor=bg_color
+            # settings.message=message
+            # settings.showMessage(bgcolor)
+            # # date_button.focus()
+            settings.page.update()
+
+        time.sleep(4)
+
+        fecha.hint_text="dd/mm/aaaa"
+        if settings.tipo_app == 0:
+            page.update()
+        else:
+            settings.page.update()
+    
+    def page_resize(e):
+        if settings.tipo_app == 0:
+            if page.window.width <= 425:
+                settings.textsize=30
+            elif page.window.width > 425 and page.window.width <= 678:
+                settings.textsize=50
+            elif page.window.width >= 768 and page.window.width < 992:
+                settings.textsize=70
+            elif page.window.width >= 992 and page.window.width <= 1400:
+                settings.textsize=90
+            if settings.tipo_app == 0:
+                fecha.text_size=settings.textsize
+            else:
+                textsize=settings.textsize
+                textsize=settings.textsize
+            fecha.update()
+            page.update()
+        else:
+            if settings.page.window.width <= 425:
+                settings.textsize=30
+            elif settings.page.window.width > 425 and settings.page.window.width <= 678:
+                settings.textsize=50
+            elif settings.page.window.width >= 768 and settings.page.window.width < 992:
+                settings.textsize=70
+            elif settings.page.window.width >= 992 and settings.page.window.width <= 1400:
+                settings.textsize=90
+            if settings.tipo_app == 0:
+                fecha.text_size=settings.textsize
+            else:
+                textsize=settings.textsize
+                textsize=settings.textsize
+            settings.page.update()
+
+    def dismiss_date(e):
+        close_dlg(e)
+        date_picker.value=None
+        date_picker.current_date=date_picker.value
 
     def change_date(e):
-        fecha_cierre=str(date_picker.value)
-        fecha_cierre=fecha_cierre.split(" ")
-        fecha_cierre=fecha_cierre[0]
-        fecha_cierre=fecha_cierre.split("-")
-        ano=fecha_cierre[0]
-        mes=fecha_cierre[1]
-        dia=fecha_cierre[2]
-        fecha.hint_text=dia + "/" + mes + "/" + ano
-        fecha.update()
+        date_picker.current_date=date_picker.value
+        fecha_cierre=date_picker.value.strftime('%d/%m/%Y')
+        fecha.hint_text=fecha_cierre
+        # fecha_cierre=fecha_cierre.split(" ")
+        # fecha_cierre=fecha_cierre[0]
+        # fecha_cierre=fecha_cierre.split("-")
+        # ano=fecha_cierre[0]
+        # mes=fecha_cierre[1]
+        # dia=fecha_cierre[2]
+        # fecha.hint_text=dia + "/" + mes + "/" + ano
+        if settings.tipo_app == 0:
+            fecha.update()
         # fecha.value=dia + "/" + mes + "/" + ano
         # fecha.focus()
         if settings.tipo_app == 1:
-            date_button.focus()
+            settings.page.update()
+            # date_button.focus()
         # print(f"Date picker changed, value is {date_picker.value}")
-        close_day(e)
+        # close_day(e)
+        closing_day(e)
 
     # def date_picker_dismissed(e):
     #     print(f"Date picker dismissed, value is {date_picker.value}")
@@ -158,13 +232,15 @@ def Closing_day(page):
         confirm_text="Aceptar",
         field_label_text="Ingresa una fecha",
         on_change=change_date,
-        # on_dismiss=date_picker_dismissed,
+        on_dismiss=dismiss_date,
         first_date=datetime.datetime(2024, 7, 1),
         last_date=datetime.datetime(2099, 10, 1),
     )
 
     if settings.tipo_app == 0:
         page.overlay.append(date_picker)
+    else:
+        settings.page.overlay.append(date_picker)
 
     date_button=ft.ElevatedButton(
         "Cierre de día",
@@ -172,21 +248,25 @@ def Closing_day(page):
         width=280,
         bgcolor=ft.colors.BLUE_900,
         color="white",
-        on_click=lambda _: page.open(date_picker),
+        on_click=lambda _: page.open(date_picker) if settings.tipo_app == 0 else settings.page.open(date_picker),
     )
 
-    btn_cierre=ft.ElevatedButton(
-        text="Cerrar día",
-        icon=ft.icons.CALENDAR_MONTH,
-        width=280,
-        bgcolor=ft.colors.BLUE_900,
-        color="white",
-        on_click=close_day)
+    # btn_cierre=ft.ElevatedButton(
+    #     text="Cerrar día",
+    #     icon=ft.icons.CALENDAR_MONTH,
+    #     width=280,
+    #     bgcolor=ft.colors.BLUE_900,
+    #     color="white",
+    #     on_click=close_day)
 
     def close_dlg(e):
         dlg_modal.open=False
-        dlg_modal.update()
+        # dlg_modal.update()
         # total.update()
+        if settings.tipo_app == 0:
+            page.update()
+        else:
+            settings.page.update()
 
     def open_dlg_modal(e, title, message):
         # dlg_modal.title=ft.Text(title, text_align="center")
@@ -198,8 +278,12 @@ def Closing_day(page):
         )
         dlg_modal.content=ft.Text(message, text_align="center")
         dlg_modal.open=True
-        # page.overlay.append(dlg_modal)
-        dlg_modal.update()
+        if settings.tipo_app == 0:
+            page.overlay.append(dlg_modal)
+            page.update()
+        else:
+            settings.page.overlay.append(dlg_modal)
+            settings.page.update()
 
     dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
@@ -209,14 +293,15 @@ def Closing_day(page):
         # content=ft.Text(message, text_align="center"),
         actions=[
             ft.TextButton("Sí", on_click=closing_day),
-            ft.TextButton("No", autofocus=True, on_click=cancel)
+            ft.TextButton("No", on_click=cancel, autofocus=True)
         ],
         actions_alignment=ft.MainAxisAlignment.END,
-        on_dismiss=lambda _: date_button.focus(),
+        # on_dismiss=lambda _: date_button.focus(),
     )
 
-    if settings.tipo_app == 0:
-        page.overlay.append(dlg_modal)
+    # if settings.tipo_app == 0:
+    #     page.overlay.append(dlg_modal)
+    #     page.update()
     
     if settings.tipo_app == 0:
         page.on_resized=page_resize
@@ -230,7 +315,16 @@ def Closing_day(page):
         elif page.window.width >= 992:
             textsize=90
     else:
-        textsize=90
+        settings.page.on_resized=page_resize
+
+        if settings.page.window.width <= 425:
+            textsize=30
+        elif settings.page.window.width > 425 and settings.page.window.width <= 678:
+            textsize=50
+        elif settings.page.window.width >= 768 and settings.page.window.width < 992:
+            textsize=70
+        elif settings.page.window.width >= 992:
+            textsize=90
 
     # fecha=ft.TextField(hint_text="dd/mm/aaaa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=close_day)
     # fecha=ft.Text("dd/mm/aaaa", size=textsize, width=600, text_align="center")

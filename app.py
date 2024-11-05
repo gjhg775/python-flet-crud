@@ -7,16 +7,34 @@ try:
     from views import views_handler
 except Exception as e:
     print(e)
-from pages.login import Login
-from pages.profile import Profile
-from pages.home import Home
-from pages.users import Users
+try:
+    from pages.login import Login
+except Exception as e:
+    print(e)
+try:
+    from pages.profile import Profile
+except Exception as e:
+    print(e)
+try:
+    from pages.home import Home
+except Exception as e:
+    print(e)
+try:
+    from pages.users import Users
+except Exception as e:
+    print(e)
 try:
     from pages.configuration import Configuration
 except Exception as e:
     print(e)
-from pages.variables import Variables
-from pages.register import *
+try:
+    from pages.variables import Variables
+except Exception as e:
+    print(e)
+try:
+    from pages.register import *
+except Exception as e:
+    print(e)
 try:
     from pages.cash_register import *
 except Exception as e:
@@ -961,7 +979,6 @@ else:
             self.page.padding=10
             self.page.add()
 
-
             # snack_bar=ft.SnackBar(
             #     ft.Text(message, text_align="center"),
             #     bgcolor=bgcolor,
@@ -987,16 +1004,16 @@ else:
             # }
 
             self.routes = {
-                "/": 0,
-                "/users": 1,
-                "/configuration": 2,
-                "/variables": 3,
-                "/register": 4,
-                "/cash_register": 5,
-                "/closing_day": 6,
-                "/developer": 7,
-                # "/cerrar_sesion": 8,
-                "/login": 8
+                "/profile": 0,
+                "/": 1,
+                "/users": 2,
+                "/configuration": 3,
+                "/variables": 4,
+                "/register": 5,
+                "/cash_register": 6,
+                "/closing_day": 7,
+                "/developer": 8,
+                "/login": 9,
             }
 
             self.color_container=ft.colors.BLUE_900
@@ -1009,16 +1026,19 @@ else:
             # self.animation_style=ft.animation.Animation(400, ft.AnimationCurve.EASE_IN_TO_LINEAR)
             self.animation_style=ft.animation.Animation(100, ft.AnimationCurve.EASE_IN_TO_LINEAR)
 
-            self.label_0=ft.Text("Inicio", color=self.color_icons_dark, width=120)
-            self.label_1=ft.Text("Usuarios", color=self.color_icons_dark, width=120)
-            self.label_2=ft.Text("Configuración", color=self.color_icons_dark, width=120)
-            self.label_3=ft.Text("Variables", color=self.color_icons_dark, width=120)
-            self.label_4=ft.Text("Registro", color=self.color_icons_dark, width=120)
-            self.label_5=ft.Text("Cuadre de caja", color=self.color_icons_dark, width=120)
-            self.label_6=ft.Text("Cierre de día", color=self.color_icons_dark, width=120)
-            self.label_7=ft.Text("Desarrollador", color=self.color_icons_dark, width=120)
-            self.label_8=ft.Text("Cerrar sesión", color=self.color_icons_dark, width=120)
+            settings.label_0.color=self.color_icons_dark
+            # settings.label_0=ft.Text(settings.user_auth, color=self.color_icons_dark)
+            self.label_1=ft.Text("Inicio", color=self.color_icons_dark, width=120)
+            self.label_2=ft.Text("Usuarios", color=self.color_icons_dark, width=120)
+            self.label_3=ft.Text("Configuración", color=self.color_icons_dark, width=120)
+            self.label_4=ft.Text("Variables", color=self.color_icons_dark, width=120)
+            self.label_5=ft.Text("Registro", color=self.color_icons_dark, width=120)
+            self.label_6=ft.Text("Cuadre de caja", color=self.color_icons_dark, width=120)
+            self.label_7=ft.Text("Cierre de día", color=self.color_icons_dark, width=120)
+            self.label_8=ft.Text("Desarrollador", color=self.color_icons_dark, width=120)
+            self.label_9=ft.Text("Cerrar sesión", color=self.color_icons_dark, width=120)
             self.label_title=ft.Text("Parqueadero", color=self.color_icons_dark, size=30)
+            self.logo=ft.Image(src=f"/img/parqueadero.png", height=50, width=50, fit=ft.ImageFit.COVER, border_radius=150)
 
             self.mode_switch=ft.Switch(value=True, on_change=self.mode_change_update)
 
@@ -1087,7 +1107,7 @@ else:
                 content=ft.Column(
                     scroll="auto",
                     controls=[
-                        # ft.Text("Configuración"),
+                        # ft.Text("Usuarios"),
                         # ft.Container(
                         #     border_radius=20,
                         # )
@@ -1102,8 +1122,9 @@ else:
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
-                        # ft.Text("Variables"),
+                        # ft.Text("Configuración"),
                         # ft.Container(
                         #     border_radius=20,
                         # )
@@ -1119,7 +1140,7 @@ else:
                 padding=10,
                 content=ft.Column(
                     controls=[
-                        # ft.Text("Registro"),
+                        # ft.Text("Variables"),
                         # ft.Container(
                         #     border_radius=20,
                         # )
@@ -1135,7 +1156,7 @@ else:
                 padding=10,
                 content=ft.Column(
                     controls=[
-                        # ft.Text("Cuadre de caja"),
+                        # ft.Text("Registro"),
                         # ft.Container(
                         #     border_radius=20,
                         # )
@@ -1151,7 +1172,7 @@ else:
                 padding=10,
                 content=ft.Column(
                     controls=[
-                        # ft.Text("Cierre de día"),
+                        # ft.Text("Cuadre de caja"),
                         # ft.Container(
                         #     border_radius=20,
                         # )
@@ -1167,7 +1188,7 @@ else:
                 padding=10,
                 content=ft.Column(
                     controls=[
-                        # ft.Text("Desarrollador"),
+                        # ft.Text("Cierre de día"),
                         # ft.Container(
                         #     border_radius=20,
                         # )
@@ -1176,6 +1197,22 @@ else:
             )
 
             self.container_8=ft.Container(
+                # bgcolor=self.color_container,
+                offset=ft.transform.Offset(0, 0),
+                # animate_offset=self.animation_style,
+                border_radius=10,
+                padding=10,
+                content=ft.Column(
+                    controls=[
+                        # ft.Text("Desarrollador"),
+                        # ft.Container(
+                        #     border_radius=20,
+                        # )
+                    ]
+                )
+            )
+
+            self.container_9=ft.Container(
                 # bgcolor=self.color_container,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
@@ -1201,26 +1238,36 @@ else:
                 6:self.container_6,
                 7:self.container_7,
                 8:self.container_8,
+                9:self.container_9,
             }
 
             self.option_0=ft.Container(
-                bgcolor=self.color_items,
-                border_radius=ft.border_radius.only(top_left=0,
-                                            top_right=20,
-                                            bottom_left=0,
-                                            bottom_right=20),
-                animate_scale=self.animation_style,
-                on_click=lambda e: self.change_page(e, 0),
-                on_hover=lambda e: self.on_hover_change(e, 0),
-                height=40,
-                padding=10,
+                # bgcolor=self.color_items,
+                # border_radius=ft.border_radius.only(top_left=0,
+                #                             top_right=20,
+                #                             bottom_left=0,
+                #                             bottom_right=20),
+                # animate_scale=self.animation_style,
+                # on_click=lambda e: self.change_page(e, 0),
+                # on_hover=lambda e: self.on_hover_change(e, 0),
+                # height=40,
+                # padding=10,
                 content=ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=20,
+                    # spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.HOME, color=self.color_icons_dark),
-                        # ft.Text("Inicio", width=120)
-                        self.label_0
+                        ft.Container(
+                            # padding=ft.padding.only(top=10),
+                            # on_click=lambda e: profile(e),
+                            on_click=lambda e: self.change_page(e, 0),
+                            # on_hover=lambda e: self.on_hover_change(e, 0),
+                            content=ft.Column([
+                                settings.user_avatar,
+                                settings.label_0
+                            ],
+                            horizontal_alignment="center"
+                            ),
+                        ),
                     ],
                 )
             )
@@ -1240,7 +1287,7 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.PERSON_ROUNDED, color=self.color_icons_dark),
+                        ft.Icon(ft.icons.HOME, color=self.color_icons_dark),
                         # ft.Text("Usuarios", width=120)
                         self.label_1
                     ]
@@ -1262,8 +1309,8 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.SETTINGS, color=self.color_icons_dark),
-                        # ft.Text("Configuración", width=120)
+                        ft.Icon(ft.icons.PERSON_ROUNDED, color=self.color_icons_dark),
+                        # ft.Text("Usuarios", width=120)
                         self.label_2
                     ]
                 )
@@ -1284,8 +1331,8 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.FACT_CHECK, color=self.color_icons_dark),
-                        # ft.Text("Variables", width=120)
+                        ft.Icon(ft.icons.SETTINGS, color=self.color_icons_dark),
+                        # ft.Text("Configuración", width=120)
                         self.label_3
                     ]
                 )
@@ -1306,8 +1353,8 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.EDIT_ROUNDED, color=self.color_icons_dark),
-                        # ft.Text("Registro", width=120)
+                        ft.Icon(ft.icons.FACT_CHECK, color=self.color_icons_dark),
+                        # ft.Text("Variables", width=120)
                         self.label_4
                     ]
                 )
@@ -1328,8 +1375,8 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.ATTACH_MONEY_SHARP, color=self.color_icons_dark),
-                        # ft.Text("Cuadre de caja", width=120)
+                        ft.Icon(ft.icons.EDIT_ROUNDED, color=self.color_icons_dark),
+                        # ft.Text("Registro", width=120)
                         self.label_5
                     ]
                 )
@@ -1350,8 +1397,8 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.CALENDAR_MONTH, color=self.color_icons_dark),
-                        # ft.Text("Cierre de día", width=120)
+                        ft.Icon(ft.icons.ATTACH_MONEY_SHARP, color=self.color_icons_dark),
+                        # ft.Text("Cuadre de caja", width=120)
                         self.label_6
                     ]
                 )
@@ -1372,8 +1419,8 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.CODE_ROUNDED, color=self.color_icons_dark),
-                        # ft.Text("Desarrollador", width=120)
+                        ft.Icon(ft.icons.CALENDAR_MONTH, color=self.color_icons_dark),
+                        # ft.Text("Cierre de día", width=120)
                         self.label_7
                     ]
                 )
@@ -1387,7 +1434,6 @@ else:
                                             bottom_right=20),
                 animate_scale=self.animation_style,
                 on_click=lambda e: self.change_page(e, 8),
-                # on_click=lambda e: self.logout(e),
                 on_hover=lambda e: self.on_hover_change(e, 8),
                 height=40,
                 padding=10,
@@ -1395,9 +1441,31 @@ else:
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=20,
                     controls=[
-                        ft.Icon(ft.icons.POWER_SETTINGS_NEW, color=self.color_icons_dark),
-                        # ft.Text("Cerrar sesión", width=120)
+                        ft.Icon(ft.icons.CODE_ROUNDED, color=self.color_icons_dark),
+                        # ft.Text("Desarrollador", width=120)
                         self.label_8
+                    ]
+                )
+            )
+
+            self.option_9=ft.Container(
+                bgcolor=self.color_items,
+                border_radius=ft.border_radius.only(top_left=0,
+                                            top_right=20,
+                                            bottom_left=0,
+                                            bottom_right=20),
+                animate_scale=self.animation_style,
+                on_click=lambda e: self.change_page(e, 9),
+                on_hover=lambda e: self.on_hover_change(e, 9),
+                height=40,
+                padding=10,
+                content=ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=20,
+                    controls=[
+                        ft.Icon(ft.icons.POWER_SETTINGS_NEW, color=self.color_icons_dark),
+                        # ft.Text("Desarrollador", width=120)
+                        self.label_9
                     ]
                 )
             )
@@ -1409,7 +1477,12 @@ else:
                 border_radius=10,
                 alignment=ft.alignment.center,
                 # content=ft.Text("Parqueadero", color=self.color_icons_dark, size=30)
-                content=self.label_title
+                content=ft.Row([
+                    self.logo,
+                    self.label_title
+                ],
+                alignment=ft.MainAxisAlignment.CENTER
+                )
             )
 
             self.navigation=ft.Container(
@@ -1421,6 +1494,25 @@ else:
                 content=ft.Column(
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
+                        # ft.Column([
+                        #     ft.Container(height=5),
+                        #     settings.user_avatar,
+                        #     settings.user_auth,
+                        # ],
+                        # horizontal_alignment="center"
+                        # ),
+                        # ft.Container(
+                        #     padding=ft.padding.only(top=10),
+                        #     # on_click=lambda e: profile(e),
+                        #     on_click=lambda e: self.change_page(e, 9),
+                        #     # on_hover=lambda e: self.on_hover_change(e, 9),
+                        #     content=ft.Column([
+                        #         settings.user_avatar,
+                        #         self.label_user_auth
+                        #     ],
+                        #     horizontal_alignment="center"
+                        #     ),
+                        # ),
                         ft.Container(
                         expand=True,
                         content=ft.Column(
@@ -1436,6 +1528,7 @@ else:
                                 self.option_6,
                                 self.option_7,
                                 self.option_8,
+                                self.option_9,
                             ]
                         )
                     ),
@@ -1457,6 +1550,7 @@ else:
                         self.container_6,
                         self.container_7,
                         self.container_8,
+                        self.container_9,
                     ]
                 )
             )
@@ -1511,6 +1605,8 @@ else:
                 option = self.option_7
             if index == 8:
                 option = self.option_8
+            if index == 9:
+                option = self.option_9
             if e.data == "true":
                 option.bgcolor = self.hover_color if option.bgcolor != self.color_selected_item else self.color_selected_item # Color al hacer hover
             else:
@@ -1529,15 +1625,24 @@ else:
 
             if self.navigation.width == 200:
                 self.navigation.width=70
+                # settings.user_auth.visible=False
+                settings.user_avatar.height=50
+                settings.user_avatar.width=50
+                settings.label_0.visible=False
             else:
                 self.navigation.width=200
+                # settings.user_auth.visible=True
+                settings.user_avatar.height=70
+                settings.user_avatar.width=70
+                settings.label_0.visible=True
             self.btn_home.update()
             self.navigation.update()
 
         def mode_change_update(self, e):
             if e.control.value:
                 self.page.theme_mode=ft.ThemeMode.LIGHT
-                self.option_0.content.controls[0].color=self.color_icons_dark
+                # settings.user_auth.color=self.color_icons_dark
+                # self.option_0.content.controls[0].color=self.color_icons_dark
                 self.option_1.content.controls[0].color=self.color_icons_dark
                 self.option_2.content.controls[0].color=self.color_icons_dark
                 self.option_3.content.controls[0].color=self.color_icons_dark
@@ -1546,8 +1651,9 @@ else:
                 self.option_6.content.controls[0].color=self.color_icons_dark
                 self.option_7.content.controls[0].color=self.color_icons_dark
                 self.option_8.content.controls[0].color=self.color_icons_dark
+                self.option_9.content.controls[0].color=self.color_icons_dark
                 self.btn_home.content.icon_color=self.color_icons_dark
-                self.label_0.color=self.color_icons_dark
+                settings.label_0.color=self.color_icons_dark
                 self.label_1.color=self.color_icons_dark
                 self.label_2.color=self.color_icons_dark
                 self.label_3.color=self.color_icons_dark
@@ -1556,10 +1662,12 @@ else:
                 self.label_6.color=self.color_icons_dark
                 self.label_7.color=self.color_icons_dark
                 self.label_8.color=self.color_icons_dark
+                self.label_9.color=self.color_icons_dark
                 self.label_title.color=self.color_icons_dark
             else:
                 self.page.theme_mode=ft.ThemeMode.DARK
-                self.option_0.content.controls[0].color=self.color_icons_light
+                # settings.user_auth.color=self.color_icons_light
+                # self.option_0.content.controls[0].color=self.color_icons_light
                 self.option_1.content.controls[0].color=self.color_icons_light
                 self.option_2.content.controls[0].color=self.color_icons_light
                 self.option_3.content.controls[0].color=self.color_icons_light
@@ -1568,8 +1676,9 @@ else:
                 self.option_6.content.controls[0].color=self.color_icons_light
                 self.option_7.content.controls[0].color=self.color_icons_light
                 self.option_8.content.controls[0].color=self.color_icons_light
+                self.option_9.content.controls[0].color=self.color_icons_light
                 self.btn_home.content.icon_color=self.color_icons_light
-                self.label_0.color=self.color_icons_light
+                settings.label_0.color=self.color_icons_light
                 self.label_1.color=self.color_icons_light
                 self.label_2.color=self.color_icons_light
                 self.label_3.color=self.color_icons_light
@@ -1578,11 +1687,12 @@ else:
                 self.label_6.color=self.color_icons_light
                 self.label_7.color=self.color_icons_light
                 self.label_8.color=self.color_icons_light
+                self.label_9.color=self.color_icons_light
                 self.label_title.color=self.color_icons_light
             self.page.update()
 
         def change_page(self, e, n):
-            if n == 8:
+            if n == 9:
                 self.btn_home.visible=False
                 self.frame_title.visible=False
                 self.navigation.visible=False
@@ -1592,17 +1702,17 @@ else:
                 self.navigation.visible=True
 
             settings.acceso=1
-            if n == 1 and settings.acceso_usuarios == 0:
+            if n == 2 and settings.acceso_usuarios == 0:
                 settings.acceso=0
-            if n == 2 and settings.acceso_configuracion == 0:
+            if n == 3 and settings.acceso_configuracion == 0:
                 settings.acceso=0
-            if n == 3 and settings.acceso_variables == 0:
+            if n == 4 and settings.acceso_variables == 0:
                 settings.acceso=0
-            if n == 4 and settings.acceso_registro == 0:
+            if n == 5 and settings.acceso_registro == 0:
                 settings.acceso=0
-            if n == 5 and settings.acceso_cuadre == 0:
+            if n == 6 and settings.acceso_cuadre == 0:
                 settings.acceso=0
-            if n == 6 and settings.acceso_cierre == 0:
+            if n == 7 and settings.acceso_cierre == 0:
                 settings.acceso=0
 
             if settings.acceso == 1:
@@ -1613,7 +1723,7 @@ else:
                 for pag in self.switch_control:
                     self.switch_control[pag].offset.y=2
                     self.switch_control[pag].update()
-                    self.option_0.bgcolor=self.color_items
+                    # self.option_0.bgcolor=self.color_items
                     self.option_1.bgcolor=self.color_items
                     self.option_2.bgcolor=self.color_items
                     self.option_3.bgcolor=self.color_items
@@ -1622,13 +1732,15 @@ else:
                     self.option_6.bgcolor=self.color_items
                     self.option_7.bgcolor=self.color_items
                     self.option_8.bgcolor=self.color_items
+                    self.option_9.bgcolor=self.color_items
                 if n == 0:
-                    self.option_0.scale=1.2
-                    self.option_0.bgcolor=self.color_selected_item
-                    self.option_0.update()
+                    # self.option_0.scale=1.2
+                    # self.option_0.bgcolor=self.color_selected_item
+                    # self.option_0.update()
                     
-                    self.container_0.content.controls.clear()
-                    self.container_0.content.controls.append(Home(pag))
+                    # self.container_0.content.controls.clear()
+                    self.container_0.content.controls=[]
+                    self.container_0.content.controls.append(Profile(pag))
                     self.container_0.update()
                 elif n == 1:
                     self.option_1.scale=1.2
@@ -1637,7 +1749,7 @@ else:
 
                     # self.container_1.content.controls.clear()
                     self.container_1.content.controls=[]
-                    self.container_1.content.controls.append(Users(pag))
+                    self.container_1.content.controls.append(Home(pag))
                     self.container_1.update()
                 elif n == 2:
                     self.option_2.scale=1.2
@@ -1646,7 +1758,7 @@ else:
 
                     # self.container_2.content.controls.clear()
                     self.container_2.content.controls=[]
-                    self.container_2.content.controls.append(Configuration(pag))
+                    self.container_2.content.controls.append(Users(pag))
                     self.container_2.update()
                 elif n == 3:
                     self.option_3.scale=1.2
@@ -1655,7 +1767,7 @@ else:
 
                     # self.container_3.content.controls.clear()
                     self.container_3.content.controls=[]
-                    self.container_3.content.controls.append(Variables(pag))
+                    self.container_3.content.controls.append(Configuration(pag))
                     self.container_3.update()
                 elif n == 4:
                     self.option_4.scale=1.2
@@ -1664,7 +1776,7 @@ else:
 
                     # self.container_4.content.controls.clear()
                     self.container_4.content.controls=[]
-                    self.container_4.content.controls.append(Register(pag))
+                    self.container_4.content.controls.append(Variables(pag))
                     self.container_4.update()
                 elif n == 5:
                     self.option_5.scale=1.2
@@ -1673,7 +1785,7 @@ else:
 
                     # self.container_5.content.controls.clear()
                     self.container_5.content.controls=[]
-                    self.container_5.content.controls.append(Cash_register(pag))
+                    self.container_5.content.controls.append(Register(pag))
                     self.container_5.update()
                 elif n == 6:
                     self.option_6.scale=1.2
@@ -1682,7 +1794,7 @@ else:
 
                     # self.container_6.content.controls.clear()
                     self.container_6.content.controls=[]
-                    self.container_6.content.controls.append(Closing_day(pag))
+                    self.container_6.content.controls.append(Cash_register(pag))
                     self.container_6.update()
                 elif n == 7:
                     self.option_7.scale=1.2
@@ -1691,22 +1803,33 @@ else:
 
                     # self.container_7.content.controls.clear()
                     self.container_7.content.controls=[]
-                    self.container_7.content.controls.append(Developer(pag))
+                    self.container_7.content.controls.append(Closing_day(pag))
                     self.container_7.update()
                 elif n == 8:
                     self.option_8.scale=1.2
                     self.option_8.bgcolor=self.color_selected_item
                     self.option_8.update()
 
+                    # self.container_8.content.controls.clear()
+                    self.container_8.content.controls=[]
+                    self.container_8.content.controls.append(Developer(pag))
+                    self.container_8.update()
+                elif n == 9:
+                    self.option_9.scale=1.2
+                    self.option_9.bgcolor=self.color_selected_item
+                    self.option_9.update()
+
                     # user.value=""
                     # password.value=""
                     settings.username=""
                     settings.password=""
+                    settings.user_avatar.src=f"img/default.jpg"
+                    settings.label_0.value=""
                     self.page.session.clear()
-                    # self.container_8.content.controls.clear()
-                    self.container_8.content.controls=[]
-                    self.container_8.content.controls.append(Login(pag))
-                    self.container_8.update()
+                    # self.container_9.content.controls.clear()
+                    self.container_9.content.controls=[]
+                    self.container_9.content.controls.append(Login(pag))
+                    self.container_9.update()
 
                 self.switch_control[n].offset.y=0
                 self.switch_control[n].update()
@@ -1723,6 +1846,7 @@ else:
                 self.option_6.scale=1
                 self.option_7.scale=1
                 self.option_8.scale=1
+                self.option_9.scale=1
 
                 self.page.update()
                 settings.page=self.page
@@ -1743,14 +1867,14 @@ else:
                     self.page.go("/")
                     self.change_page(None, 0)
             else:
-                self.change_page(None, 8)
+                self.change_page(None, 9)
         
         # def logout(self, e):
         #     # user.value=""
         #     # password.value=""
         #     # page.session.clear()
         #     self.page.go("/login")
-        #     self.change_page(None, 8)
+        #     self.change_page(None, 9)
 
 # if __name__ == "__main__":
 if settings.tipo_app == 0:

@@ -4,7 +4,7 @@ import flet as ft
 import settings
 import sqlite3
 from pages.receipt import show_cash_register, show_cash_register2
-from datatable import conn, tblCuadre, tbc, get_configuration, get_variables, selectCashRegister
+from datatable import tblCuadre, tbc, get_connection, get_configuration, selectCashRegister
 
 # conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
@@ -57,10 +57,12 @@ def Cash_register(page):
     def cash_register(e):
         total=0
         cuadre=0
+        conn=get_connection()
         cursor=conn.cursor()
         sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total > {total} AND cuadre = {cuadre}"""
         cursor.execute(sql)
         registros=cursor.fetchall()
+        conn.close()
 
         sw=0
 
@@ -70,9 +72,12 @@ def Cash_register(page):
 
         time.sleep(0.1)
         
+        conn=get_connection()
+        cursor=conn.cursor()
         sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = {total} AND cuadre = {cuadre}"""
         cursor.execute(sql)
         registros=cursor.fetchall()
+        conn.close()
 
         if registros != []:
             show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros)

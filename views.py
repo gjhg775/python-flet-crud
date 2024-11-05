@@ -18,7 +18,7 @@ def views_handler(page):
                 Home(page)
             ],
         ),
-        "/profile":ft.View(
+         "/profile":ft.View(
             route="/profile",
             controls=[
                 Profile(page)

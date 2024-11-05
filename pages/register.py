@@ -15,7 +15,7 @@ from decouple import config
 from mail import send_mail_billing
 from time import sleep
 from pages.receipt import show_input, show_output
-from datatable import tblRegistro, tb, get_configuration, get_variables, selectRegisters, selectRegister, exportRegister, update_register_mail, exist_email
+from datatable import tblRegistro, tb, get_configuration, selectRegisters, selectRegister, exportRegister, update_register_mail, exist_email
 
 # conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 
@@ -457,6 +457,10 @@ def Register(page):
                     return False
                 
             exist_email(placa.value)
+
+            if settings.correo_electronico == "":
+                lbl_placa.value=f"Placa {placa.value}"
+                lbl_placa.update()
             
             consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, correo_electronico, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
@@ -494,17 +498,21 @@ def Register(page):
             else:
                 message="Registro actualizado satisfactoriamente"
 
-            placa.value=""
+            # placa.value=""
             vlr_total=locale.currency(vlr_total, grouping=True)
             total.hint_text="Total "+str(vlr_total)
             # card.update()
             total.update()
-            if settings.tipo_app == 0:
-                placa.focus()
+            # if settings.tipo_app == 0:
+            #     placa.focus()
             tb.rows.clear()
             selectRegisters(search)
-            tb.update()
-            tblRegistro.update()
+            if settings.tipo_app == 0:
+                tb.update()
+                # tblRegistro.update()
+                page.update()
+            else:
+                settings.page.update()
 
             bgcolor="green"
             settings.message=message
@@ -524,14 +532,22 @@ def Register(page):
                     time.sleep(2)
 
                     settings.progressBar.visible=True
-                    page.open(dlg_modal3)
-                    page.update()
+                    if settings.tipo_app == 0:
+                        page.open(dlg_modal3)
+                        page.update()
+                    else:
+                        settings.page.open(dlg_modal3)     
+                        settings.page.update()
 
                     send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
                     settings.progressBar.visible=False
-                    page.close(dlg_modal3)
-                    page.update()
+                    if settings.tipo_app == 0:
+                        page.close(dlg_modal3)
+                        page.update()
+                    else:
+                        settings.page.close(dlg_modal3)     
+                        settings.page.update()
 
                     bgcolor="green"
                     message="Correo enviado satisfactoriamente"
@@ -540,13 +556,19 @@ def Register(page):
 
                     time.sleep(2)
 
-            time.sleep(2)
+            # time.sleep(2)
 
+            placa.value=""
+            placa.focus()
             vlr_total=0
             vlr_total=locale.currency(vlr_total, grouping=True)
             total.hint_text="Total "+str(vlr_total)
             # card.update()
-            total.update()
+            if settings.tipo_app == 0:
+                placa.update()
+                total.update()
+            else:
+                settings.page.update()
 
     def validate_email(e):
         dlg_modal4.content.error_text=""
@@ -557,28 +579,48 @@ def Register(page):
             return False
 
     def page_resize(e):
-        if page.window.width <= 425:
-            settings.textsize=30
-        elif page.window.width > 425 and page.window.width <= 678:
-            settings.textsize=50
-        elif page.window.width >= 768 and page.window.width < 992:
-            settings.textsize=70
-        elif page.window.width >= 992 and page.window.width <= 1400:
-            settings.textsize=90
         if settings.tipo_app == 0:
+            if page.window.width <= 425:
+                settings.textsize=30
+            elif page.window.width > 425 and page.window.width <= 678:
+                settings.textsize=50
+            elif page.window.width >= 768 and page.window.width < 992:
+                settings.textsize=70
+            elif page.window.width >= 992 and page.window.width <= 1400:
+                settings.textsize=90
+            # if settings.tipo_app == 0:
             placa.text_size=settings.textsize
             total.text_size=settings.textsize
+            # else:
+            #     textsize=settings.textsize
+            #     textsize=settings.textsize
+            placa.update()
+            total.update()
+            page.update()
         else:
+            if settings.page.window.width <= 425:
+                settings.textsize=30
+            elif settings.page.window.width > 425 and settings.page.window.width <= 678:
+                settings.textsize=50
+            elif settings.page.window.width >= 768 and settings.page.window.width < 992:
+                settings.textsize=70
+            elif settings.page.window.width >= 992 and settings.page.window.width <= 1400:
+                settings.textsize=90
+            # if settings.tipo_app == 0:
+                # placa.text_size=settings.textsize
+                # total.text_size=settings.textsize
+            # else:
             textsize=settings.textsize
             textsize=settings.textsize
-        placa.update()
-        total.update()
-        page.update()
+            settings.page.update()
 
     def close_dlg(e):
         dlg_modal.open=False
-        page.update()
-        total.update()
+        if settings.tipo_app == 0:
+            page.update()
+            total.update()
+        else:
+            settings.page.update()
 
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Row([
@@ -637,11 +679,14 @@ def Register(page):
         fecha_hasta.value="dd/mm/aaaa"
 
     def close_dlg2(e):
-        dlg_modal2.open=False
-        page.update()
-        total.update()
         fecha_desde.value="dd/mm/aaaa"
         fecha_hasta.value="dd/mm/aaaa"
+        dlg_modal2.open=False
+        if settings.tipo_app == 0:
+            page.update()
+            total.update()
+        else:
+            settings.page.update()
 
     def open_dlg_modal2(e):
         if settings.username == "Super Admin" or settings.username == "Admin":
@@ -680,7 +725,10 @@ def Register(page):
             message="No se encontraron registros"
             settings.message=message
             settings.showMessage(bgcolor)
-        tblRegistro.update()
+        if settings.tipo_app == 0:
+            page.update()
+        else:
+            settings.page.update()
         # no_registros.update()
     
     def placa_change(e):
@@ -767,18 +815,36 @@ def Register(page):
             textsize=70
         elif page.window.width >= 992:
             textsize=90
+        page.update()
     else:
-        textsize=90
+        settings.page.on_resized=page_resize
+
+        if settings.page.window.width <= 425:
+            textsize=30
+        elif settings.page.window.width > 425 and settings.page.window.width <= 678:
+            textsize=50
+        elif settings.page.window.width >= 768 and settings.page.window.width < 992:
+            textsize=70
+        elif settings.page.window.width >= 992:
+            textsize=90
+        settings.page.update()
     
-    buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change, on_blur=search_blur)
+    if settings.tipo_app == 0:
+        buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change, on_blur=search_blur)
+    else:
+        buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change, on_blur=search_blur)
     export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
-    placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
+    if settings.tipo_app == 0:
+        placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
+    else:
+        placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_change=placa_change, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", size=24, text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
-    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from))
-    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_to))
+    date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from) if settings.tipo_app == 0 else settings.page.open(date_picker_from))
+    date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_to) if settings.tipo_app == 0 else settings.page.open(date_picker_to))
     correo=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
+    lbl_placa=ft.Text("", size=24, text_align="center")
 
     dlg_modal=ft.AlertDialog(
         bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
@@ -849,8 +915,12 @@ def Register(page):
                 time.sleep(2)
 
                 settings.progressBar.visible=True
-                page.open(dlg_modal3)
-                page.update()
+                if settings.tipo_app == 0:
+                    page.open(dlg_modal3)
+                    page.update()
+                else:
+                    settings.page.open(dlg_modal3)     
+                    settings.page.update()
 
                 update_register_mail(settings.correo_electronico, settings.placa)
                 send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
@@ -859,8 +929,12 @@ def Register(page):
                 correo.update()
 
                 settings.progressBar.visible=False
-                page.close(dlg_modal3)
-                page.update()
+                if settings.tipo_app == 0:
+                    page.close(dlg_modal3)
+                    page.update()
+                else:
+                    settings.page.close(dlg_modal3)     
+                    settings.page.update()
 
                 bgcolor="green"
                 message="Correo enviado satisfactoriamente"
@@ -877,14 +951,17 @@ def Register(page):
     def close_dlg4(e):
         correo.update()
         dlg_modal4.open=False
-        page.update()
+        if settings.tipo_app == 0:
+            page.update()
+        else:
+            settings.page.update()
 
     def open_dlg_modal_email(e):
         dlg_modal4.title=ft.Row([
-                ft.Icon(ft.icons.EMAIL, size=32),
-                ft.Text("Correo electrónico", text_align="center", color=ft.colors.PRIMARY)
-            ],
-            alignment=ft.MainAxisAlignment.CENTER
+            ft.Icon(ft.icons.EMAIL, size=32),
+            ft.Text("Correo electrónico", text_align="center", color=ft.colors.PRIMARY)
+        ],
+        alignment=ft.MainAxisAlignment.CENTER
         )
         # dlg_modal4.title=ft.Text("Correo electrónico", text_align="center")
         # dlg_modal4.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
@@ -899,6 +976,7 @@ def Register(page):
         # content=ft.Text(message, text_align="center"),
         content=correo,
         actions=[
+            lbl_placa,
             ft.TextButton("Enviar", autofocus=True, on_click=sendMailBilling)
         ],
         actions_alignment=ft.MainAxisAlignment.END,
@@ -910,6 +988,11 @@ def Register(page):
         page.overlay.append(dlg_modal2)
         page.overlay.append(dlg_modal3)
         page.overlay.append(dlg_modal4)
+    else:
+        settings.page.overlay.append(dlg_modal)
+        settings.page.overlay.append(dlg_modal2)
+        settings.page.overlay.append(dlg_modal3)
+        settings.page.overlay.append(dlg_modal4)
 
     registros=selectRegisters(search)
     if registros != []:
@@ -922,6 +1005,10 @@ def Register(page):
         message="No se encontraron registros"
         settings.message=message
         settings.showMessage(bgcolor)
+    if settings.tipo_app == 0:
+        page.update()
+    else:
+        settings.page.update()
 
     # card=ft.Card(
     #     margin=ft.margin.only(0, 50, 0, 0),

@@ -1,7 +1,7 @@
 import os
 import sys
 import flet as ft
-import settings
+# import settings
 # from datatable import get_configuration
 
 # parqueadero, regimen=get_configuration()
@@ -120,16 +120,16 @@ import settings
 #         )
 
 def Home(page):
-    if getattr(sys, 'frozen', False):
-        # Si está corriendo como un ejecutable
-        base_path = sys._MEIPASS
-    else:
-        # Si está corriendo como un script en desarrollo
-        base_path = os.path.abspath(".")
+    # if getattr(sys, 'frozen', False):
+    #     # Si está corriendo como un ejecutable
+    #     base_path = sys._MEIPASS
+    # else:
+    #     # Si está corriendo como un script en desarrollo
+    #     base_path = os.path.abspath(".")
 
-    # Para acceder a los archivos en assets o upload:
-    assets_path = os.path.join(base_path, "assets")
-    upload_path = os.path.join(base_path, "upload")
+    # # Para acceder a los archivos en assets o upload:
+    # assets_path = os.path.join(base_path, "assets")
+    # upload_path = os.path.join(base_path, "upload")
         
     # Ejemplo de uso:
     # icon_path = os.path.join(assets_path, "img", "parqueadero.png")

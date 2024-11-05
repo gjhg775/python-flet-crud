@@ -189,7 +189,8 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
                 0
             )
     else:
-        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
+        if settings.preview_register == 1:
+            webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -561,7 +562,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                 0
             )
     else:
-        webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
+        if settings.preview_register == 1:
+            webbrowser.open_new(f"{assets_path}\\receipt\\receipt.pdf")
 
     # ahora=str(datetime.datetime.now())
     # ahora=ahora.split(" ")
@@ -701,7 +703,8 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
                 0
             )
     else:
-        webbrowser.open_new(f"{assets_path}\\receipt\\cash_register.pdf")
+        if settings.preview_cash == 1:
+            webbrowser.open_new(f"{assets_path}\\receipt\\cash_register.pdf")
 
 def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio, registros):
     nit="NIT " + nit
@@ -819,4 +822,5 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
                 0
             )
     else:
-        webbrowser.open_new(f"{assets_path}\\receipt\\cash_register2.pdf")
+        if settings.preview_cash == 1:
+            webbrowser.open_new(f"{assets_path}\\receipt\\cash_register2.pdf")

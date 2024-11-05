@@ -4,7 +4,7 @@ import flet as ft
 import settings
 import sqlite3
 import win32print
-from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, show_access, lblAccesos, tba, tblAccesos
+from datatable import get_connection, get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, show_access, lblAccesos, tba, tblAccesos
 
 # conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 search=""
@@ -197,13 +197,13 @@ def Users(page):
         else:
             tblUsuarios.height=60
             # no_registros.visible=True
-            lblAccesos.value="Accesos"
+            lblAccesos.value="Accesos " + search
             lblAccesos.update()
-            if settings.tipo_app == 0:
-                bgcolor="blue"
-                message="No se encontraron registros"
-                settings.message=message
-                settings.showMessage(bgcolor)
+            # if settings.tipo_app == 0:
+            bgcolor="blue"
+            message="No se encontraron registros"
+            settings.message=message
+            settings.showMessage(bgcolor)
         if settings.tipo_app == 0:
             tblUsuarios.update()
             tblAccesos.update()
@@ -263,8 +263,8 @@ def Users(page):
                     # ft.Column(col={"xs":0, "sm":0, "md":0, "lg":0, "xl":0, "xxl":1}),
                     # ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":3, "xxl":4}),
                     ft.Column(col={"xs":0, "sm":0, "md":0, "lg":1, "xl":1, "xxl":2}),
-                    ft.Column(col={"xs":12, "sm":6, "md":7, "lg":5, "xl":7, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios], alignment=ft.alignment.center_right),
-                    ft.Column(col={"xs":12, "sm":6, "md":5, "lg":5, "xl":3, "xxl":3}, controls=[lblAccesos, tblAccesos]),
+                    ft.Column(col={"xs":12, "sm":6, "md":7, "lg":5, "xl":8, "xxl":5}, controls=[lblUsuarios, buscar, tblUsuarios], alignment=ft.alignment.center_right),
+                    ft.Column(col={"xs":12, "sm":6, "md":5, "lg":5, "xl":2, "xxl":3}, controls=[lblAccesos, tblAccesos]),
                     ft.Column(col={"xs":0, "sm":0, "md":0, "lg":1, "xl":1, "xxl":2}),
                 ]),
                 # ]),

@@ -3,7 +3,7 @@ import flet as ft
 global username, correo_electronico, password, token_password, photo, user_avatar, user_photo, usuario, acceso_usuarios, acceso_configuracion, acceso_variables, acceso_registro, \
        acceso_cuadre, acceso_cierre, textsize, fieldwith, tipo_app, preview_register, print_register_receipt, send_email_register, preview_cash, print_cash_receipt, printer, \
        paper_width, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, billing, clave_tecnica, tipo_ambiente, cliente_final, consecutivo, consecutivo2, \
-       placa, progressRing, correcto, errors, acceso
+       placa, progressRing, correcto, errors, acceso, user_auth
 
 username=""
 correo_electronico=""
@@ -25,6 +25,7 @@ cliente_final=""
 consecutivo=""
 consecutivo2=""
 placa=""
+user_auth=""
 acceso_usuarios=0
 acceso_configuracion=0
 acceso_variables=0
@@ -58,6 +59,8 @@ progressBar=ft.ProgressBar(width=page.width, color="amber", bgcolor="#eeeeee", v
 
 user_avatar=ft.Image(src=f"/img/{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
 user_photo=ft.Image(src=f"/img/{photo}", height=200, width=200, fit=ft.ImageFit.COVER, border_radius=150)
+
+label_0=ft.Text()
 
 # if tipo_app == 0:
 #     user_avatar=ft.Image(src=f"img\\{photo}", height=70, width=70, fit=ft.ImageFit.COVER, border_radius=150)
