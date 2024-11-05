@@ -579,40 +579,19 @@ def Register(page):
             return False
 
     def page_resize(e):
-        if settings.tipo_app == 0:
-            if page.window.width <= 425:
-                settings.textsize=30
-            elif page.window.width > 425 and page.window.width <= 678:
-                settings.textsize=50
-            elif page.window.width >= 768 and page.window.width < 992:
-                settings.textsize=70
-            elif page.window.width >= 992 and page.window.width <= 1400:
-                settings.textsize=90
-            # if settings.tipo_app == 0:
-            placa.text_size=settings.textsize
-            total.text_size=settings.textsize
-            # else:
-            #     textsize=settings.textsize
-            #     textsize=settings.textsize
-            placa.update()
-            total.update()
-            page.update()
-        else:
-            if settings.page.window.width <= 425:
-                settings.textsize=30
-            elif settings.page.window.width > 425 and settings.page.window.width <= 678:
-                settings.textsize=50
-            elif settings.page.window.width >= 768 and settings.page.window.width < 992:
-                settings.textsize=70
-            elif settings.page.window.width >= 992 and settings.page.window.width <= 1400:
-                settings.textsize=90
-            # if settings.tipo_app == 0:
-                # placa.text_size=settings.textsize
-                # total.text_size=settings.textsize
-            # else:
-            textsize=settings.textsize
-            textsize=settings.textsize
-            settings.page.update()
+        if page.window.width <= 425:
+            settings.textsize=30
+        elif page.window.width > 425 and page.window.width <= 678:
+            settings.textsize=50
+        elif page.window.width >= 768 and page.window.width < 992:
+            settings.textsize=70
+        elif page.window.width >= 992 and page.window.width <= 1400:
+            settings.textsize=90
+        placa.text_size=settings.textsize
+        total.text_size=settings.textsize
+        placa.update()
+        total.update()
+        page.update()
 
     def close_dlg(e):
         dlg_modal.open=False
@@ -650,6 +629,8 @@ def Register(page):
             settings.progressBar.visible=True
             settings.page.open(dlg_modal3)
             settings.page.update()
+
+            time.sleep(2)
 
             file_name="register.xlsx"
             df=pd.DataFrame(data, columns=["Factura" if settings.billing == 1 else "Recibo", "Placa", "Entrada", "Salida", "Vehiculo", "Valor", "Tiempo", "Total"])
@@ -815,19 +796,8 @@ def Register(page):
             textsize=70
         elif page.window.width >= 992:
             textsize=90
-        page.update()
     else:
-        settings.page.on_resized=page_resize
-
-        if settings.page.window.width <= 425:
-            textsize=30
-        elif settings.page.window.width > 425 and settings.page.window.width <= 678:
-            textsize=50
-        elif settings.page.window.width >= 768 and settings.page.window.width < 992:
-            textsize=70
-        elif settings.page.window.width >= 992:
-            textsize=90
-        settings.page.update()
+         textsize=90
     
     if settings.tipo_app == 0:
         buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change, on_blur=search_blur)

@@ -103,12 +103,17 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf=FPDF("P", "mm", (settings.paper_width, 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.set_font("helvetica", "", size=20 if settings.paper_width == 80 else 16)
+    pdf.image(f"{assets_path}/img/parqueadero.png", x=2, y=2, w=20, h=20)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
-    pdf.set_x((doc_w - title_w) / 2)
+    # pdf.set_x((doc_w - title_w) / 2)
+    pdf.set_x(23)
     pdf.cell(title_w, 0, title, align="C")
-    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+    if len(parqueadero) <= 12:
+        pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+    else:
+        pdf.set_font("helvetica", "B", size=12)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
     pdf.cell(parqueadero_w, 18, parqueadero, align="C")
@@ -156,13 +161,19 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=98, w=30, h=30)
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
-    if vehiculo == "Moto":
-        # pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
-        pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
-    if vehiculo == "Carro":
-        pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
-    if vehiculo == "Otro":
-        pdf.code39(f"*{placas}*", x=2, y=100, w=2, h=15)
+    if len(placas) == 5:
+        pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
+    elif len(placas) == 6:
+        pdf.code39(f"*{placas}*", x=8, y=100, w=1.5, h=5)
+    else:
+        pdf.code39(f"*{placas}*", x=2, y=100, w=1.2, h=5)
+    # if vehiculo == "Moto":
+    #     # pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
+    #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
+    # if vehiculo == "Carro":
+    #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
+    # if vehiculo == "Otro":
+    #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
     pdf.set_font("helvetica", "", size=8)
     impreso=os.getenv("FOOTER") if settings.billing == 1 else ""
     impreso_w=pdf.get_string_width(impreso)
@@ -392,12 +403,17 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf=FPDF("P", "mm", (settings.paper_width, 150 if settings.billing == 0 else 255))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.set_font("helvetica", "", size=20 if settings.paper_width == 80 else 16)
+    pdf.image(f"{assets_path}/img/parqueadero.png", x=2, y=2, w=20, h=20)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
-    pdf.set_x((doc_w - title_w) / 2)
+    # pdf.set_x((doc_w - title_w) / 2)
+    pdf.set_x(23)
     pdf.cell(title_w, 0, title, align="C")
-    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+    if len(parqueadero) <= 12:
+        pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+    else:
+        pdf.set_font("helvetica", "B", size=12)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
     pdf.cell(parqueadero_w, 18, parqueadero, align="C")
@@ -419,7 +435,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 91, servicio, align="C")
     if settings.billing == 1:
-        pdf.set_font("helvetica", "B", size=15 if settings.paper_width == 80 else 11)
+        pdf.set_font("helvetica", "B", size=14 if settings.paper_width == 80 else 11)
         factura="Factura Electrónica de Venta"
         factura_w=pdf.get_string_width(factura)
         pdf.set_x((doc_w - factura_w) / 2)
@@ -428,7 +444,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         consecutivo1_w=pdf.get_string_width(consecutivo)
         pdf.set_x((doc_w - consecutivo1_w) / 2)
         pdf.cell(consecutivo1_w, 119, consecutivo, align="C")
-        pdf.set_font("helvetica", "", size=13 if settings.paper_width == 80 else 10)
+        pdf.set_font("helvetica", "", size=12 if settings.paper_width == 80 else 10)
         fecha_autoriza1="Desde " + str(fecha_desde) + " Hasta " + str(fecha_hasta)
         fecha_autoriza1_w=pdf.get_string_width(fecha_autoriza1)
         pdf.set_x((doc_w - fecha_autoriza1_w) / 2)
@@ -446,6 +462,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         forma_pago_w=pdf.get_string_width(forma_pago)
         pdf.set_x((doc_w - forma_pago_w) / 2)
         pdf.cell(forma_pago_w, 170, forma_pago, align="C")
+        pdf.set_font("helvetica", "", size=12 if settings.paper_width == 80 else 11)
         generacion=f"Fecha Generación " + generacion
         generacion_w=pdf.get_string_width(generacion)
         pdf.set_x((doc_w - generacion_w) / 2)
@@ -454,6 +471,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         expedicion_w=pdf.get_string_width(expedicion)
         pdf.set_x((doc_w - expedicion_w) / 2)
         pdf.cell(expedicion_w, 198, expedicion, align="C")
+        pdf.set_font("helvetica", "", size=13 if settings.paper_width == 80 else 11)
         cod_cliente=f"Cliente: {settings.cliente_final}"
         cod_cliente_w=pdf.get_string_width(cod_cliente)
         pdf.set_x((doc_w - cod_cliente_w) / 2)
@@ -593,12 +611,17 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     pdf=FPDF("P", "mm", (settings.paper_width, 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.set_font("helvetica", "", size=20)
+    pdf.image(f"{assets_path}/img/parqueadero.png", x=2, y=2, w=20, h=20)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
-    pdf.set_x((doc_w - title_w) / 2)
+    # pdf.set_x((doc_w - title_w) / 2)
+    pdf.set_x(23)
     pdf.cell(title_w, 0, title, align="C")
-    pdf.set_font("helvetica", "B", size=20)
+    if len(parqueadero) <= 12:
+        pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+    else:
+        pdf.set_font("helvetica", "B", size=12)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
     pdf.cell(parqueadero_w, 18, parqueadero, align="C")
@@ -725,12 +748,17 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf=FPDF("P", "mm", (settings.paper_width, 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.set_font("helvetica", "", size=20)
+    pdf.image(f"{assets_path}/img/parqueadero.png", x=2, y=2, w=20, h=20)
+    pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
-    pdf.set_x((doc_w - title_w) / 2)
+    # pdf.set_x((doc_w - title_w) / 2)
+    pdf.set_x(23)
     pdf.cell(title_w, 0, title, align="C")
-    pdf.set_font("helvetica", "B", size=20)
+    if len(parqueadero) <= 12:
+        pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+    else:
+        pdf.set_font("helvetica", "B", size=12)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
     pdf.cell(parqueadero_w, 18, parqueadero, align="C")

@@ -560,8 +560,12 @@ def Configuration(page):
     def autoriza_del_changed(e):
         consecutivo.value = e.control.value
         consecutivo.update()
+    
+    def prefijo_blur(e):
+        prefijo.value=e.control.value.upper()
+        settings.page.update()
 
-    def prefijo_to_upper(e):
+    def prefijo_change(e):
         prefijo.value=e.control.value.upper()
         prefijo.update()
 
@@ -628,7 +632,10 @@ def Configuration(page):
     fecha_hasta=ft.TextField(label="Hasta", hint_text="dd/mm/aaaa", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9/]", replacement_string=""), value=fecha_hasta, read_only=True, disabled=True if settings.billing == 0 else False)
     date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", disabled=True if settings.billing == 0 else False, on_click=lambda e: settings.page.open(date_picker_from))
     date_button_to=ft.ElevatedButton("Hasta", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", disabled=True if settings.billing == 0 else False, on_click=lambda e: settings.page.open(date_picker_to))
-    prefijo=ft.TextField(label="Prefijo", capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[a-zA-Z-]", replacement_string=""), value=prefijo, disabled=True if settings.billing == 0 else False, on_change=prefijo_to_upper)
+    if settings.tipo_app == 0:
+        prefijo=ft.TextField(label="Prefijo", capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[a-zA-Z-]", replacement_string=""), value=prefijo, disabled=True if settings.billing == 0 else False, on_change=prefijo_change)
+    else:
+        prefijo=ft.TextField(label="Prefijo", capitalization="CHARACTERS", value=prefijo, disabled=True if settings.billing == 0 else False, on_blur=prefijo_blur)
     autoriza_del=ft.TextField(label="Autoriza del", value=autoriza_del, input_filter=ft.NumbersOnlyInputFilter(), disabled=True if settings.billing == 0 else False, on_change=autoriza_del_changed)
     autoriza_al=ft.TextField(label="Autoriza al", value=autoriza_al, input_filter=ft.NumbersOnlyInputFilter(), disabled=True if settings.billing == 0 else False)
     clave_tecnica=ft.TextField(label="Clave técnica", value=clave_tecnica, disabled=True if settings.billing == 0 else False)

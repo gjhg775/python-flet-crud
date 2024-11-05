@@ -1,7 +1,7 @@
 import os
 import sys
 import flet as ft
-# import settings
+import settings
 # from datatable import get_configuration
 
 # parqueadero, regimen=get_configuration()
