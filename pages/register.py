@@ -1048,7 +1048,6 @@ def Register(page):
     return ft.Column(
         controls=[
             settings.progressBar,
-            
             ft.Container(height=20),
             ft.Container(
                 alignment=ft.alignment.center,
