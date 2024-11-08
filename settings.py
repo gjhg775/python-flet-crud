@@ -35,7 +35,7 @@ acceso_cierre=0
 acceso=1
 textsize=30
 fieldwith=800
-tipo_app=0 # 0=Escritorio 1=Web
+tipo_app=1 # 0=Escritorio 1=Web
 billing=1
 tipo_ambiente=0
 paper_width=0

@@ -611,56 +611,56 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     pdf=FPDF("P", "mm", (settings.paper_width, 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.image(f"{assets_path}/img/logo_recibo.jpeg", x=2, y=2, w=20, h=20)
+    pdf.image(f"{assets_path}/img/logo_recibo.jpeg", x=4, y=2, w=20, h=20)
     pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
     # pdf.set_x((doc_w - title_w) / 2)
-    pdf.set_x(23)
-    pdf.cell(title_w, 0, title, align="C")
+    pdf.set_x(25)
+    pdf.cell(title_w, 5, title, align="C")
     if len(parqueadero) <= 12:
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     else:
-        pdf.set_font("helvetica", "B", size=12)
+        pdf.set_font("helvetica", "B", size=13)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
-    pdf.cell(parqueadero_w, 18, parqueadero, align="C")
-    pdf.set_font("helvetica", "", size=15)
+    pdf.cell(parqueadero_w, 28, parqueadero, align="C")
+    pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     nit_w=pdf.get_string_width(nit)
     pdf.set_x((doc_w - nit_w) / 2)
-    pdf.cell(nit_w, 35, nit, align="C")
+    pdf.cell(nit_w, 45, nit, align="C")
     regimen_w=pdf.get_string_width(regimen)
     pdf.set_x((doc_w - regimen_w) / 2)
-    pdf.cell(regimen_w, 49, regimen, align="C")
+    pdf.cell(regimen_w, 59, regimen, align="C")
     direccion_w=pdf.get_string_width(direccion)
     pdf.set_x((doc_w - direccion_w) / 2)
-    pdf.cell(direccion_w, 63, direccion, align="C")
+    pdf.cell(direccion_w, 73, direccion, align="C")
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
-    pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.cell(telefono_w, 87, telefono, align="C")
     pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
-    pdf.cell(servicio_w, 91, servicio, align="C")
+    pdf.cell(servicio_w, 101, servicio, align="C")
     pdf.set_font("helvetica", "B", size=20)
     titulo_w=pdf.get_string_width(titulo)
     pdf.set_x((doc_w - titulo_w) / 2)
-    pdf.cell(titulo_w, 105, titulo, align="C")
+    pdf.cell(titulo_w, 115, titulo, align="C")
     pdf.set_font("helvetica", "", size=15)
     registro_w=pdf.get_string_width(registro)
     pdf.set_x((doc_w - registro_w) / 2)
-    pdf.cell(registro_w, 119, registro, align="C")
-    pdf.set_font("helvetica", "", size=10)
+    pdf.cell(registro_w, 129, registro, align="C")
+    pdf.set_font("helvetica", "", size=14)
     fecha_w=pdf.get_string_width(fecha)
     pdf.set_x((doc_w - fecha_w) / 2)
-    pdf.cell(fecha_w, 133, fecha, align="C")
+    pdf.cell(fecha_w, 144, fecha, align="C")
     pdf.set_font("helvetica", "", size=9)
-    pos=133
+    pos=146
     pagina=0
     contador=0
     efectivo=0
     for registro in registros:
-        pos+=10
+        pos+=11
         pagina+=1
         contador+=1
         # consecutivo=settings.prefijo + str(registro[0]).zfill(6)
@@ -694,7 +694,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
             contador=0
             pos=0
         # if (contador%18) == 0:
-        if contador == 13:
+        if contador == 6:
             pdf.add_page(same=True)
             contador=0
             pos=0
@@ -748,55 +748,55 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf=FPDF("P", "mm", (settings.paper_width, 150))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
-    pdf.image(f"{assets_path}/img/logo_recibo.jpeg", x=2, y=2, w=20, h=20)
+    pdf.image(f"{assets_path}/img/logo_recibo.jpeg", x=4, y=2, w=20, h=20)
     pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     title_w=pdf.get_string_width(title)
     doc_w=pdf.w
     # pdf.set_x((doc_w - title_w) / 2)
-    pdf.set_x(23)
-    pdf.cell(title_w, 0, title, align="C")
+    pdf.set_x(25)
+    pdf.cell(title_w, 5, title, align="C")
     if len(parqueadero) <= 12:
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     else:
-        pdf.set_font("helvetica", "B", size=12)
+        pdf.set_font("helvetica", "B", size=13)
     parqueadero_w=pdf.get_string_width(parqueadero)
     pdf.set_x((doc_w - parqueadero_w) / 2)
-    pdf.cell(parqueadero_w, 18, parqueadero, align="C")
-    pdf.set_font("helvetica", "", size=15)
+    pdf.cell(parqueadero_w, 28, parqueadero, align="C")
+    pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     nit_w=pdf.get_string_width(nit)
     pdf.set_x((doc_w - nit_w) / 2)
-    pdf.cell(nit_w, 35, nit, align="C")
+    pdf.cell(nit_w, 45, nit, align="C")
     regimen_w=pdf.get_string_width(regimen)
     pdf.set_x((doc_w - regimen_w) / 2)
-    pdf.cell(regimen_w, 49, regimen, align="C")
+    pdf.cell(regimen_w, 59, regimen, align="C")
     direccion_w=pdf.get_string_width(direccion)
     pdf.set_x((doc_w - direccion_w) / 2)
-    pdf.cell(direccion_w, 63, direccion, align="C")
+    pdf.cell(direccion_w, 73, direccion, align="C")
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
-    pdf.cell(telefono_w, 77, telefono, align="C")
+    pdf.cell(telefono_w, 87, telefono, align="C")
     pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
-    pdf.cell(servicio_w, 91, servicio, align="C")
+    pdf.cell(servicio_w, 101, servicio, align="C")
     pdf.set_font("helvetica", "B", size=20)
     titulo_w=pdf.get_string_width(titulo)
     pdf.set_x((doc_w - titulo_w) / 2)
-    pdf.cell(titulo_w, 105, titulo, align="C")
+    pdf.cell(titulo_w, 115, titulo, align="C")
     pdf.set_font("helvetica", "", size=15)
     registro_w=pdf.get_string_width(registro)
     pdf.set_x((doc_w - registro_w) / 2)
-    pdf.cell(registro_w, 119, registro, align="C")
-    pdf.set_font("helvetica", "", size=10)
+    pdf.cell(registro_w, 129, registro, align="C")
+    pdf.set_font("helvetica", "", size=14)
     fecha_w=pdf.get_string_width(fecha)
     pdf.set_x((doc_w - fecha_w) / 2)
-    pdf.cell(fecha_w, 133, fecha, align="C")
+    pdf.cell(fecha_w, 144, fecha, align="C")
     pdf.set_font("helvetica", "", size=9)
-    pos=133
+    pos=146
     contador=0
     pendiente=0
     for registro in registros:
-        pos+=10
+        pos+=11
         contador+=1
         pendiente+=1
         # consecutivo=str(registro[0]) if settings.billing == 0 else str(registro[0]).zfill(6)

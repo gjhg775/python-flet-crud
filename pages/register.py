@@ -1054,7 +1054,7 @@ def Register(page):
                 content=ft.Stack([
                     ft.Row([
                         ft.Column([
-                            ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
+                            # ft.Text(parqueadero, theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, width=300, text_align="center", weight="bold", color=ft.colors.BLUE_900),
                             ft.Row([
                                 ft.Icon(ft.icons.EDIT_ROUNDED, size=32),
                                 ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_MEDIUM, text_align="center", color=ft.colors.PRIMARY)
