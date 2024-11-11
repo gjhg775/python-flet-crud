@@ -124,6 +124,7 @@ tbc = ft.DataTable(
         ft.DataColumn(ft.Text("Vehículo")),
         ft.DataColumn(ft.Text("Facturación")),
         ft.DataColumn(ft.Text("Valor"), numeric=True),
+        ft.DataColumn(ft.Text("Tiempo"), numeric=True),
         ft.DataColumn(ft.Text("Total"), numeric=True),
         # DataColumn(Text("Cuadre")),
 	],
@@ -1992,6 +1993,7 @@ def selectCashRegister():
                         ft.DataCell(ft.Text(x["vehiculo"], color=color, weight=weight)),
                         ft.DataCell(ft.Text("Horas" if x["facturacion"] == 0 else "Turnos", color=color, weight=weight)),
                         ft.DataCell(ft.Text(locale.currency(x["valor"], grouping=True), color=color, weight=weight)),
+                        ft.DataCell(ft.Text(x["tiempo"], color=color, weight=weight)),
                         ft.DataCell(ft.Text(locale.currency(x["total"], grouping=True), color=color, weight=weight)),
                         # DataCell(Text(x["cuadre"])),
                         # DataCell(Row([
