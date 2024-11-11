@@ -29,8 +29,10 @@ assets_path = os.path.join(base_path, "assets")
 
 load_dotenv()
 
-SENDER_EMAIL=os.getenv("EMAIL_USER")
-MAIL_PASSWORD=config("EMAIL_PASS")
+# SENDER_EMAIL=os.getenv("EMAIL_USER")
+# MAIL_PASSWORD=config("EMAIL_PASS")
+SENDER_EMAIL=settings.email_user
+MAIL_PASSWORD=settings.email_pass
 RECEIVER_EMAIL=settings.correo_electronico
 
 def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
@@ -62,8 +64,10 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
     msg.add_attachment(file_data, maintype="application", subtype="octet-stream", filename=file_name)
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
-        smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
+        # smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
+        # smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
+        smtp.login(settings.email_user, settings.email_pass)
+        smtp.sendmail(settings.email_user, RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 
     settings.correo_electronico=""
@@ -86,8 +90,10 @@ def send_mail_user(SENDER_EMAIL, RECEIVER_EMAIL, token_password):
     """, subtype="html")
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
-        smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
-        smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
+        # smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
+        # smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
+        smtp.login(settings.email_user, settings.email_pass)
+        smtp.sendmail(settings.email_user, RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 
     settings.correo_electronico=""

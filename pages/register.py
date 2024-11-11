@@ -83,14 +83,18 @@ if configuracion != None:
     imprimir_registro=False if configuracion[0][19] == 0 else True
     settings.send_email_register=configuracion[0][20]
     enviar_correo_electronico=False if configuracion[0][20] == 0 else True
-    settings.preview_cash=configuracion[0][21]
-    vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-    settings.print_cash_receipt=configuracion[0][22]
-    imprimir_cuadre=False if configuracion[0][22] == 0 else True
-    settings.printer=configuracion[0][23]
-    impresora=configuracion[0][23]
-    settings.paper_width=configuracion[0][24]
-    papel=configuracion[0][24]
+    settings.email_user=configuracion[0][21]
+    correo_usuario=configuracion[0][21]
+    settings.email_pass=configuracion[0][22]
+    correo_clave=configuracion[0][22]
+    settings.preview_cash=configuracion[0][23]
+    vista_previa_cuadre=False if configuracion[0][23] == 0 else True
+    settings.print_cash_receipt=configuracion[0][24]
+    imprimir_cuadre=False if configuracion[0][24] == 0 else True
+    settings.printer=configuracion[0][25]
+    impresora=configuracion[0][25]
+    settings.paper_width=configuracion[0][26]
+    papel=configuracion[0][26]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -387,40 +391,37 @@ def Register(page):
         servicio=configuracion[0][6]
         settings.billing=configuracion[0][7]
         facturacion=False if configuracion[0][7] == 0 else True
-        settings.resolucion=configuracion[0][8]
         resolucion=configuracion[0][8]
-        settings.fecha_desde=configuracion[0][9]
         fecha_desde=configuracion[0][9]
-        settings.fecha_hasta=configuracion[0][10]
         fecha_hasta=configuracion[0][10]
         settings.prefijo=configuracion[0][11]
         prefijo=configuracion[0][11]
-        settings.autoriza_del=configuracion[0][12]
         autoriza_del=configuracion[0][12]
-        settings.autoriza_al=configuracion[0][13]
         autoriza_al=configuracion[0][13]
-        settings.clave_tecnica=configuracion[0][14]
         clave_tecnica=configuracion[0][14]
         settings.tipo_ambiente=configuracion[0][15]
         tipo_ambiente=configuracion[0][15]
         settings.cliente_final=configuracion[0][16]
         cliente=configuracion[0][16]
-        settings.consecutivo=configuracion[0][17]
         consecutivo=configuracion[0][17]
         settings.preview_register=configuracion[0][18]
         vista_previa_registro=False if configuracion[0][18] == 0 else True
         settings.print_register_receipt=configuracion[0][19]
         imprimir_registro=False if configuracion[0][19] == 0 else True
         settings.send_email_register=configuracion[0][20]
-        enviar_correo=False if configuracion[0][20] == 0 else True
-        settings.preview_cash=configuracion[0][21]
-        vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-        settings.print_cash_receipt=configuracion[0][22]
-        imprimir_cuadre=False if configuracion[0][22] == 0 else True
-        settings.printer=configuracion[0][23]
-        impresora=configuracion[0][23]
-        settings.paper_width=configuracion[0][24]
-        papel=configuracion[0][24]
+        enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+        settings.email_user=configuracion[0][21]
+        correo_usuario=configuracion[0][21]
+        settings.email_pass=configuracion[0][22]
+        correo_clave=configuracion[0][22]
+        settings.preview_cash=configuracion[0][23]
+        vista_previa_cuadre=False if configuracion[0][23] == 0 else True
+        settings.print_cash_receipt=configuracion[0][24]
+        imprimir_cuadre=False if configuracion[0][24] == 0 else True
+        settings.printer=configuracion[0][25]
+        impresora=configuracion[0][25]
+        settings.paper_width=configuracion[0][26]
+        papel=configuracion[0][26]
     
     def register(e):
         if placa.value != "":
@@ -521,40 +522,44 @@ def Register(page):
             time.sleep(2)
 
             if settings.send_email_register == 1:
-                if settings.correo_electronico == "":
-                    open_dlg_modal_email(e)
-                else:
-                    bgcolor="blue"
-                    message="Enviando correo"
-                    settings.message=message
-                    settings.showMessage(bgcolor)
+                if settings.correo_electronico != "":
+                    correo.value=settings.correo_electronico
+                    # correo.update()
+                open_dlg_modal_email(e)
+                # if settings.correo_electronico == "":
+                #     open_dlg_modal_email(e)
+                # else:
+                #     bgcolor="blue"
+                #     message="Enviando correo"
+                #     settings.message=message
+                #     settings.showMessage(bgcolor)
 
-                    time.sleep(2)
+                #     time.sleep(2)
 
-                    settings.progressBar.visible=True
-                    if settings.tipo_app == 0:
-                        page.open(dlg_modal3)
-                        page.update()
-                    else:
-                        settings.page.open(dlg_modal3)     
-                        settings.page.update()
+                #     settings.progressBar.visible=True
+                #     if settings.tipo_app == 0:
+                #         page.open(dlg_modal3)
+                #         page.update()
+                #     else:
+                #         settings.page.open(dlg_modal3)     
+                #         settings.page.update()
 
-                    send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+                #     send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
 
-                    settings.progressBar.visible=False
-                    if settings.tipo_app == 0:
-                        page.close(dlg_modal3)
-                        page.update()
-                    else:
-                        settings.page.close(dlg_modal3)     
-                        settings.page.update()
+                #     settings.progressBar.visible=False
+                #     if settings.tipo_app == 0:
+                #         page.close(dlg_modal3)
+                #         page.update()
+                #     else:
+                #         settings.page.close(dlg_modal3)     
+                #         settings.page.update()
 
-                    bgcolor="green"
-                    message="Correo enviado satisfactoriamente"
-                    settings.message=message
-                    settings.showMessage(bgcolor)
+                #     bgcolor="green"
+                #     message="Correo enviado satisfactoriamente"
+                #     settings.message=message
+                #     settings.showMessage(bgcolor)
 
-                    time.sleep(2)
+                #     time.sleep(2)
 
             # time.sleep(2)
 
@@ -892,8 +897,8 @@ def Register(page):
                     settings.page.open(dlg_modal3)     
                     settings.page.update()
 
-                update_register_mail(settings.correo_electronico, settings.placa)
-                send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+                update_register_mail(settings.correo_electronico, settings.placa, settings.consecutivo)
+                send_mail_billing(settings.email_user, settings.correo_electronico)
 
                 correo.value=""
                 correo.update()

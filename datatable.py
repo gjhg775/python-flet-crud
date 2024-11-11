@@ -335,6 +335,7 @@ def get_configuration():
 configuracion=get_configuration()
 
 if configuracion != None:
+    id=configuracion[0][0]
     parqueadero=configuracion[0][1]
     nit=configuracion[0][2]
     regimen=configuracion[0][3]
@@ -368,22 +369,26 @@ if configuracion != None:
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
     settings.send_email_register=configuracion[0][20]
-    enviar_correo=False if configuracion[0][20] == 0 else True
-    settings.preview_cash=configuracion[0][21]
-    vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-    settings.print_cash_receipt=configuracion[0][22]
-    imprimir_cuadre=False if configuracion[0][22] == 0 else True
-    settings.printer=configuracion[0][23]
-    impresora=configuracion[0][23]
-    settings.paper_width=configuracion[0][24]
-    papel=configuracion[0][24]
+    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+    settings.email_user=configuracion[0][21]
+    correo_usuario=configuracion[0][21]
+    settings.email_pass=configuracion[0][22]
+    correo_clave=configuracion[0][22]
+    settings.preview_cash=configuracion[0][23]
+    vista_previa_cuadre=False if configuracion[0][23] == 0 else True
+    settings.print_cash_receipt=configuracion[0][24]
+    imprimir_cuadre=False if configuracion[0][24] == 0 else True
+    settings.printer=configuracion[0][25]
+    impresora=configuracion[0][25]
+    settings.paper_width=configuracion[0][26]
+    papel=configuracion[0][26]
 
-def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, enviar_correo_electronico, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
+def update_configuration(parqueadero, nit, regimen, direccion, telefono, servicio, facturacion, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, clave_tecnica, tipo_ambiente, cliente, consecutivo, vista_previa_registro, imprimir_registro, enviar_correo_electronico, correo_usuario, correo_clave, vista_previa_cuadre, imprimir_cuadre, impresora, papel, id):
     try:
         conn=get_connection()
         cursor=conn.cursor()
-        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, cliente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, enviar_correo_electronico = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
-        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{cliente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{enviar_correo_electronico}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
+        sql=f"""UPDATE configuracion SET parqueadero = ?, nit = ?, regimen = ?, direccion = ?, telefono = ?, servicio = ?, facturacion = ?, resolucion = ?, fecha_desde = ?, fecha_hasta = ?, prefijo = ?, autoriza_del = ?, autoriza_al = ?, clave_tecnica = ?, tipo_ambiente = ?, cliente = ?, consecutivo = ?, vista_previa_registro = ?, imprimir_registro = ?, enviar_correo_electronico = ?, email_user = ?, email_pass = ?, vista_previa_cuadre = ?, imprimir_cuadre = ?, impresora = ?, papel = ? WHERE configuracion_id = ?"""
+        values=(f"{parqueadero}", f"{nit}", f"{regimen}", f"{direccion}", f"{telefono}", f"{servicio}", f"{facturacion}", f"{resolucion}", f"{fecha_desde}", f"{fecha_hasta}", f"{prefijo}", f"{autoriza_del}", f"{autoriza_al}", f"{clave_tecnica}", f"{tipo_ambiente}", f"{cliente}", f"{consecutivo}", f"{vista_previa_registro}", f"{imprimir_registro}", f"{enviar_correo_electronico}", f"{correo_usuario}", f"{correo_clave}", f"{vista_previa_cuadre}", f"{imprimir_cuadre}", f"{impresora}", f"{papel}", f"{id}")
         cursor.execute(sql, values)
         conn.commit()
         conn.close()
@@ -430,15 +435,19 @@ def update_configuration(parqueadero, nit, regimen, direccion, telefono, servici
             settings.print_register_receipt=configuracion[0][19]
             imprimir_registro=False if configuracion[0][19] == 0 else True
             settings.send_email_register=configuracion[0][20]
-            enviar_correo=False if configuracion[0][20] == 0 else True
-            settings.preview_cash=configuracion[0][21]
-            vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-            settings.print_cash_receipt=configuracion[0][22]
-            imprimir_cuadre=False if configuracion[0][22] == 0 else True
-            settings.printer=configuracion[0][23]
-            impresora=configuracion[0][23]
-            settings.paper_width=configuracion[0][24]
-            papel=configuracion[0][24]
+            enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+            settings.email_user=configuracion[0][21]
+            correo_usuario=configuracion[0][21]
+            settings.email_pass=configuracion[0][22]
+            correo_clave=configuracion[0][22]
+            settings.preview_cash=configuracion[0][23]
+            vista_previa_cuadre=False if configuracion[0][23] == 0 else True
+            settings.print_cash_receipt=configuracion[0][24]
+            imprimir_cuadre=False if configuracion[0][24] == 0 else True
+            settings.printer=configuracion[0][25]
+            impresora=configuracion[0][25]
+            settings.paper_width=configuracion[0][26]
+            papel=configuracion[0][26]
     except Exception as e:
         print(e)
 
@@ -481,12 +490,12 @@ def update_variables(vlr_hora_moto, vlr_turno_moto, vlr_hora_carro, vlr_turno_ca
     except Exception as e:
         print(e)
 
-def update_register_mail(correo_electronico, placa):
+def update_register_mail(correo_electronico, placa, consecutivo):
     try:
         conn=get_connection()
         cursor=conn.cursor()
-        sql=f"""UPDATE registro SET correo_electronico = ? WHERE placa = ?"""
-        values=(f"{correo_electronico}", f"{placa}")
+        sql=f"""UPDATE registro SET correo_electronico = ? WHERE placa = ? AND consecutivo = ?"""
+        values=(f"{correo_electronico}", f"{placa}", f"{consecutivo}")
         cursor.execute(sql, values)
         conn.commit()
         conn.close()
@@ -587,6 +596,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             horas+=dias
             sobrante=tiempos.seconds%3600
             minutos=sobrante//60
+            duracion=str(f'{horas:02}') + ":" + str(f'{minutos:02}')
 
             # segundos=registros[0][13]
             # dias=segundos//(24*60*60)
@@ -672,6 +682,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
                 facturacion=1
 
             # tiempo=int(tiempo)
+            tiempo=duracion
             conn=get_connection()
             cursor=conn.cursor()
             sql="""UPDATE registro SET salida = ?, facturacion = ?, valor = ?, tiempo = ?, total = ? WHERE registro_id = ?"""
@@ -804,7 +815,7 @@ def exist_email(placa):
     correo_electronico=settings.correo_electronico
     conn=get_connection()
     cursor=conn.cursor()
-    sql=f"""SELECT * FROM registro WHERE placa = ? AND correo_electronico != ?"""
+    sql=f"""SELECT * FROM registro WHERE placa = ? AND correo_electronico != ? ORDER BY salida DESC"""
     values=(f"{placa}", f"{correo_electronico}")
     cursor.execute(sql, values)
     registros=cursor.fetchone()
@@ -907,15 +918,19 @@ def showedit(e):
             settings.print_register_receipt=configuracion[0][19]
             imprimir_registro=False if configuracion[0][19] == 0 else True
             settings.send_email_register=configuracion[0][20]
-            enviar_correo=False if configuracion[0][20] == 0 else True
-            settings.preview_cash=configuracion[0][21]
-            vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-            settings.print_cash_receipt=configuracion[0][22]
-            imprimir_cuadre=False if configuracion[0][22] == 0 else True
-            settings.printer=configuracion[0][23]
-            impresora=configuracion[0][23]
-            settings.paper_width=configuracion[0][24]
-            papel=configuracion[0][24]
+            enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+            settings.email_user=configuracion[0][21]
+            correo_usuario=configuracion[0][21]
+            settings.email_pass=configuracion[0][22]
+            correo_clave=configuracion[0][22]
+            settings.preview_cash=configuracion[0][23]
+            vista_previa_cuadre=False if configuracion[0][23] == 0 else True
+            settings.print_cash_receipt=configuracion[0][24]
+            imprimir_cuadre=False if configuracion[0][24] == 0 else True
+            settings.printer=configuracion[0][25]
+            impresora=configuracion[0][25]
+            settings.paper_width=configuracion[0][26]
+            papel=configuracion[0][26]
 
         placa=registros[0][2]
         entrada=registros[0][3]
@@ -1080,7 +1095,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
         settings.page.open(dlg_modal2)
         settings.page.update()
 
-        send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+        send_mail_billing(settings.email_user, settings.correo_electronico)
 
         settings.progressBar.visible=False
         settings.page.close(dlg_modal2)
@@ -1485,7 +1500,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         settings.page.open(dlg_modal2)
         settings.page.update()
 
-        send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+        send_mail_billing(settings.email_user, settings.correo_electronico)
 
         settings.progressBar.visible=False
         settings.page.close(dlg_modal2)

@@ -76,15 +76,19 @@ if configuracion != None:
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
     settings.send_email_register=configuracion[0][20]
-    enviar_correo=False if configuracion[0][20] == 0 else True
-    settings.preview_cash=configuracion[0][21]
-    vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-    settings.print_cash_receipt=configuracion[0][22]
-    imprimir_cuadre=False if configuracion[0][22] == 0 else True
-    settings.printer=configuracion[0][23]
-    impresora=configuracion[0][23]
-    settings.paper_width=configuracion[0][24]
-    papel=configuracion[0][24]
+    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
+    settings.email_user=configuracion[0][21]
+    correo_usuario=configuracion[0][21]
+    settings.email_pass=configuracion[0][22]
+    correo_clave=configuracion[0][22]
+    settings.preview_cash=configuracion[0][23]
+    vista_previa_cuadre=False if configuracion[0][23] == 0 else True
+    settings.print_cash_receipt=configuracion[0][24]
+    imprimir_cuadre=False if configuracion[0][24] == 0 else True
+    settings.printer=configuracion[0][25]
+    impresora=configuracion[0][25]
+    settings.paper_width=configuracion[0][26]
+    papel=configuracion[0][26]
 
 def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
     nit="NIT " + nit
