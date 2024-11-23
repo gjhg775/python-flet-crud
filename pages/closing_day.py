@@ -18,6 +18,7 @@ def Closing_day(page):
 
     if configuracion != None:
         id=configuracion[0][0]
+        settings.parqueadero=configuracion[0][1]
         parqueadero=configuracion[0][1]
         nit=configuracion[0][2]
         regimen=configuracion[0][3]
@@ -26,18 +27,25 @@ def Closing_day(page):
         servicio=configuracion[0][6]
         settings.billing=configuracion[0][7]
         facturacion=False if configuracion[0][7] == 0 else True
+        settings.resolucion=configuracion[0][8]
         resolucion=configuracion[0][8]
+        settings.fecha_desde=configuracion[0][9]
         fecha_desde=configuracion[0][9]
+        settings.fecha_hasta=configuracion[0][10]
         fecha_hasta=configuracion[0][10]
         settings.prefijo=configuracion[0][11]
         prefijo=configuracion[0][11]
+        settings.autoriza_del=configuracion[0][12]
         autoriza_del=configuracion[0][12]
+        settings.autoriza_al=configuracion[0][13]
         autoriza_al=configuracion[0][13]
+        settings.clave_tecnica=configuracion[0][14]
         clave_tecnica=configuracion[0][14]
         settings.tipo_ambiente=configuracion[0][15]
         tipo_ambiente=configuracion[0][15]
         settings.cliente_final=configuracion[0][16]
         cliente=configuracion[0][16]
+        settings.consecutivo=configuracion[0][17]
         consecutivo=configuracion[0][17]
         settings.preview_register=configuracion[0][18]
         vista_previa_registro=False if configuracion[0][18] == 0 else True
@@ -45,14 +53,20 @@ def Closing_day(page):
         imprimir_registro=False if configuracion[0][19] == 0 else True
         settings.send_email_register=configuracion[0][20]
         enviar_correo_electronico=False if configuracion[0][20] == 0 else True
-        settings.preview_cash=configuracion[0][21]
-        vista_previa_cuadre=False if configuracion[0][21] == 0 else True
-        settings.print_cash_receipt=configuracion[0][22]
-        imprimir_cuadre=False if configuracion[0][22] == 0 else True
-        settings.printer=configuracion[0][23]
-        impresora=configuracion[0][23]
-        settings.paper_width=configuracion[0][24]
-        papel=configuracion[0][24]
+        settings.email_user=configuracion[0][21]
+        correo_usuario=configuracion[0][21]
+        settings.email_pass=configuracion[0][22]
+        correo_clave=configuracion[0][22]
+        settings.secret_key=configuracion[0][23]
+        secret_key=configuracion[0][23]
+        settings.preview_cash=configuracion[0][24]
+        vista_previa_cuadre=False if configuracion[0][24] == 0 else True
+        settings.print_cash_receipt=configuracion[0][25]
+        imprimir_cuadre=False if configuracion[0][25] == 0 else True
+        settings.printer=configuracion[0][26]
+        impresora=configuracion[0][26]
+        settings.paper_width=configuracion[0][27]
+        papel=configuracion[0][27]
 
     def cancel(e):
         close_dlg(e)

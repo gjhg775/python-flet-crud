@@ -3,9 +3,10 @@ import sys
 import settings
 import smtplib
 # import ssl
+from flet.security import decrypt
 from pathlib import Path
 from email.message import EmailMessage
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from decouple import config
 
 if getattr(sys, 'frozen', False):
@@ -20,14 +21,14 @@ assets_path = os.path.join(base_path, "assets")
 # upload_path = os.path.join(base_path, "upload")
 
 # Ejemplo de uso:
-# icon_path = os.path.join(assets_path, "img", "parqueadero.png")
+# icon_path = os.path.join(assets_path, "img", "parqueadero.jpeg")
 
 # if settings.tipo_app == 0:
 #     path=os.path.join(os.getcwd(), "upload\\receipt\\")
 # else:
 #     path=os.path.join(os.getcwd(), "assets\\receipt\\")
 
-load_dotenv()
+# load_dotenv()
 
 # SENDER_EMAIL=os.getenv("EMAIL_USER")
 # MAIL_PASSWORD=config("EMAIL_PASS")
@@ -47,7 +48,13 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
     <!DOCTYPE html>
     <html>
         <body>
-            <h1 style="color:SlateGray;">{documento + ' ' + consecutivo}</h1>
+            <div>
+                <h1 style="color:Black; display:inline-block; vertical-align:middle; margin:0;">{settings.parqueadero}</h1>
+            </div>
+            <div>
+                <h1 style="color:SlateGray; display:inline-block; vertical-align:middle; margin:0;">{documento + ' ' + consecutivo}</h1>
+                <p>Para ver más detalles abra el archivo adjunto</p>
+            </div>
         </body>
     </html>
     """, subtype="html")
@@ -66,7 +73,8 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
         # smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
         # smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
-        smtp.login(settings.email_user, settings.email_pass)
+        MAIL_PASSWORD=decrypt(settings.email_pass, settings.secret_key)
+        smtp.login(settings.email_user, MAIL_PASSWORD)
         smtp.sendmail(settings.email_user, RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 
@@ -92,7 +100,8 @@ def send_mail_user(SENDER_EMAIL, RECEIVER_EMAIL, token_password):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
         # smtp.login(config("EMAIL_USER"), config("EMAIL_PASS"))
         # smtp.sendmail(config("EMAIL_USER"), RECEIVER_EMAIL, msg.as_string())
-        smtp.login(settings.email_user, settings.email_pass)
+        MAIL_PASSWORD=decrypt(settings.email_pass, settings.secret_key)
+        smtp.login(settings.email_user, MAIL_PASSWORD)
         smtp.sendmail(settings.email_user, RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 

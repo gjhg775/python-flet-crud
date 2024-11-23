@@ -48,7 +48,7 @@ try:
     from datatable import get_configuration, selectUser, selectAccess, add_user, get_user, reset_password, update_user, lblAccesos, tba
 except Exception as e:
     print(e)
-from decouple import config
+# from decouple import config
 from mail import send_mail_user
 
 if settings.tipo_app == 0:
@@ -265,7 +265,7 @@ if settings.tipo_app == 0:
                     if bln_login == True:
                         datalogin={"logged":bln_login, "username":login_user}
                         page.session.set("username", datalogin["username"])
-                        settings.username=page.session.get("username")
+                        settings.username=login_user if settings.tipo_app == 0 else page.session.get("username")
                         username=settings.username
                         settings.photo=login_photo
                         if correo_electronico == "":
@@ -275,7 +275,7 @@ if settings.tipo_app == 0:
                         # page.go("/register")
                         page.clean()
                         # page.appbar.title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE)
-                        page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE)
+                        # page.appbar.title=ft.Text("Parqueadero", color=ft.colors.WHITE, size=20)
                         page.add(Home(page))
                         page.update()
                         # if settings.tipo_app == 0:
@@ -408,7 +408,7 @@ if settings.tipo_app == 0:
                     title="Reestablecer contraseña"
                     message="Se ha enviado un código de un solo uso al correo electrónico " + correo_electronico
                     open_dlg_modal2(e, title, message)
-                    send_mail_user(config("EMAIL_USER"), correo_electronico, settings.token_password)
+                    # send_mail_user(config("EMAIL_USER"), correo_electronico, settings.token_password)
             else:
                 user.error_text="Digite usuario ó correo electrónico"
                 user.focus()
@@ -418,6 +418,8 @@ if settings.tipo_app == 0:
             user.value=""
             password.value=""
             page.session.clear()
+            # page.session.remove("username")
+            # page.session.remove("secret_key")
 
         def exit(e):
             logout()
@@ -645,9 +647,15 @@ if settings.tipo_app == 0:
         
         if settings.tipo_app == 0:
             page.appbar = ft.AppBar(
-                leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
-                leading_width=55,
-                title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+                # leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
+                leading_width=230,
+                # title=ft.Text("Parqueadero", color=ft.colors.WHITE),
+                leading=ft.ListTile(
+                    content_padding=ft.padding.only(top=1),
+                    leading=ft.Image(src=f"/img/parqueadero.png", height=55, width=55, fit=ft.ImageFit.COVER),
+                    title=ft.Text("Parqueadero", color=ft.colors.WHITE, size=25),
+                    on_click=show_drawer
+                ),
                 # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
                 center_title=False,
                 # bgcolor=ft.colors.PRIMARY_CONTAINER,
@@ -976,7 +984,7 @@ else:
 
             self.page.title="Parqueadero"
             self.page.theme_mode=ft.ThemeMode.LIGHT
-            self.page.padding=10
+            self.page.padding=0
             self.page.add()
 
             # snack_bar=ft.SnackBar(
@@ -1058,11 +1066,17 @@ else:
                 height=60,
                 bgcolor=self.color_container,
                 # on_hover=lambda e: self.on_hover_change(e, -1),
-                border_radius=10,
+                # border_radius=10,
                 alignment=ft.alignment.center,
-                content=ft.IconButton(icon=ft.icons.MENU,
-                                    icon_color=self.color_icons_dark,
-                                    on_click=self.bar_icons)
+                # content=ft.IconButton(icon=ft.icons.MENU,
+                #                     icon_color=self.color_icons_dark,
+                #                     on_click=self.bar_icons)
+                content=ft.ListTile(
+                    content_padding=ft.padding.only(left=15, top=6, right=15, bottom=4),
+                    leading=ft.Image(src=f"/img/parqueadero.png", height=55, width=55, fit=ft.ImageFit.COVER),
+                    # title=ft.Text("Parqueadero", color=ft.colors.WHITE, size=25),
+                    on_click=self.bar_icons
+                ),
             )
 
             self.container_0=ft.Container(
@@ -1474,14 +1488,15 @@ else:
                 expand=True,
                 height=60,
                 bgcolor=self.color_container,
-                border_radius=10,
+                # border_radius=10,
                 alignment=ft.alignment.center,
+                # padding=ft.padding.only(left=15),
                 # content=ft.Text("Parqueadero", color=self.color_icons_dark, size=30)
                 content=ft.Row([
-                    self.logo,
+                    # self.logo,
                     self.label_title
                 ],
-                alignment=ft.MainAxisAlignment.CENTER
+                alignment=ft.MainAxisAlignment.START,
                 )
             )
 
@@ -1489,7 +1504,7 @@ else:
                 bgcolor=self.color_container,
                 animate_size=self.animation_style,
                 width=200,
-                border_radius=10,
+                # border_radius=10,
                 padding=10,
                 content=ft.Column(
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -1558,15 +1573,18 @@ else:
             self.page.on_route_change = self.route_change
 
             self.page.add(ft.Column(
+                spacing=0,
                 expand=True,
                 controls=[
                     ft.Row(
+                        spacing=0,
                         controls=[
                             self.btn_home,
                             self.frame_title,
                         ]
                     ),
                     ft.Row(
+                        spacing=0,
                         expand=True,
                         controls=[
                             self.navigation,
@@ -1826,6 +1844,8 @@ else:
                     settings.user_avatar.src=f"img/default.jpg"
                     settings.label_0.value=""
                     self.page.session.clear()
+                    # self.page.session.remove("username")
+                    # self.page.session.remove("secret_key")
                     # self.container_9.content.controls.clear()
                     self.container_9.content.controls=[]
                     self.container_9.content.controls.append(Login(pag))

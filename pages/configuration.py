@@ -1,10 +1,16 @@
+import os
 import time
 import datetime
 import flet as ft
 import settings
+import secrets
 import sqlite3
 import win32print
+from flet.security import encrypt
 from datatable import get_configuration, update_configuration, tbu, tblUsuarios, selectUsers, lblAccesos, tba, tblAccesos
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # conn=sqlite3.connect("C:/pdb/data/parqueadero.db", check_same_thread=False)
 search=""
@@ -134,6 +140,7 @@ def Configuration(page):
 
     if configuracion != None:
         id=configuracion[0][0]
+        settings.parqueadero=configuracion[0][1]
         parqueadero=configuracion[0][1]
         nit=configuracion[0][2]
         regimen=configuracion[0][3]
@@ -172,14 +179,16 @@ def Configuration(page):
         correo_usuario=configuracion[0][21]
         settings.email_pass=configuracion[0][22]
         correo_clave=configuracion[0][22]
-        settings.preview_cash=configuracion[0][23]
-        vista_previa_cuadre=False if configuracion[0][23] == 0 else True
-        settings.print_cash_receipt=configuracion[0][24]
-        imprimir_cuadre=False if configuracion[0][24] == 0 else True
-        settings.printer=configuracion[0][25]
-        impresora=configuracion[0][25]
-        settings.paper_width=configuracion[0][26]
-        papel=configuracion[0][26]
+        settings.secret_key=configuracion[0][23]
+        secret_key=configuracion[0][23]
+        settings.preview_cash=configuracion[0][24]
+        vista_previa_cuadre=False if configuracion[0][24] == 0 else True
+        settings.print_cash_receipt=configuracion[0][25]
+        imprimir_cuadre=False if configuracion[0][25] == 0 else True
+        settings.printer=configuracion[0][26]
+        impresora=configuracion[0][26]
+        settings.paper_width=configuracion[0][27]
+        papel=configuracion[0][27]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -349,7 +358,12 @@ def Configuration(page):
             consecutivo.update()
             email_user.update()
             email_pass.update()
-            update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, client.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.send_email_register, email_user.value, email_pass.value, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+            if len(email_pass.value) <= 16:
+                settings.secret_key=secrets.token_hex(16)
+                email_pass_encrypted=encrypt(email_pass.value, settings.secret_key)
+                email_pass.value=email_pass_encrypted
+                email_pass.update()
+            update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, client.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.send_email_register, email_user.value, email_pass.value, settings.secret_key, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
                 # if message != "":
                 #     bgcolor="green"
                 #     settings.message=message

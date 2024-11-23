@@ -10,8 +10,8 @@ import pandas as pd
 import re
 # from flet import Page
 # from app import page
-from dotenv import load_dotenv
-from decouple import config
+# from dotenv import load_dotenv
+# from decouple import config
 from mail import send_mail_billing
 from time import sleep
 from pages.receipt import show_input, show_output
@@ -40,10 +40,12 @@ assets_path = os.path.join(base_path, "assets")
 # else:
 #     path=os.path.join(os.getcwd(), "assets\\xls\\")
 
-load_dotenv()
+# load_dotenv()
 
-SENDER_EMAIL=os.getenv("EMAIL_USER")
-MAIL_PASSWORD=config("EMAIL_PASS")
+# SENDER_EMAIL=os.getenv("EMAIL_USER")
+# MAIL_PASSWORD=config("EMAIL_PASS")
+SENDER_EMAIL=settings.email_user
+MAIL_PASSWORD=settings.email_pass
 RECEIVER_EMAIL=settings.correo_electronico
 
 vlr_total=0
@@ -56,6 +58,7 @@ email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 configuracion=get_configuration()
 
 if configuracion != None:
+    settings.parqueadero=configuracion[0][1]
     parqueadero=configuracion[0][1]
     nit=configuracion[0][2]
     regimen=configuracion[0][3]
@@ -87,14 +90,16 @@ if configuracion != None:
     correo_usuario=configuracion[0][21]
     settings.email_pass=configuracion[0][22]
     correo_clave=configuracion[0][22]
-    settings.preview_cash=configuracion[0][23]
-    vista_previa_cuadre=False if configuracion[0][23] == 0 else True
-    settings.print_cash_receipt=configuracion[0][24]
-    imprimir_cuadre=False if configuracion[0][24] == 0 else True
-    settings.printer=configuracion[0][25]
-    impresora=configuracion[0][25]
-    settings.paper_width=configuracion[0][26]
-    papel=configuracion[0][26]
+    settings.secret_key=configuracion[0][23]
+    secret_key=configuracion[0][23]
+    settings.preview_cash=configuracion[0][24]
+    vista_previa_cuadre=False if configuracion[0][24] == 0 else True
+    settings.print_cash_receipt=configuracion[0][25]
+    imprimir_cuadre=False if configuracion[0][25] == 0 else True
+    settings.printer=configuracion[0][26]
+    impresora=configuracion[0][26]
+    settings.paper_width=configuracion[0][27]
+    papel=configuracion[0][27]
 
 # def showInputs(e):
 #     variables=get_variables()
@@ -383,6 +388,7 @@ def Register(page):
 
     if configuracion != None:
         id=configuracion[0][0]
+        settings.parqueadero=configuracion[0][1]
         parqueadero=configuracion[0][1]
         nit=configuracion[0][2]
         regimen=configuracion[0][3]
@@ -414,14 +420,16 @@ def Register(page):
         correo_usuario=configuracion[0][21]
         settings.email_pass=configuracion[0][22]
         correo_clave=configuracion[0][22]
-        settings.preview_cash=configuracion[0][23]
-        vista_previa_cuadre=False if configuracion[0][23] == 0 else True
-        settings.print_cash_receipt=configuracion[0][24]
-        imprimir_cuadre=False if configuracion[0][24] == 0 else True
-        settings.printer=configuracion[0][25]
-        impresora=configuracion[0][25]
-        settings.paper_width=configuracion[0][26]
-        papel=configuracion[0][26]
+        settings.secret_key=configuracion[0][23]
+        secret_key=configuracion[0][23]
+        settings.preview_cash=configuracion[0][24]
+        vista_previa_cuadre=False if configuracion[0][24] == 0 else True
+        settings.print_cash_receipt=configuracion[0][25]
+        imprimir_cuadre=False if configuracion[0][25] == 0 else True
+        settings.printer=configuracion[0][26]
+        impresora=configuracion[0][26]
+        settings.paper_width=configuracion[0][27]
+        papel=configuracion[0][27]
     
     def register(e):
         if placa.value != "":

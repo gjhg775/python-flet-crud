@@ -3,7 +3,7 @@ import flet as ft
 global username, correo_electronico, password, token_password, photo, user_avatar, user_photo, usuario, acceso_usuarios, acceso_configuracion, acceso_variables, acceso_registro, \
        acceso_cuadre, acceso_cierre, textsize, fieldwith, tipo_app, preview_register, print_register_receipt, send_email_register, preview_cash, print_cash_receipt, printer, \
        paper_width, resolucion, fecha_desde, fecha_hasta, prefijo, autoriza_del, autoriza_al, billing, clave_tecnica, tipo_ambiente, cliente_final, consecutivo, consecutivo2, \
-       placa, progressRing, correcto, errors, acceso, user_auth, email_user, email_pass
+       placa, progressRing, correcto, errors, acceso, user_auth, email_user, email_pass, secret_key, parqueadero
 
 username=""
 correo_electronico=""
@@ -28,6 +28,8 @@ placa=""
 user_auth=""
 email_user=""
 email_pass=""
+secret_key=""
+parqueadero=""
 acceso_usuarios=0
 acceso_configuracion=0
 acceso_variables=0
@@ -37,7 +39,7 @@ acceso_cierre=0
 acceso=1
 textsize=30
 fieldwith=800
-tipo_app=0 # 0=Escritorio 1=Web
+tipo_app=1 # 0=Escritorio 1=Web
 billing=1
 tipo_ambiente=0
 paper_width=0
