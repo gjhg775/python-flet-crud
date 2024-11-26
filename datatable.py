@@ -95,11 +95,13 @@ tb = ft.DataTable(
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
+    sort_column_index=0,
+    sort_ascending=True,
 	columns=[
-		ft.DataColumn(ft.Text("Consecutivo")),
-		ft.DataColumn(ft.Text("Placa")),
-		ft.DataColumn(ft.Text("Entrada")),
-		ft.DataColumn(ft.Text("Salida")),
+		ft.DataColumn(ft.Text("Consecutivo"), on_sort=lambda e: sort_registers(e)),
+		ft.DataColumn(ft.Text("Placa"), on_sort=lambda e: sort_registers(e)),
+		ft.DataColumn(ft.Text("Entrada"), on_sort=lambda e: sort_registers(e)),
+		ft.DataColumn(ft.Text("Salida"), on_sort=lambda e: sort_registers(e)),
         # DataColumn(Text("Vehiculo")),
         # DataColumn(Text("Valor")),
         # DataColumn(Text("Tiempo")),
@@ -116,16 +118,18 @@ tbc = ft.DataTable(
     # bgcolor="#FFFFFF",
     # border_radius=10,
     # data_row_color={"hovered": "#e5eff5"},
+    sort_column_index=0,
+    sort_ascending=True,
 	columns=[
-		ft.DataColumn(ft.Text("Consecutivo")),
-		ft.DataColumn(ft.Text("Placa")),
-		ft.DataColumn(ft.Text("Entrada")),
-		ft.DataColumn(ft.Text("Salida")),
-        ft.DataColumn(ft.Text("Vehículo")),
-        ft.DataColumn(ft.Text("Facturación")),
-        ft.DataColumn(ft.Text("Valor"), numeric=True),
-        ft.DataColumn(ft.Text("Tiempo"), numeric=True),
-        ft.DataColumn(ft.Text("Total"), numeric=True),
+		ft.DataColumn(ft.Text("Consecutivo"), on_sort=lambda e: sort_cash_register(e)),
+		ft.DataColumn(ft.Text("Placa"), on_sort=lambda e: sort_cash_register(e)),
+		ft.DataColumn(ft.Text("Entrada"), on_sort=lambda e: sort_cash_register(e)),
+		ft.DataColumn(ft.Text("Salida"), on_sort=lambda e: sort_cash_register(e)),
+        ft.DataColumn(ft.Text("Vehículo"), on_sort=lambda e: sort_cash_register(e)),
+        ft.DataColumn(ft.Text("Facturación"), on_sort=lambda e: sort_cash_register(e)),
+        ft.DataColumn(ft.Text("Valor"), numeric=True, on_sort=lambda e: sort_cash_register(e)),
+        ft.DataColumn(ft.Text("Tiempo"), numeric=True, on_sort=lambda e: sort_cash_register(e)),
+        ft.DataColumn(ft.Text("Total"), numeric=True, on_sort=lambda e: sort_cash_register(e)),
         # DataColumn(Text("Cuadre")),
 	],
 	rows=[]
@@ -1867,16 +1871,37 @@ def selectAccess(username):
         settings.acceso_cuadre=registros[4][1]
         settings.acceso_cierre=registros[5][1]
 
-def selectRegisters(search):
+def sort_registers(e):
+    tb.sort_column_index=e.column_index
+    tb.sort_ascending=True if e.ascending else False
+    if e.ascending == True:
+        order="ASC"
+    else:
+        order="DESC"
+    
+    if e.column_index == 0:
+        column="consecutivo"
+    elif e.column_index == 1:
+        column="placa"
+    elif e.column_index == 2:
+        column="entrada"
+    elif e.column_index == 3:
+        column="salida"
+
+    order=column + " " + order
+    selectRegisters("", order)
+    settings.page.update()
+
+def selectRegisters(search, order):
     cuadre=0
     conn=get_connection()
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE cuadre = ?"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE cuadre = ? ORDER BY {order}"""
         values=(f'{cuadre}',)
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ?"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ? ORDER BY {order}"""
         values=(f'%{search}%', f'%{search}%', f'{cuadre}')
     cursor.execute(sql, values)
     registros=cursor.fetchall()
@@ -1967,12 +1992,43 @@ def exportRegister(fecha_desde, fecha_hasta):
     conn.close()
     return registros
 
-def selectCashRegister():
+def sort_cash_register(e):
+    tbc.sort_column_index=e.column_index
+    tbc.sort_ascending=True if e.ascending else False
+    if e.ascending == True:
+        order="ASC"
+    else:
+        order="DESC"
+    
+    if e.column_index == 0:
+        column="consecutivo"
+    elif e.column_index == 1:
+        column="placa"
+    elif e.column_index == 2:
+        column="entrada"
+    elif e.column_index == 3:
+        column="salida"
+    elif e.column_index == 4:
+        column="vehiculo"
+    elif e.column_index == 5:
+        column="facturacion"
+    elif e.column_index == 6:
+        column="valor"
+    elif e.column_index == 7:
+        column="tiempo"
+    elif e.column_index == 8:
+        column="total"
+
+    order=column + " " + order
+    selectCashRegister(order)
+    settings.page.update()
+
+def selectCashRegister(order="consecutivo ASC"):
     cuadre=0
     conn=get_connection()
     cursor=conn.cursor()    
     # sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = 0 AND cuadre = 0"""
-    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = ?"""
+    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = ? order by {order}"""
     values=(f'{cuadre}',)
     cursor.execute(sql, values)
     registros=cursor.fetchall()

@@ -615,7 +615,8 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
     hora=" Hora " + hora
     fecha=fecha + hora
 
-    pdf=FPDF("P", "mm", (settings.paper_width, 150))
+    pdf=FPDF("P", "mm", (settings.paper_width, 2000))
+    # pdf=FPDF("P", "mm", (settings.paper_width, (25 * len(registros)) if contador < 6 else (15 * len(registros))))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.image(f"{assets_path}/img/logo_recibo.jpeg", x=4, y=2, w=20, h=20)
@@ -701,10 +702,10 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
             contador=0
             pos=0
         # if (contador%18) == 0:
-        if contador == 6:
-            pdf.add_page(same=True)
-            contador=0
-            pos=0
+        # if contador == 6:
+        #     pdf.add_page(same=True)
+        #     contador=0
+        #     pos=0
     pdf.set_font("helvetica", "B", size=9)
     pos+=10
     efectivo=locale.currency(efectivo, grouping=True)
@@ -751,8 +752,9 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     fecha="Fecha " + fecha
     hora=" Hora " + hora
     fecha=fecha + hora
-
-    pdf=FPDF("P", "mm", (settings.paper_width, 150))
+    
+    pdf=FPDF("P", "mm", (settings.paper_width, 2000))
+    # pdf=FPDF("P", "mm", (settings.paper_width, (25 * len(registros)) if len(registros) < 6 else (len(registros) * len(registros))))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
     pdf.image(f"{assets_path}/img/logo_recibo.jpeg", x=4, y=2, w=20, h=20)
@@ -800,10 +802,12 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
     pdf.cell(fecha_w, 144, fecha, align="C")
     pdf.set_font("helvetica", "", size=9)
     pos=146
+    pagina=0
     contador=0
     pendiente=0
     for registro in registros:
         pos+=11
+        pagina+=1
         contador+=1
         pendiente+=1
         # consecutivo=str(registro[0]) if settings.billing == 0 else str(registro[0]).zfill(6)
@@ -828,9 +832,9 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
-        if contador == 13:
-            pdf.add_page(same=True)
-            pos=0
+        # if contador == 13:
+        #     pdf.add_page(same=True)
+        #     pos=0
     pdf.set_font("helvetica", "B", size=9)
     pos+=10
     pendiente="Total pendiente " + str(pendiente)

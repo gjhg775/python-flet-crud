@@ -515,7 +515,7 @@ def Register(page):
             # if settings.tipo_app == 0:
             #     placa.focus()
             tb.rows.clear()
-            selectRegisters(search)
+            selectRegisters(search, order="consecutivo ASC")
             if settings.tipo_app == 0:
                 tb.update()
                 # tblRegistro.update()
@@ -708,7 +708,7 @@ def Register(page):
         buscar.update()
         # no_registros.visible=False
         tb.rows.clear()
-        registros=selectRegisters(search)
+        registros=selectRegisters(search, order="consecutivo ASC")
         if registros != []:
             tblRegistro.height=246
             # no_registros.visible=False
@@ -977,7 +977,7 @@ def Register(page):
         settings.page.overlay.append(dlg_modal3)
         settings.page.overlay.append(dlg_modal4)
 
-    registros=selectRegisters(search)
+    registros=selectRegisters(search, order="consecutivo ASC")
     if registros != []:
         tblRegistro.height=246
         # no_registros.visible=False
