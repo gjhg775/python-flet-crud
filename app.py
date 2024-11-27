@@ -648,15 +648,15 @@ if settings.tipo_app == 0:
         if settings.tipo_app == 0:
             page.appbar = ft.AppBar(
                 # leading=ft.IconButton(ft.icons.MENU_SHARP, icon_color=ft.colors.WHITE, on_click=show_drawer),
-                leading_width=230,
+                # leading_width=230,
                 # title=ft.Text("Parqueadero", color=ft.colors.WHITE),
                 leading=ft.ListTile(
-                    content_padding=ft.padding.only(top=1),
+                    content_padding=ft.padding.only(top=4),
                     leading=ft.Image(src=f"/img/parqueadero.png", height=55, width=55, fit=ft.ImageFit.COVER),
-                    title=ft.Text("Parqueadero", color=ft.colors.WHITE, size=25),
+                    # title=ft.Text("Parqueadero", color=ft.colors.WHITE, size=25),
                     on_click=show_drawer
                 ),
-                # title=ft.Text("Parqueadero "+parqueadero, color=ft.colors.WHITE),
+                title=ft.Text("Parqueadero", color=ft.colors.WHITE, size=25),
                 center_title=False,
                 # bgcolor=ft.colors.PRIMARY_CONTAINER,
                 bgcolor=ft.colors.BLUE_900,
@@ -1086,6 +1086,7 @@ else:
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Inicio"),
                         # ft.Container(

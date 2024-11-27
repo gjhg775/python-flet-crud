@@ -70,6 +70,17 @@ def Profile(page):
 
     username=settings.username
 
+    def changeEmail(e):
+        correo.error_text=""
+        if correo.value != "":
+            settings.correo_electronico=correo.value
+            update_user(settings.username, settings.correo_electronico, settings.password, settings.photo, "update")
+            settings.page.update()
+        else:
+            correo.error_text="Digite el correo electrónico"
+            btn_save_email.focus()
+            settings.page.update()
+
     def changePassword(e):
         current_password.error_text=""
         password.error_text=""
@@ -113,6 +124,8 @@ def Profile(page):
 
     # photo=ft.Image(src=f"img/parqueadero.jpeg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     login_nombre=ft.Text(settings.login_nombre, theme_style=ft.TextThemeStyle.TITLE_LARGE)
+    correo=ft.TextField(width=280, height=60, hint_text="Correo electrónico", border="underline", prefix_icon=ft.icons.EMAIL, text_align="left", value=settings.correo_electronico)
+    btn_save_email=ft.ElevatedButton("Guardar", icon=ft.icons.SAVE_SHARP, width=280, bgcolor=ft.colors.BLUE_900, color="white", autofocus=True, on_click=changeEmail)
     # photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     # settings.user_photo=ft.Image(src=f"img/default.jpg", height=296, width=300, fit=ft.ImageFit.COVER, border_radius=150)
     settings.user_photo=ft.Image(src=f"/img/{settings.photo}", height=200, width=200, fit=ft.ImageFit.COVER, border_radius=150)
@@ -160,6 +173,22 @@ def Profile(page):
         ),
         ft.Container(height=10),
         ft.Container(
+            ft.Row([
+                correo
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
+            ),
+        ),
+        ft.Container(
+            ft.Row([
+                btn_save_email
+            ], 
+            alignment=ft.MainAxisAlignment.CENTER,
+            ),
+        ),
+        ft.Container(height=10),
+        ft.Container(height=10),
+        ft.Container(
             ft.Column([
                 change_password,
                 current_password,
@@ -170,14 +199,14 @@ def Profile(page):
             ),
         ),
         ft.Container(height=10),
-            ft.Container(
-                ft.Row([
-                    btn_save
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
-                ),
+        ft.Container(
+            ft.Row([
+                btn_save
+            ], 
+            alignment=ft.MainAxisAlignment.CENTER,
             ),
-            # ft.Container(height=50),
+        ),
+        ft.Container(height=10),
     ],
     horizontal_alignment="center"
     )
