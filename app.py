@@ -268,9 +268,9 @@ if settings.tipo_app == 0:
                         settings.username=login_user if settings.tipo_app == 0 else page.session.get("username")
                         username=settings.username
                         settings.photo=login_photo
-                        if correo_electronico == "":
-                            open_dlg_modal_email(e)
-                        settings.correo_electronico=correo_electronico
+                        # if correo_electronico == "":
+                        #     open_dlg_modal_email(e)
+                        # settings.correo_electronico=correo_electronico
                         selectAccess(username)
                         # page.go("/register")
                         page.clean()
@@ -487,13 +487,13 @@ if settings.tipo_app == 0:
                 dlg_modal3.content.error_text="Digite correo electrónico"
                 dlg_modal3.update()
                 return False
-            if not re.match(email_regex, email):
+            elif not re.match(email_regex, email):
                 dlg_modal3.content.error_text="Correo electrónico no válido"
                 dlg_modal3.update()
                 return False
             else:
-                update_user(settings.username, correo.value, settings.password, settings.photo, "update")
                 close_dlg3(e)
+                update_user(settings.username, email, settings.password, settings.photo, "update")
                 
         correo=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
 
@@ -503,6 +503,10 @@ if settings.tipo_app == 0:
             dlg_modal3.content.error_text=""
             dlg_modal3.open=False
             dlg_modal3.update()
+            if settings.tipo_app == 0:
+                page.update()
+            else:
+                settings.page.update()
 
         def open_dlg_modal_email(e):
             dlg_modal3.title=ft.Row([
@@ -515,7 +519,10 @@ if settings.tipo_app == 0:
             # dlg_modal3.content=ft.TextField(label="Correo electrónico", prefix_icon=ft.icons.EMAIL, text_align="left")
             page.overlay.append(dlg_modal3)
             dlg_modal3.open=True
-            page.update()
+            if settings.tipo_app == 0:
+                page.update()
+            else:
+                settings.page.update()
 
         dlg_modal3=ft.AlertDialog(
             bgcolor=ft.colors.with_opacity(opacity=0.8, color=ft.colors.PRIMARY_CONTAINER),
@@ -1642,18 +1649,23 @@ else:
             # self.btn_home.update()
             # self.navigation.update()
 
-            if self.navigation.width == 200:
-                self.navigation.width=70
-                # settings.user_auth.visible=False
-                settings.user_avatar.height=50
-                settings.user_avatar.width=50
-                settings.label_0.visible=False
+            # if self.navigation.width == 200:
+            #     self.navigation.width=70
+            #     # settings.user_auth.visible=False
+            #     settings.user_avatar.height=50
+            #     settings.user_avatar.width=50
+            #     settings.label_0.visible=False
+            # else:
+            #     self.navigation.width=200
+            #     # settings.user_auth.visible=True
+            #     settings.user_avatar.height=70
+            #     settings.user_avatar.width=70
+            #     settings.label_0.visible=True
+
+            if self.navigation.visible == True:
+                self.navigation.visible=False
             else:
-                self.navigation.width=200
-                # settings.user_auth.visible=True
-                settings.user_avatar.height=70
-                settings.user_avatar.width=70
-                settings.label_0.visible=True
+                self.navigation.visible=True
             self.btn_home.update()
             self.navigation.update()
 
@@ -1718,7 +1730,7 @@ else:
             else:
                 self.btn_home.visible=True
                 self.frame_title.visible=True
-                self.navigation.visible=True
+                # self.navigation.visible=True
 
             settings.acceso=1
             if n == 2 and settings.acceso_usuarios == 0:
@@ -1753,6 +1765,8 @@ else:
                     self.option_8.bgcolor=self.color_items
                     self.option_9.bgcolor=self.color_items
                 if n == 0:
+                    self.navigation.visible=False
+                    time.sleep(0.1)
                     # self.option_0.scale=1.2
                     # self.option_0.bgcolor=self.color_selected_item
                     # self.option_0.update()
@@ -1762,6 +1776,8 @@ else:
                     self.container_0.content.controls.append(Profile(pag))
                     self.container_0.update()
                 elif n == 1:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_1.scale=1.2
                     self.option_1.bgcolor=self.color_selected_item
                     self.option_1.update()
@@ -1771,6 +1787,8 @@ else:
                     self.container_1.content.controls.append(Home(pag))
                     self.container_1.update()
                 elif n == 2:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_2.scale=1.2
                     self.option_2.bgcolor=self.color_selected_item
                     self.option_2.update()
@@ -1780,6 +1798,8 @@ else:
                     self.container_2.content.controls.append(Users(pag))
                     self.container_2.update()
                 elif n == 3:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_3.scale=1.2
                     self.option_3.bgcolor=self.color_selected_item
                     self.option_3.update()
@@ -1789,6 +1809,8 @@ else:
                     self.container_3.content.controls.append(Configuration(pag))
                     self.container_3.update()
                 elif n == 4:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_4.scale=1.2
                     self.option_4.bgcolor=self.color_selected_item
                     self.option_4.update()
@@ -1798,6 +1820,8 @@ else:
                     self.container_4.content.controls.append(Variables(pag))
                     self.container_4.update()
                 elif n == 5:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_5.scale=1.2
                     self.option_5.bgcolor=self.color_selected_item
                     self.option_5.update()
@@ -1807,6 +1831,8 @@ else:
                     self.container_5.content.controls.append(Register(pag))
                     self.container_5.update()
                 elif n == 6:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_6.scale=1.2
                     self.option_6.bgcolor=self.color_selected_item
                     self.option_6.update()
@@ -1816,6 +1842,8 @@ else:
                     self.container_6.content.controls.append(Cash_register(pag))
                     self.container_6.update()
                 elif n == 7:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_7.scale=1.2
                     self.option_7.bgcolor=self.color_selected_item
                     self.option_7.update()
@@ -1825,6 +1853,8 @@ else:
                     self.container_7.content.controls.append(Closing_day(pag))
                     self.container_7.update()
                 elif n == 8:
+                    # self.navigation.visible=False
+                    # time.sleep(0.1)
                     self.option_8.scale=1.2
                     self.option_8.bgcolor=self.color_selected_item
                     self.option_8.update()
@@ -1855,8 +1885,8 @@ else:
                 self.switch_control[n].offset.y=0
                 self.switch_control[n].update()
 
-                # time.sleep(0.5)
-                time.sleep(0.1)
+                time.sleep(0.5)
+                # time.sleep(0.1)
 
                 self.option_0.scale=1
                 self.option_1.scale=1
@@ -1868,6 +1898,13 @@ else:
                 self.option_7.scale=1
                 self.option_8.scale=1
                 self.option_9.scale=1
+
+                self.page.update()
+                settings.page=self.page
+
+                time.sleep(0.2)
+
+                self.navigation.visible=False
 
                 self.page.update()
                 settings.page=self.page

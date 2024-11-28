@@ -432,11 +432,11 @@ def Register(page):
         papel=configuracion[0][27]
     
     def register(e):
+        buscar.value=""
         if placa.value != "":
             if settings.tipo_app == 1:
                 placa.value=e.control.value.upper()
-                placa.update()
-            buscar.value=""
+                settings.page.update()
             if rdbVehiculo.value == "Moto":
                 for i in placa.value:
                     if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":

@@ -104,9 +104,9 @@ def Login(page):
                     settings.username=settings.page.session.get("login_user")
                     username=settings.username
                     settings.photo=login_photo
-                    if correo_electronico == "":
-                        open_dlg_modal_email(e)
-                    settings.correo_electronico=correo_electronico
+                    # if correo_electronico == "":
+                    #     open_dlg_modal_email(e)
+                    # settings.correo_electronico=correo_electronico
                     selectAccess(username)
                     # settings.page.clean()
                     settings.page.route="/"
