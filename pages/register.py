@@ -433,6 +433,8 @@ def Register(page):
     
     def register(e):
         buscar.value=""
+        selectRegisters(search="", order="consecutivo ASC")
+        settings.page.update()
         if placa.value != "":
             if settings.tipo_app == 1:
                 placa.value=e.control.value.upper()
@@ -515,13 +517,13 @@ def Register(page):
             # if settings.tipo_app == 0:
             #     placa.focus()
             tb.rows.clear()
-            selectRegisters(search, order="consecutivo ASC")
-            if settings.tipo_app == 0:
-                tb.update()
-                # tblRegistro.update()
-                page.update()
-            else:
-                settings.page.update()
+            selectRegisters(search="", order="consecutivo ASC")
+            # if settings.tipo_app == 0:
+            #     tb.update()
+            #     tblRegistro.update()
+            #     page.update()
+            # else:
+            settings.page.update()
 
             bgcolor="green"
             settings.message=message
@@ -571,17 +573,19 @@ def Register(page):
 
             # time.sleep(2)
 
+            settings.correo_electronico=""
             placa.value=""
             placa.focus()
             vlr_total=0
             vlr_total=locale.currency(vlr_total, grouping=True)
             total.hint_text="Total "+str(vlr_total)
             # card.update()
-            if settings.tipo_app == 0:
-                placa.update()
-                total.update()
-            else:
-                settings.page.update()
+            # if settings.tipo_app == 0:
+            #     placa.update()
+            #     total.update()
+            #     page.update()
+            # else:
+            settings.page.update()
 
     def validate_email(e):
         dlg_modal4.content.error_text=""
@@ -726,9 +730,8 @@ def Register(page):
         # no_registros.update()
     
     def placa_change(e):
-        if settings.tipo_app == 0:
-            placa.value=e.control.value.upper()
-            placa.update()
+        placa.value=e.control.value.upper()
+        placa.update()
 
     def radiogroup_changed(e):
         placa.focus()
@@ -820,7 +823,7 @@ def Register(page):
     if settings.tipo_app == 0:
         placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
     else:
-        placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_change=placa_change, on_blur=register)
+        placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=register)
     total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", size=24, text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
@@ -977,7 +980,7 @@ def Register(page):
         settings.page.overlay.append(dlg_modal3)
         settings.page.overlay.append(dlg_modal4)
 
-    registros=selectRegisters(search, order="consecutivo ASC")
+    registros=selectRegisters(search="", order="consecutivo ASC")
     if registros != []:
         tblRegistro.height=246
         # no_registros.visible=False
