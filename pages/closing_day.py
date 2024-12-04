@@ -174,29 +174,13 @@ def Closing_day(page):
         time.sleep(4)
 
         fecha.hint_text="dd/mm/aaaa"
-        if settings.tipo_app == 0:
-            page.update()
-        else:
-            settings.page.update()
+        # if settings.tipo_app == 0:
+        #     page.update()
+        # else:
+        settings.page.update()
     
     def page_resize(e):
         if settings.tipo_app == 0:
-            if page.window.width <= 425:
-                settings.textsize=30
-            elif page.window.width > 425 and page.window.width <= 678:
-                settings.textsize=50
-            elif page.window.width >= 768 and page.window.width < 992:
-                settings.textsize=70
-            elif page.window.width >= 992 and page.window.width <= 1400:
-                settings.textsize=90
-            if settings.tipo_app == 0:
-                fecha.text_size=settings.textsize
-            else:
-                textsize=settings.textsize
-                textsize=settings.textsize
-            fecha.update()
-            page.update()
-        else:
             if settings.page.window.width <= 425:
                 settings.textsize=30
             elif settings.page.window.width > 425 and settings.page.window.width <= 678:
@@ -205,12 +189,32 @@ def Closing_day(page):
                 settings.textsize=70
             elif settings.page.window.width >= 992 and settings.page.window.width <= 1400:
                 settings.textsize=90
-            if settings.tipo_app == 0:
-                fecha.text_size=settings.textsize
             else:
-                textsize=settings.textsize
-                textsize=settings.textsize
-            settings.page.update()
+                settings.textsize=120
+            # if settings.tipo_app == 0:
+            #     fecha.text_size=settings.textsize
+            # else:
+            #     textsize=settings.textsize
+            # fecha.update()
+            # page.update()
+        else:
+            if settings.page.width <= 425:
+                settings.textsize=30
+            elif settings.page.width > 425 and settings.page.width <= 678:
+                settings.textsize=50
+            elif settings.page.width >= 768 and settings.page.width < 992:
+                settings.textsize=70
+            elif settings.page.width >= 992 and settings.page.width <= 1400:
+                settings.textsize=90
+            else:
+                settings.textsize=120
+            # if settings.tipo_app == 0:
+            #     fecha.text_size=settings.textsize
+            # else:
+            #     textsize=settings.textsize
+            #     textsize=settings.textsize
+        fecha.text_size=settings.textsize
+        settings.page.update()
 
     def dismiss_date(e):
         close_dlg(e)
@@ -316,34 +320,43 @@ def Closing_day(page):
     # if settings.tipo_app == 0:
     #     page.overlay.append(dlg_modal)
     #     page.update()
+
+    settings.page.on_resized=lambda e: page_resize(e)
     
     if settings.tipo_app == 0:
-        page.on_resized=page_resize
+        # page.on_resized=page_resize
 
-        if page.window.width <= 425:
+        if int(settings.page.window.width) <= 425:
             textsize=30
-        elif page.window.width > 425 and page.window.width <= 678:
+        elif int(settings.page.window.width) > 425 and int(settings.page.window.width) <= 678:
             textsize=50
-        elif page.window.width >= 768 and page.window.width < 992:
+        elif int(settings.page.window.width) >= 768 and int(settings.page.window.width) < 992:
             textsize=70
-        elif page.window.width >= 992:
+        elif int(settings.page.window.width) >= 992:
             textsize=90
+        else:
+            textsize=120
     else:
-        settings.page.on_resized=page_resize
+        # settings.page.on_resized=page_resize
 
-        if settings.page.window.width <= 425:
+        if int(settings.page.width) <= 425:
             textsize=30
-        elif settings.page.window.width > 425 and settings.page.window.width <= 678:
+        elif int(settings.page.width) > 425 and int(settings.page.width) <= 678:
             textsize=50
-        elif settings.page.window.width >= 768 and settings.page.window.width < 992:
+        elif int(settings.page.width) >= 768 and int(settings.page.width) < 992:
             textsize=70
-        elif settings.page.window.width >= 992:
+        elif int(settings.page.width) >= 992:
             textsize=90
+        else:
+            textsize=120
 
     # fecha=ft.TextField(hint_text="dd/mm/aaaa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=close_day)
     # fecha=ft.Text("dd/mm/aaaa", size=textsize, width=600, text_align="center")
-    fecha=ft.TextField(hint_text="dd/mm/aaaa", border="none", text_size=textsize, width=600, text_align="center", autofocus=False, read_only=True)
+    fecha=ft.TextField(hint_text="dd/mm/aaaa", border="none", text_size=textsize, text_align="center", autofocus=False, read_only=True)
     # btn_cierre=ft.ElevatedButton(text="Cerrar día", icon=ft.icons.CALENDAR_MONTH, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=close_day)
+
+    page_resize(e=settings.page)
+    settings.page.update()
     
     # if settings.tipo_app == 0:
     return ft.Column(

@@ -433,7 +433,9 @@ def Register(page):
     
     def register(e):
         buscar.value=""
-        selectRegisters(search="", order="consecutivo ASC")
+        registros=selectRegisters(search="", order="consecutivo ASC")
+        if registros != []:
+            tblRegistro.height=246
         settings.page.update()
         if placa.value != "":
             if settings.tipo_app == 1:
@@ -596,27 +598,41 @@ def Register(page):
             return False
 
     def page_resize(e):
-        if page.window.width <= 425:
-            settings.textsize=30
-        elif page.window.width > 425 and page.window.width <= 678:
-            settings.textsize=50
-        elif page.window.width >= 768 and page.window.width < 992:
-            settings.textsize=70
-        elif page.window.width >= 992 and page.window.width <= 1400:
-            settings.textsize=90
+        if settings.tipo_app == 0:
+            if int(settings.page.window.width) <= 425:
+                settings.textsize=30
+            elif int(settings.page.window.width) > 425 and int(settings.page.window.width) <= 678:
+                settings.textsize=50
+            elif int(settings.page.window.width) >= 768 and int(settings.page.window.width) < 992:
+                settings.textsize=70
+            elif int(settings.page.window.width) >= 992 and int(settings.page.window.width) <= 1400:
+                settings.textsize=90
+            else:
+                settings.textsize=120
+        else:
+            if int(settings.page.width) <= 425:
+                settings.textsize=30
+            elif int(settings.page.width) > 425 and int(settings.page.width) <= 678:
+                settings.textsize=50
+            elif int(settings.page.width) >= 768 and int(settings.page.width) < 992:
+                settings.textsize=70
+            elif int(settings.page.width) >= 992 and int(settings.page.width) <= 1400:
+                settings.textsize=90
+            else:
+                settings.textsize=120
         placa.text_size=settings.textsize
         total.text_size=settings.textsize
-        placa.update()
-        total.update()
-        page.update()
+        # placa.update()
+        # total.update()
+        settings.page.update()
 
     def close_dlg(e):
         dlg_modal.open=False
-        if settings.tipo_app == 0:
-            page.update()
-            total.update()
-        else:
-            settings.page.update()
+        # if settings.tipo_app == 0:
+        #     page.update()
+        #     total.update()
+        # else:
+        settings.page.update()
 
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Row([
@@ -699,12 +715,10 @@ def Register(page):
             settings.showMessage(bgcolor)
 
     def search_blur(e):
-        if settings.tipo_app == 1:
-            search_data(e)
+        search_data(e)
     
     def search_change(e):
-        if settings.tipo_app == 0:
-            search_data(e)
+        search_data(e)
 
     def search_data(e):
         search=e.control.value.upper()
@@ -723,10 +737,10 @@ def Register(page):
             message="No se encontraron registros"
             settings.message=message
             settings.showMessage(bgcolor)
-        if settings.tipo_app == 0:
-            page.update()
-        else:
-            settings.page.update()
+        # if settings.tipo_app == 0:
+        #     page.update()
+        # else:
+        settings.page.update()
         # no_registros.update()
     
     def placa_change(e):
@@ -801,24 +815,36 @@ def Register(page):
         page.overlay.append(date_picker_from)
         page.overlay.append(date_picker_to)
 
-    if settings.tipo_app == 0:
-        page.on_resized=page_resize
+    # if settings.tipo_app == 0:
+    settings.page.on_resized=lambda e: page_resize(e)
 
-        if page.window.width <= 425:
+    if settings.tipo_app == 0:
+        if int(settings.page.window.width) <= 425:
             textsize=30
-        elif page.window.width > 425 and page.window.width <= 678:
+        elif int(settings.page.window.width) > 425 and int(settings.page.window.width) <= 678:
             textsize=50
-        elif page.window.width >= 768 and page.window.width < 992:
+        elif int(settings.page.window.width) >= 768 and int(settings.page.window.width) < 992:
             textsize=70
-        elif page.window.width >= 992:
+        elif int(settings.page.window.width) >= 992 and int(settings.page.window.width) <= 1400:
             textsize=90
+        else:
+            textsize=120
     else:
-         textsize=90
+        if int(settings.page.width) <= 425:
+            textsize=30
+        elif int(settings.page.width) > 425 and int(settings.page.width) <= 678:
+            textsize=50
+        elif int(settings.page.width) >= 768 and int(settings.page.width) < 992:
+            textsize=70
+        elif int(settings.page.width) >= 992 and int(settings.page.width) <= 1400:
+            textsize=90
+        else:
+            textsize=120
     
     if settings.tipo_app == 0:
-        buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change, on_blur=search_blur)
+        buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, capitalization="CHARACTERS", prefix_icon=ft.icons.SEARCH, input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=search_change)
     else:
-        buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_change=search_change, on_blur=search_blur)
+        buscar=ft.TextField(hint_text="Buscar consecutivo ó placa", border_radius=50, fill_color=ft.colors.PRIMARY_CONTAINER, filled=True, width=252, text_align="left", autofocus=False, prefix_icon=ft.icons.SEARCH, on_blur=search_blur)
     export=ft.IconButton(icon=ft.icons.FILE_DOWNLOAD_OUTLINED, on_click=open_dlg_modal2)
     if settings.tipo_app == 0:
         placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
@@ -979,6 +1005,9 @@ def Register(page):
         settings.page.overlay.append(dlg_modal2)
         settings.page.overlay.append(dlg_modal3)
         settings.page.overlay.append(dlg_modal4)
+
+    page_resize(e=settings.page)
+    settings.page.update()
 
     registros=selectRegisters(search="", order="consecutivo ASC")
     if registros != []:

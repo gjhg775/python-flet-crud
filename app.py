@@ -1177,6 +1177,7 @@ else:
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Registro"),
                         # ft.Container(
@@ -1720,6 +1721,7 @@ else:
                 self.label_8.color=self.color_icons_light
                 self.label_9.color=self.color_icons_light
                 self.label_title.color=self.color_icons_light
+            self.navigation.visible=False
             self.page.update()
 
         def change_page(self, e, n):
