@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import settings
 import smtplib
 # import ssl
@@ -78,9 +79,9 @@ def send_mail_billing(SENDER_EMAIL, RECEIVER_EMAIL):
         smtp.sendmail(settings.email_user, RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 
-    # settings.correo_electronico=""
+    settings.correo_electronico=""
 
-def send_mail_user(SENDER_EMAIL, RECEIVER_EMAIL, token_password):    
+def send_mail_user(SENDER_EMAIL, RECEIVER_EMAIL, token_password):
     msg=EmailMessage()
     msg["From"]=SENDER_EMAIL
     msg["To"]=RECEIVER_EMAIL
@@ -105,4 +106,4 @@ def send_mail_user(SENDER_EMAIL, RECEIVER_EMAIL, token_password):
         smtp.sendmail(settings.email_user, RECEIVER_EMAIL, msg.as_string())
         smtp.quit()
 
-    # settings.correo_electronico=""
+    settings.correo_electronico=""

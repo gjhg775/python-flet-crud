@@ -49,7 +49,8 @@ MAIL_PASSWORD=settings.email_pass
 RECEIVER_EMAIL=settings.correo_electronico
 
 vlr_total=0
-vlr_total=locale.currency(vlr_total, grouping=True)
+vlr_total2=vlr_total
+vlr_total2=locale.currency(vlr_total2, grouping=True)
 search=""
 textsize=settings.textsize
 
@@ -432,162 +433,188 @@ def Register(page):
         papel=configuracion[0][27]
     
     def register(e):
-        buscar.value=""
-        registros=selectRegisters(search="", order="consecutivo ASC")
-        if registros != []:
-            tblRegistro.height=246
-        settings.page.update()
-        if placa.value != "":
-            if settings.tipo_app == 1:
-                placa.value=e.control.value.upper()
-                settings.page.update()
-            if rdbVehiculo.value == "Moto":
+        try:
+            buscar.value=""
+            registros=selectRegisters(search="", order="consecutivo ASC")
+            if registros != []:
+                tblRegistro.height=246
+            settings.page.update()
+            if placa.value != "":
+                if settings.tipo_app == 1:
+                    placa.value=e.control.value.upper()
+                    settings.page.update()
+                # if rdbVehiculo.value == "Moto":
+                sw=0
                 for i in placa.value:
                     if i not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                        if rdbVehiculo.value == "Moto" or rdbVehiculo.value == "Carro":
-                            if rdbVehiculo.value == "Moto":
-                                message=f"El caracter {i} no es válido para la placa de una moto"
-                            if rdbVehiculo.value == "Carro":
-                                message=f"El caracter {i} no es válido para la placa de un carro"
-                            title="Placa inválida"
-                            open_dlg_modal(e, title, message)
-                            return False
-                if len(placa.value) < 5 or len(placa.value) > 6:
-                    title="Placa inválida"
-                    message=f"La placa {placa.value} no es válida para una moto"
-                    open_dlg_modal(e, title, message)
-                    return False
-                if len(placa.value) == 6 and placa.value[-1] in "0123456789":
-                    title="Placa inválida"
-                    message=f"La placa {placa.value} no es válida para una moto"
-                    open_dlg_modal(e, title, message)
-                    return False
-            if rdbVehiculo.value == "Carro":
-                if len(placa.value) != 6 or placa.value[-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
-                    title="Placa inválida"
-                    message=f"La placa {placa.value} no es válida para un carro"
-                    open_dlg_modal(e, title, message)
+                        if rdbVehiculo.value == "Moto":
+                            message=f"El caracter {i} no es válido para la placa de una moto"
+                        if rdbVehiculo.value == "Carro":
+                            message=f"El caracter {i} no es válido para la placa de un carro"
+                        title="Placa inválida"
+                        open_dlg_modal(e, title, message)
+                        sw=1
+                        break
+                if rdbVehiculo.value == "Moto":
+                    if len(placa.value) < 5 or len(placa.value) > 6:
+                        title="Placa inválida"
+                        message=f"La placa {placa.value} no es válida para una moto"
+                        open_dlg_modal(e, title, message)
+                        sw=1
+                    if len(placa.value) == 6 and placa.value[-1] in "0123456789":
+                        title="Placa inválida"
+                        message=f"La placa {placa.value} no es válida para una moto"
+                        open_dlg_modal(e, title, message)
+                        sw=1
+                if rdbVehiculo.value == "Carro":
+                    if len(placa.value) != 6 or placa.value[-1] in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                        title="Placa inválida"
+                        message=f"La placa {placa.value} no es válida para un carro"
+                        open_dlg_modal(e, title, message)
+                        sw=1
+                if sw == 1:
                     return False
                 
-            exist_email(placa.value)
+                exist_email(placa.value)
 
-            if settings.correo_electronico == "":
-                lbl_placa.value=f"Placa {placa.value}"
-                lbl_placa.update()
-            
-            consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, correo_electronico, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
+                if settings.correo_electronico == "":
+                    lbl_placa.value=f"Placa {placa.value}"
+                    lbl_placa.update()
+                
+                consecutivo, vehiculo, placas, entrada, salida, tiempo, comentario1, comentario2, comentario3, vlr_total, correo_electronico, entradas, salidas=selectRegister(rdbVehiculo.value, placa.value)
 
-            if settings.correcto == 1:
-                message="Verifique que la fecha y hora del sistema estén actualizadas"
-                bgcolor="red"
+                settings.placa=placas
+                settings.correo_electronico=correo_electronico
+
+                if settings.correcto == 1:
+                    message="Verifique que la fecha y hora del sistema estén actualizadas"
+                    bgcolor="red"
+                    settings.message=message
+                    settings.showMessage(bgcolor)
+                    time.sleep(2)
+                    placa.value=""
+                    placa.focus()
+                    if settings.tipo_app == 0:
+                        placa.update()
+                    else:
+                        settings.page.update()
+                    return False
+                
+                registros=selectRegisters(search="", order="consecutivo ASC")
+                if registros != []:
+                    tblRegistro.height=246
+                if settings.tipo_app == 0:
+                    tblRegistro.update()
+                settings.page.update()
+
+                if vlr_total == 0:
+                    message="Registro creado satisfactoriamente"
+                    # tblRegistro.height=246
+                else:
+                    message="Registro actualizado satisfactoriamente"
+
+                # placa.value=""
+                vlr_total2=vlr_total
+                vlr_total2=locale.currency(vlr_total2, grouping=True)
+                total.hint_text="Total "+str(vlr_total2)
+                total.update()
+                # card.update()
+                if settings.tipo_app == 0:
+                    # placa.update()
+                    page.update()
+                else:
+                    settings.page.update()
+                # tb.rows.clear()
+                # registros=selectRegisters(search="", order="consecutivo ASC")
+                # if registros != []:
+                #     tblRegistro.height=246
+                # settings.page.update()
+
+                bgcolor="green"
                 settings.message=message
                 settings.showMessage(bgcolor)
+
                 time.sleep(2)
-                placa.value=""
-                placa.focus()
-                placa.update()
-                return False
-            
-            # consecutivo=str(consecutivo).zfill(6) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else consecutivo
-            consecutivo=str(consecutivo).zfill(6)
-            settings.consecutivo2=consecutivo
-            
-            if comentario1 != "":
-                show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas)
-            else:
-                show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas)
-            
-            # print("Total " + str(vlr_total))
 
-            # if vlr_total == None or vlr_total == "":
-            #     vlr_total = 0
+                # consecutivo=str(consecutivo).zfill(6) if str(consecutivo[0:1]) == str(settings.prefijo[0:1]) else consecutivo
+                consecutivo=str(consecutivo).zfill(6)
+                settings.consecutivo2=consecutivo
+                
+                if comentario1 != "":
+                    show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas)
+                else:
+                    show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas)
+                
+                # print("Total " + str(vlr_total))
 
-            settings.placa=placas
-            settings.correo_electronico=correo_electronico
+                # if vlr_total == None or vlr_total == "":
+                #     vlr_total = 0
 
-            if vlr_total == 0:
-                message="Registro creado satisfactoriamente"
-                tblRegistro.height=246
-            else:
-                message="Registro actualizado satisfactoriamente"
+                if settings.send_email_register == 1:
+                    if settings.correo_electronico != "":
+                        correo.value=settings.correo_electronico
+                        # correo.update()
+                    open_dlg_modal_email(e)
+                    # if settings.correo_electronico == "":
+                    #     open_dlg_modal_email(e)
+                    # else:
+                    #     bgcolor="blue"
+                    #     message="Enviando correo"
+                    #     settings.message=message
+                    #     settings.showMessage(bgcolor)
 
-            # placa.value=""
-            vlr_total=locale.currency(vlr_total, grouping=True)
-            total.hint_text="Total "+str(vlr_total)
-            # card.update()
+                    #     time.sleep(2)
+
+                    #     settings.progressBar.visible=True
+                    #     if settings.tipo_app == 0:
+                    #         page.open(dlg_modal3)
+                    #         page.update()
+                    #     else:
+                    #         settings.page.open(dlg_modal3)     
+                    #         settings.page.update()
+
+                    #     send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
+
+                    #     settings.progressBar.visible=False
+                    #     if settings.tipo_app == 0:
+                    #         page.close(dlg_modal3)
+                    #         page.update()
+                    #     else:
+                    #         settings.page.close(dlg_modal3)     
+                    #         settings.page.update()
+
+                    #     bgcolor="green"
+                    #     message="Correo enviado satisfactoriamente"
+                    #     settings.message=message
+                    #     settings.showMessage(bgcolor)
+
+                    #     time.sleep(2)
+
+            placa.value=""
+            vlr_total=0
+            vlr_total2=vlr_total
+            vlr_total2=locale.currency(vlr_total2, grouping=True)
+            total.hint_text=f"Total {vlr_total2}"
+            placa.update()
             total.update()
+            # placa.focus()
+            # # card.update()
             # if settings.tipo_app == 0:
-            #     placa.focus()
-            tb.rows.clear()
-            selectRegisters(search="", order="consecutivo ASC")
-            # if settings.tipo_app == 0:
-            #     tb.update()
-            #     tblRegistro.update()
             #     page.update()
             # else:
+            #     settings.page.update()
             settings.page.update()
-
-            bgcolor="green"
+        except Exception as e:
+            bgcolor="red"
+            message=f"Error {e}"
+            settings.banner.content=content=ft.Text(
+                value=message,
+                color=ft.colors.BLACK
+            )
+            settings.show_banner()
             settings.message=message
             settings.showMessage(bgcolor)
-
             time.sleep(2)
-
-            if settings.send_email_register == 1:
-                if settings.correo_electronico != "":
-                    correo.value=settings.correo_electronico
-                    # correo.update()
-                open_dlg_modal_email(e)
-                # if settings.correo_electronico == "":
-                #     open_dlg_modal_email(e)
-                # else:
-                #     bgcolor="blue"
-                #     message="Enviando correo"
-                #     settings.message=message
-                #     settings.showMessage(bgcolor)
-
-                #     time.sleep(2)
-
-                #     settings.progressBar.visible=True
-                #     if settings.tipo_app == 0:
-                #         page.open(dlg_modal3)
-                #         page.update()
-                #     else:
-                #         settings.page.open(dlg_modal3)     
-                #         settings.page.update()
-
-                #     send_mail_billing(config("EMAIL_USER"), settings.correo_electronico)
-
-                #     settings.progressBar.visible=False
-                #     if settings.tipo_app == 0:
-                #         page.close(dlg_modal3)
-                #         page.update()
-                #     else:
-                #         settings.page.close(dlg_modal3)     
-                #         settings.page.update()
-
-                #     bgcolor="green"
-                #     message="Correo enviado satisfactoriamente"
-                #     settings.message=message
-                #     settings.showMessage(bgcolor)
-
-                #     time.sleep(2)
-
-            # time.sleep(2)
-
-            settings.correo_electronico=""
-            placa.value=""
-            placa.focus()
-            vlr_total=0
-            vlr_total=locale.currency(vlr_total, grouping=True)
-            total.hint_text="Total "+str(vlr_total)
-            # card.update()
-            # if settings.tipo_app == 0:
-            #     placa.update()
-            #     total.update()
-            #     page.update()
-            # else:
-            settings.page.update()
 
     def validate_email(e):
         dlg_modal4.content.error_text=""
@@ -628,11 +655,10 @@ def Register(page):
 
     def close_dlg(e):
         dlg_modal.open=False
-        # if settings.tipo_app == 0:
-        #     page.update()
-        #     total.update()
-        # else:
-        settings.page.update()
+        if settings.tipo_app == 0:
+            page.update()
+        else:
+            settings.page.update()
 
     def open_dlg_modal(e, title, message):
         dlg_modal.title=ft.Row([
@@ -698,7 +724,6 @@ def Register(page):
         dlg_modal2.open=False
         if settings.tipo_app == 0:
             page.update()
-            total.update()
         else:
             settings.page.update()
 
@@ -741,7 +766,7 @@ def Register(page):
         #     page.update()
         # else:
         settings.page.update()
-        # no_registros.update()
+        # no_registros.update()        
     
     def placa_change(e):
         placa.value=e.control.value.upper()
@@ -850,7 +875,7 @@ def Register(page):
         placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, capitalization="CHARACTERS", input_filter=ft.InputFilter(allow=True, regex_string=r"[0-9a-zA-Z]", replacement_string=""), on_change=placa_change, on_blur=register)
     else:
         placa=ft.TextField(hint_text="Placa", border="underline", text_size=textsize, width=600, text_align="center", autofocus=True, on_blur=register)
-    total=ft.TextField(hint_text="Total "+str(vlr_total), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
+    total=ft.TextField(hint_text="Total "+str(vlr_total2), border="none", text_size=textsize, width=600, text_align="right", autofocus=False, read_only=True)
     fecha_desde=ft.Text("dd/mm/aaaa", size=24, text_align="center")
     fecha_hasta=ft.Text("dd/mm/aaaa", size=24, text_align="center")
     date_button_from=ft.ElevatedButton("Desde", icon=ft.icons.CALENDAR_MONTH, bgcolor=ft.colors.BLUE_900, color="white", on_click=lambda _: page.open(date_picker_from) if settings.tipo_app == 0 else settings.page.open(date_picker_from))
@@ -908,6 +933,9 @@ def Register(page):
         ),
     )
 
+    page_resize(e=settings.page)
+    settings.page.update()
+
     def sendMailBilling(e):
         settings.correo_electronico=correo.value
         if settings.correo_electronico != "":
@@ -936,7 +964,7 @@ def Register(page):
 
                 update_register_mail(settings.correo_electronico, settings.placa, settings.consecutivo)
                 send_mail_billing(settings.email_user, settings.correo_electronico)
-
+                
                 correo.value=""
                 correo.update()
 
@@ -947,13 +975,12 @@ def Register(page):
                 else:
                     settings.page.close(dlg_modal3)     
                     settings.page.update()
-
+                
                 bgcolor="green"
                 message="Correo enviado satisfactoriamente"
                 settings.message=message
                 settings.showMessage(bgcolor)
-
-                time.sleep(2)
+                placa.focus()
         else:
             dlg_modal4.content.error_text="Digite correo electrónico"
             dlg_modal4.content.update()
@@ -963,10 +990,10 @@ def Register(page):
     def close_dlg4(e):
         correo.update()
         dlg_modal4.open=False
-        if settings.tipo_app == 0:
-            page.update()
-        else:
-            settings.page.update()
+        # if settings.tipo_app == 0:
+        #     page.update()
+        # else:
+        settings.page.update()
 
     def open_dlg_modal_email(e):
         dlg_modal4.title=ft.Row([
@@ -1005,9 +1032,6 @@ def Register(page):
         settings.page.overlay.append(dlg_modal2)
         settings.page.overlay.append(dlg_modal3)
         settings.page.overlay.append(dlg_modal4)
-
-    page_resize(e=settings.page)
-    settings.page.update()
 
     registros=selectRegisters(search="", order="consecutivo ASC")
     if registros != []:

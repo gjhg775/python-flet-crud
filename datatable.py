@@ -520,9 +520,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
     
     try:
         salida=datetime.datetime.now()
-        formato=f"%Y-%m-%d %H:%M"
+        formato=f"%Y-%m-%d %H:%M:%S"
         salida=str(salida)
-        salida=str(salida[0:16])
+        salida=str(salida[0:19])
         salida=datetime.datetime.strptime(salida, formato)
 
         if vehiculo == "Moto":
@@ -595,11 +595,11 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             # tiempo=((registros[0][13])/60)/60
             tiempo=registros[0][8]
 
-            formato=f"%Y-%m-%d %H:%M"
+            formato=f"%Y-%m-%d %H:%M:%S"
             entrada=str(entrada)
             salida=str(salida)
-            entrada=str(entrada[0:16])
-            salida=str(salida[0:16])
+            entrada=str(entrada[0:19])
+            salida=str(salida[0:19])
             entrada=datetime.datetime.strptime(entrada, formato)
             salida=datetime.datetime.strptime(salida, formato)
             tiempos=salida - entrada
@@ -608,7 +608,8 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
             horas+=dias
             sobrante=tiempos.seconds%3600
             minutos=sobrante//60
-            duracion=str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+            segundos=sobrante//60
+            duracion=str(f'{horas:02}') + ":" + str(f'{minutos:02}') + ":" + str(f'{segundos:02}')
 
             # segundos=registros[0][13]
             # dias=segundos//(24*60*60)
@@ -705,7 +706,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
             conn=get_connection()
             cursor=conn.cursor()
-            sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE registro_id = ?"""
+            sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE registro_id = ?"""
             values=(f'{id}',)
             cursor.execute(sql, values)
             registros=cursor.fetchall()
@@ -739,9 +740,9 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
 
 def add_register(vehiculo, placa):
     entrada=datetime.datetime.now()
-    formato=f"%Y-%m-%d %H:%M"
+    formato=f"%Y-%m-%d %H:%M:%S"
     entrada=str(entrada)
-    entrada=str(entrada[0:16])
+    entrada=str(entrada[0:19])
     entrada=datetime.datetime.strptime(entrada, formato)
     salida=entrada
     vehiculo=vehiculo
@@ -793,7 +794,7 @@ def add_register(vehiculo, placa):
 
         conn=get_connection()
         cursor=conn.cursor()
-        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE placa = ? AND strftime("%s", entrada) = strftime("%s", salida) AND total = 0"""
         values=(f'{placa}',)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
@@ -865,8 +866,9 @@ def selectRegister(vehiculo, placa):
             consecutivo=registros[0][1]
             settings.consecutivo=registros[0][1]
             consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas=update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro)
-            if total == None:
+            if total == None or total == "":
                 total=0
+
         return consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas
 
         # cursor=conn.cursor()
@@ -888,7 +890,7 @@ def showedit(e):
     try:
         conn=get_connection()
         cursor=conn.cursor()
-        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M', entrada) AS entradas, strftime('%d/%m/%Y %H:%M', salida) AS salidas FROM registro WHERE consecutivo = ?"""
+        sql=f"""SELECT *, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entradas, strftime('%d/%m/%Y %H:%M:%S', salida) AS salidas FROM registro WHERE consecutivo = ?"""
         values=(f"{consecutivo}",)
         cursor.execute(sql, values)
         registros=cursor.fetchall()
@@ -1131,17 +1133,21 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     settings.consecutivo2=consecutivo
     # consecutivo=str(settings.consecutivo2).zfill(6) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
     consecutivo=str(consecutivo).zfill(6)
+
+    if settings.tipo_app == 0:
+        settings.billing = 0
+
     if settings.billing == 0:
         consecutivo="Recibo " + consecutivo
     else:
         consecutivo=settings.prefijo + str(consecutivo)
         settings.consecutivo2=consecutivo
-    formato=f"%Y-%m-%d %H:%M"
+    formato=f"%Y-%m-%d %H:%M:%S"
     entrada=str(entrada)
     salida=str(salida)
-    entrada=str(entrada[0:16])
-    salida=str(salida[0:16])
-    fecha=str(salida[0:16])
+    entrada=str(entrada[0:19])
+    salida=str(salida[0:19])
+    fecha=str(salida[0:19])
     fecha=fecha.split(" ")
     generacion=fecha[0]
     hora=fecha[1]
@@ -1160,8 +1166,9 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     # print(horas)
     sobrante=tiempos.seconds%3600
     minutos=sobrante//60
+    segundos=sobrante%60
     # print(minutos)
-    duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+    duracion="Tiempo hh:mm:ss " + str(f'{horas:02}') + ":" + str(f'{minutos:02}') + ":" + str(f'{segundos:02}')
     # duracion="Tiempo hh:mm " + str(f'{tiempos}')
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
@@ -1183,23 +1190,56 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         nit_fac=nit_fac[1]
         nit_fac=str(nit_fac).split("-")
         nit_fac=nit_fac[0]
-        doc_adq=settings.cliente_final
+        doc_adq=f"{settings.cliente_final}"
         val_fac=vlr_total
-        CodImp1="01"
+        val_fac2=f"{val_fac:.2f}"
+        CodImp1=1
+        CodImp1=f"{CodImp1:02}"
         ValImp1=0
-        CodImp2="04"
+        ValImp11=f"{ValImp1:.2f}"
+        CodImp2=4
+        CodImp2=f"{CodImp2:02}"
         ValImp2=0
-        CodImp3="03"
+        ValImp22=f"{ValImp2:.2f}"
+        CodImp3=3
+        CodImp3=f"{CodImp3:02}"
         ValImp3=0
+        ValImp33=f"{ValImp3:.2f}"
         val_iva=0
         val_otro_im=0
         val_tol_fac=val_fac
         ValTot=val_fac+ValImp1+ValImp2+ValImp3
-        NitOFE=nit_fac
-        ClTec=settings.clave_tecnica
+        ValTot2=f"{ValTot:.2f}"
+        NitOFE=f"{nit_fac}"
+        ClTec=f"{settings.clave_tecnica}"
         TipoAmbie=settings.tipo_ambiente
-        cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
-        bytes=cufe.encode('utf-8')
+        TipoAmbie2=f"{TipoAmbie}"
+
+        print(consecutivo)
+        print(fec_fac)
+        print(hor_fac)
+        print(val_fac2)
+        print(CodImp1)
+        print(ValImp11)
+        print(CodImp2)
+        print(ValImp22)
+        print(CodImp3)
+        print(ValImp33)
+        print(ValTot2)
+        print(NitOFE)
+        print(doc_adq)
+        print(ClTec)
+        print(TipoAmbie2)
+
+        # cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
+        # cufe=consecutivo + fec_fac + hor_fac + f"{val_fac2:.2f}" + CodImp1 + f"{ValImp11:.2f}" + CodImp2 + f"{ValImp22:.2f}" + CodImp3 + f"{ValImp33:.2f}" + f"{ValTot2:.2f}" + NitOFE + doc_adq + ClTec + TipoAmbie2
+        # cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
+        cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
+        # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
+        # cufe=cufe.encode("utf-8")
+        # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
+        # hash=hashlib.sha384(cufe).hexdigest()
+        bytes=cufe.encode("utf-8")
         hash=hashlib.sha384(bytes).hexdigest()
         cufe=hash
 
@@ -1414,11 +1454,12 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         valor_w=pdf.get_string_width(valor)
         pdf.set_x((doc_w - valor_w) / 2)
         pdf.cell(valor_w, 313, valor, align="C")
-        vlr_total=locale.currency(vlr_total, grouping=True)
-        vlr_total="Total " + str(vlr_total) 
-        vlr_total_w=pdf.get_string_width(vlr_total)
-        pdf.set_x((doc_w - vlr_total_w) / 2)
-        pdf.cell(vlr_total_w, 327, vlr_total, align="C")
+        vlr_total2=vlr_total
+        vlr_total2=locale.currency(vlr_total2, grouping=True)
+        vlr_total2="Total " + str(vlr_total2) 
+        vlr_total2_w=pdf.get_string_width(vlr_total2)
+        pdf.set_x((doc_w - vlr_total2_w) / 2)
+        pdf.cell(vlr_total2_w, 327, vlr_total2, align="C")
         pdf.set_font("helvetica", "", size=13)
         title_cufe="CUFE:"
         title_cufe_w=pdf.get_string_width(title_cufe)
@@ -1457,11 +1498,12 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         valor_w=pdf.get_string_width(valor)
         pdf.set_x((doc_w - valor_w) / 2)
         pdf.cell(valor_w, 208, valor, align="C")
-        vlr_total=locale.currency(vlr_total, grouping=True)
-        vlr_total="Total " + str(vlr_total) 
-        vlr_total_w=pdf.get_string_width(vlr_total)
-        pdf.set_x((doc_w - vlr_total_w) / 2)
-        pdf.cell(vlr_total_w, 222, vlr_total, align="C")
+        vlr_total2=vlr_total
+        vlr_total2=locale.currency(vlr_total2, grouping=True)
+        vlr_total2="Total " + str(vlr_total2) 
+        vlr_total2_w=pdf.get_string_width(vlr_total2)
+        pdf.set_x((doc_w - vlr_total2_w) / 2)
+        pdf.cell(vlr_total2_w, 222, vlr_total2, align="C")
     pdf.set_font("helvetica", "", size=8)
     impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
     impreso_w=pdf.get_string_width(impreso)
@@ -1502,31 +1544,6 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     # minuto=int(ahora[1])
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
-
-    if settings.send_email_register == 1:
-        bgcolor="blue"
-        message="Enviando correo"
-        settings.message=message
-        settings.showMessage(bgcolor)
-
-        time.sleep(2)
-
-        settings.progressBar.visible=True
-        settings.page.open(dlg_modal2)
-        settings.page.update()
-
-        send_mail_billing(settings.email_user, settings.correo_electronico)
-
-        settings.progressBar.visible=False
-        settings.page.close(dlg_modal2)
-        settings.page.update()
-
-        bgcolor="green"
-        message="Correo enviado satisfactoriamente"
-        settings.message=message
-        settings.showMessage(bgcolor)
-
-        time.sleep(2)
 
 # def show_edit_access(e):
 #     # data_edit=e.control.data
@@ -1892,16 +1909,16 @@ def sort_registers(e):
     selectRegisters("", order)
     settings.page.update()
 
-def selectRegisters(search, order):
+def selectRegisters(search="", order="consecutivo ASC"):
     cuadre=0
     conn=get_connection()
     cursor=conn.cursor()
     # sql=f"""SELECT registro_id, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), vehiculo, valor, tiempo, total, cuadre, usuario FROM registro"""
     if search == "":
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE cuadre = ? ORDER BY {order}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), total, correo_electronico FROM registro WHERE cuadre = ? ORDER BY {order}"""
         values=(f'{cuadre}',)
     else:
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada), strftime('%d/%m/%Y %H:%M', salida), total, correo_electronico FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ? ORDER BY {order}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada), strftime('%d/%m/%Y %H:%M:%S', salida), total, correo_electronico FROM registro WHERE (consecutivo LIKE ? OR placa LIKE ?) AND cuadre = ? ORDER BY {order}"""
         values=(f'%{search}%', f'%{search}%', f'{cuadre}')
     cursor.execute(sql, values)
     registros=cursor.fetchall()
@@ -2028,7 +2045,7 @@ def selectCashRegister(order="consecutivo ASC"):
     conn=get_connection()
     cursor=conn.cursor()    
     # sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = 0 AND cuadre = 0"""
-    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = ? order by {order}"""
+    sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entrada, strftime('%d/%m/%Y %H:%M:%S', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE cuadre = ? order by {order}"""
     values=(f'{cuadre}',)
     cursor.execute(sql, values)
     registros=cursor.fetchall()

@@ -2,7 +2,9 @@ import os
 import sys
 import locale
 import qrcode
+import bcrypt
 import datetime
+import time
 import settings
 import subprocess
 import webbrowser
@@ -227,23 +229,27 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     settings.consecutivo2=consecutivo
     # consecutivo=str(settings.consecutivo2).zfill(6) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
     consecutivo=str(consecutivo).zfill(6)
+
+    if settings.tipo_app == 0:
+        settings.billing = 0
+        
     if settings.billing == 0:
         consecutivo="Recibo " + consecutivo
     else:
         consecutivo=settings.prefijo + str(consecutivo)
         settings.consecutivo2=consecutivo
-    formato=f"%Y-%m-%d %H:%M"
+    formato=f"%Y-%m-%d %H:%M:%S"
     entrada=str(entrada)
     salida=str(salida)
-    fecha=str(salida[0:16])
+    fecha=str(salida[0:19])
     fecha=fecha.split(" ")
     generacion=fecha[0]
     hora=fecha[1]
     generacion=generacion.split("-")
     generacion=generacion[2] + "/" + generacion[1] + "/" + generacion[0] + " " + hora
     expedicion=generacion
-    entrada=str(entrada[0:16])
-    salida=str(salida[0:16])
+    entrada=str(entrada[0:19])
+    salida=str(salida[0:19])
     entrada=datetime.datetime.strptime(entrada, formato)
     salida=datetime.datetime.strptime(salida, formato)
     tiempos=salida - entrada
@@ -256,8 +262,9 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     # print(horas)
     sobrante=tiempos.seconds%3600
     minutos=sobrante//60
+    segundos=sobrante%60
     # print(minutos)
-    duracion="Tiempo hh:mm " + str(f'{horas:02}') + ":" + str(f'{minutos:02}')
+    duracion="Tiempo hh:mm:ss " + str(f'{horas:02}') + ":" + str(f'{minutos:02}') + ":" + str(f'{segundos:02}')
     # duracion="Tiempo hh:mm " + str(f'{tiempos}')
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
@@ -274,28 +281,61 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         ano=ano[0:4]
         fec_fac=ano+"-"+mes+"-"+dia
         hor_fac=str(salidas).split(" ")
-        hor_fac=hor_fac[1]
+        hor_fac=hor_fac[1] # Hora de la factura incluyendo GMT
         nit_fac=str(nit).split(" ")
         nit_fac=nit_fac[1]
         nit_fac=str(nit_fac).split("-")
-        nit_fac=nit_fac[0] # Hora de la factura incluyendo GMT
-        doc_adq=settings.cliente_final
+        nit_fac=nit_fac[0]
+        doc_adq=f"{settings.cliente_final}"
         val_fac=vlr_total
-        CodImp1="01"
+        val_fac2=f"{val_fac:.2f}"
+        CodImp1=1
+        CodImp1=f"{CodImp1:02}"
         ValImp1=0
-        CodImp2="04"
+        ValImp11=f"{ValImp1:.2f}"
+        CodImp2=4
+        CodImp2=f"{CodImp2:02}"
         ValImp2=0
-        CodImp3="03"
+        ValImp22=f"{ValImp2:.2f}"
+        CodImp3=3
+        CodImp3=f"{CodImp3:02}"
         ValImp3=0
+        ValImp33=f"{ValImp3:.2f}"
         val_iva=0
         val_otro_im=0
         val_tol_fac=val_fac
         ValTot=val_fac+ValImp1+ValImp2+ValImp3
-        NitOFE=nit_fac
-        ClTec=settings.clave_tecnica
+        ValTot2=f"{ValTot:.2f}"
+        NitOFE=f"{nit_fac}"
+        ClTec=f"{settings.clave_tecnica}"
         TipoAmbie=settings.tipo_ambiente
-        cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
-        bytes=cufe.encode('utf-8')
+        TipoAmbie2=f"{TipoAmbie}"
+
+        print(consecutivo)
+        print(fec_fac)
+        print(hor_fac)
+        print(val_fac2)
+        print(CodImp1)
+        print(ValImp11)
+        print(CodImp2)
+        print(ValImp22)
+        print(CodImp3)
+        print(ValImp33)
+        print(ValTot2)
+        print(NitOFE)
+        print(doc_adq)
+        print(ClTec)
+        print(TipoAmbie2)
+
+        # cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
+        # cufe=consecutivo + fec_fac + hor_fac + f"{val_fac2:.2f}" + CodImp1 + f"{ValImp11:.2f}" + CodImp2 + f"{ValImp22:.2f}" + CodImp3 + f"{ValImp33:.2f}" + f"{ValTot2:.2f}" + NitOFE + doc_adq + ClTec + TipoAmbie2
+        # cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
+        cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
+        # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
+        # cufe=cufe.encode("utf-8")
+        # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
+        # hash=hashlib.sha384(cufe).hexdigest()
+        bytes=cufe.encode("utf-8")
         hash=hashlib.sha384(bytes).hexdigest()
         cufe=hash
 
@@ -406,7 +446,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
                 if minutos > 15:
                     valor_fraccion=valor_hora_otro
             vlr_total=total+valor_fraccion+(valor_turno_otro*turno)
-
+    
     pdf=FPDF("P", "mm", (settings.paper_width, 150 if settings.billing == 0 else 255))
     pdf.add_page()
     # pdf.image("assets/img/parqueadero.png", x=0, y=0, w=20, h=20)
@@ -510,11 +550,12 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         valor_w=pdf.get_string_width(valor)
         pdf.set_x((doc_w - valor_w) / 2)
         pdf.cell(valor_w, 313, valor, align="C")
-        vlr_total=locale.currency(vlr_total, grouping=True)
-        vlr_total="Total " + str(vlr_total) 
-        vlr_total_w=pdf.get_string_width(vlr_total)
-        pdf.set_x((doc_w - vlr_total_w) / 2)
-        pdf.cell(vlr_total_w, 327, vlr_total, align="C")
+        vlr_total2=vlr_total
+        vlr_total2=locale.currency(vlr_total2, grouping=True)
+        vlr_total2="Total " + str(vlr_total2) 
+        vlr_total2_w=pdf.get_string_width(vlr_total2)
+        pdf.set_x((doc_w - vlr_total2_w) / 2)
+        pdf.cell(vlr_total2_w, 327, vlr_total2, align="C")
         pdf.set_font("helvetica", "", size=13)
         title_cufe="CUFE:"
         title_cufe_w=pdf.get_string_width(title_cufe)
@@ -553,11 +594,11 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         valor_w=pdf.get_string_width(valor)
         pdf.set_x((doc_w - valor_w) / 2)
         pdf.cell(valor_w, 208, valor, align="C")
-        vlr_total=locale.currency(vlr_total, grouping=True)
-        vlr_total="Total " + str(vlr_total) 
-        vlr_total_w=pdf.get_string_width(vlr_total)
-        pdf.set_x((doc_w - vlr_total_w) / 2)
-        pdf.cell(vlr_total_w, 222, vlr_total, align="C")
+        vlr_total2=locale.currency(vlr_total, grouping=True)
+        vlr_total2="Total " + str(vlr_total2) 
+        vlr_total2_w=pdf.get_string_width(vlr_total2)
+        pdf.set_x((doc_w - vlr_total2_w) / 2)
+        pdf.cell(vlr_total2_w, 222, vlr_total2, align="C")
     pdf.set_font("helvetica", "", size=8)
     impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
     impreso_w=pdf.get_string_width(impreso)

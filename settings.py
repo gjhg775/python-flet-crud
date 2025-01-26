@@ -96,7 +96,7 @@ banner = ft.Banner(
     bgcolor=ft.colors.AMBER_100,
     leading=ft.Icon(ft.icons.WARNING_AMBER_ROUNDED, color=ft.colors.AMBER, size=40),
     content=ft.Text(
-        value="Se presentaron algunos errores mientras se intentaba abrir la base de datos. Para soporte técnico por favor comuníquese con el Desarrollador de la aplicación.",
+        value="",
         color=ft.colors.BLACK,
     ),
     actions=[

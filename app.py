@@ -298,6 +298,10 @@ if settings.tipo_app == 0:
                 except Exception as e:
                     user.value=""
                     password.value=""
+                    settings.banner.content=content=ft.Text(
+                        value="Se presentaron algunos errores mientras se intentaba abrir la base de datos. Para soporte técnico por favor comuníquese con el Desarrollador de la aplicación.",
+                        color=ft.colors.BLACK
+                    )
                     settings.show_banner()
                     bgcolor="red"
                     message="No se puede abrir la base de datos"
