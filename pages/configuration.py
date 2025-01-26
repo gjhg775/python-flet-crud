@@ -862,14 +862,6 @@ def Configuration(page):
                     padding=ft.padding.only(0, 0, 20, 0),
                     content=ft.ResponsiveRow([
                         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lbl_environment, environment, lbl_client, client]),
-                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
-                    ]),
-                ),
-                ft.Container(
-                    padding=ft.padding.only(0, 0, 20, 0),
-                    content=ft.ResponsiveRow([
-                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
                         ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[lblRegistro]),
                         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
                     ]),
