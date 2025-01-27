@@ -106,7 +106,7 @@ def Closing_day(page):
                 total=0
                 conn=get_connection()
                 cursor=conn.cursor()
-                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre} AND total = {total}"""
+                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = {dia} AND cuadre = {cuadre} AND total = {total}"""
                 cursor.execute(sql)
                 registros=cursor.fetchall()
                 conn.close()

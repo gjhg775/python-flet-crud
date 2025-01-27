@@ -815,8 +815,8 @@ def add_register(vehiculo, placa):
         conn.commit()
         conn.close()
 
-        comentario1="Sin éste recibo no se entrega el automotor."
-        comentario2="Después de retirado el automotor no se"
+        comentario1="Sin éste recibo, no se entrega el automotor."
+        comentario2="Después de retirado el automotor, no se"
         comentario3="aceptan reclamos."
 
         return consecutivo, vehiculo, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas
@@ -956,6 +956,8 @@ def showedit(e):
         valor=registros[0][7]
         tiempo=registros[0][8]
         vlr_total=registros[0][9]
+        ingreso=registros[0][11]
+        retiro=registros[0][12]
         correo_electronico=registros[0][13]
         entradas=registros[0][14]
         salidas=registros[0][15]
@@ -963,18 +965,20 @@ def showedit(e):
         consecutivo=settings.consecutivo2
         settings.correo_electronico=correo_electronico
 
-        comentario1="Sin éste recibo no se entrega el automotor."
-        comentario2="Después de retirado el automotor no se"
+        comentario1="Sin éste recibo, no se entrega el automotor."
+        comentario2="Después de retirado el automotor, no se"
         comentario3="aceptan reclamos."
 
         if vlr_total == 0:
-            showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, comentario3, entradas)
+            atendido=ingreso
+            showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placa, entrada, comentario1, comentario2, comentario3, entradas, atendido)
         if vlr_total > 0:
+            atendido=retiro
             showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resolucion, fecha_desde, fecha_hasta, autoriza_del, autoriza_al, consecutivo, vehiculo, placa, entrada, salida, valor, tiempo, vlr_total, entradas, salidas)
     except Exception as e:
         print(e)
 
-def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
+def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas, atendido):
     nit="NIT " + nit
     # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -1027,6 +1031,7 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     pdf.set_x((doc_w - consecutivo_w) / 2)
     pdf.cell(consecutivo_w, 117, consecutivo, align="C")
     placas1=f"Placa {placas}"
+    placas1=vehiculo + " " + placas1
     placas1_w=pdf.get_string_width(placas1)
     pdf.set_x((doc_w - placas1_w) / 2)
     pdf.cell(placas1_w, 135, placas1, align="C")
@@ -1044,17 +1049,22 @@ def showInput(parqueadero, nit, regimen, direccion, telefono, servicio, consecut
     comentario3_w=pdf.get_string_width(comentario3)
     pdf.set_x((doc_w - comentario3_w) / 2)
     pdf.cell(comentario3_w, 181, comentario3, align="C")
+    pdf.set_font("helvetica", "", size=10)
+    atendido="Atendido por " + atendido
+    atendido_w=pdf.get_string_width(atendido)
+    pdf.set_x((doc_w - atendido_w) / 2)
+    pdf.cell(atendido_w, 194, atendido, align="C")
     pdf.set_font("helvetica", "", size=15)
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=98, w=30, h=30)
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
     if len(placas) == 5:
-        pdf.code39(f"*{placas}*", x=12, y=107, w=1.5, h=5)
+        pdf.code39(f"*{placas}*", x=12, y=112, w=1.5, h=5)
     elif len(placas) == 6:
-        pdf.code39(f"*{placas}*", x=8, y=107, w=1.5, h=5)
+        pdf.code39(f"*{placas}*", x=8, y=112, w=1.5, h=5)
     else:
-        pdf.code39(f"*{placas}*", x=2, y=107, w=1.2, h=5)
+        pdf.code39(f"*{placas}*", x=2, y=112, w=1.2, h=5)
     # if vehiculo == "Moto":
     #     # pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
@@ -1263,19 +1273,19 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         valor=valor_hora_otro
         tarifa="Tarifa Hora-Otro"
 
-    if dias == 0 and int(horas) <= 4:
+    if dias == 0 and int(horas) <= 3:
         if int(horas) == 0:
             total=valor
         else:
             if vehiculo == "Moto":
                 valor_turno=valor_turno_moto
-                tarifa="Tarifa Turno-Moto"
+                # tarifa="Tarifa Turno-Moto"
             if vehiculo == "Carro":
                 valor_turno=valor_turno_carro
-                tarifa="Tarifa Turno-Carro"
+                # tarifa="Tarifa Turno-Carro"
             if vehiculo == "Otro":
                 valor_turno=valor_turno_otro
-                tarifa="Tarifa Turno-Otro"
+                # tarifa="Tarifa Turno-Otro"
 
             valor_horas=valor*int(horas)
 
@@ -1433,6 +1443,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         pdf.cell(cliente_w, 228, cliente, align="C")
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         placas1=f"Placa {placas}"
+        placas1=vehiculo + " " + placas1
         placas1_w=pdf.get_string_width(placas1)
         pdf.set_x((doc_w - placas1_w) / 2)
         pdf.cell(placas1_w, 243, placas1, align="C")
@@ -1477,6 +1488,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         pdf.set_x((doc_w - consecutivo_w) / 2)
         pdf.cell(consecutivo_w, 117, consecutivo, align="C")
         placas1=f"Placa {placas}"
+        placas1=vehiculo + " " + placas1
         placas1_w=pdf.get_string_width(placas1)
         pdf.set_x((doc_w - placas1_w) / 2)
         pdf.cell(placas1_w, 135, placas1, align="C")
@@ -1504,6 +1516,11 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         vlr_total2_w=pdf.get_string_width(vlr_total2)
         pdf.set_x((doc_w - vlr_total2_w) / 2)
         pdf.cell(vlr_total2_w, 222, vlr_total2, align="C")
+    pdf.set_font("helvetica", "", size=10)
+    atendido="Atendido por " + atendido
+    atendido_w=pdf.get_string_width(atendido)
+    pdf.set_x((doc_w - atendido_w) / 2)
+    pdf.cell(atendido_w, 236, atendido, align="C")
     pdf.set_font("helvetica", "", size=8)
     impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
     impreso_w=pdf.get_string_width(impreso)

@@ -73,7 +73,7 @@ def Cash_register(page):
         cuadre=0
         conn=get_connection()
         cursor=conn.cursor()
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total > {total} AND cuadre = {cuadre}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entrada, strftime('%d/%m/%Y %H:%M:%S', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total > {total} AND cuadre = {cuadre}"""
         cursor.execute(sql)
         registros=cursor.fetchall()
         conn.close()
@@ -88,7 +88,7 @@ def Cash_register(page):
         
         conn=get_connection()
         cursor=conn.cursor()
-        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M', entrada) AS entrada, strftime('%d/%m/%Y %H:%M', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = {total} AND cuadre = {cuadre}"""
+        sql=f"""SELECT consecutivo, placa, strftime('%d/%m/%Y %H:%M:%S', entrada) AS entrada, strftime('%d/%m/%Y %H:%M:%S', salida) AS salida, vehiculo, facturacion, valor, tiempo, total, cuadre FROM registro WHERE total = {total} AND cuadre = {cuadre}"""
         cursor.execute(sql)
         registros=cursor.fetchall()
         conn.close()
