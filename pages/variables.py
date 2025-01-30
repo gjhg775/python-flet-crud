@@ -146,22 +146,24 @@ if configuracion != None:
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
-    settings.send_email_register=configuracion[0][20]
-    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
-    settings.email_user=configuracion[0][21]
-    correo_usuario=configuracion[0][21]
-    settings.email_pass=configuracion[0][22]
-    correo_clave=configuracion[0][22]
-    settings.secret_key=configuracion[0][23]
-    secret_key=configuracion[0][23]
-    settings.preview_cash=configuracion[0][24]
-    vista_previa_cuadre=False if configuracion[0][24] == 0 else True
-    settings.print_cash_receipt=configuracion[0][25]
-    imprimir_cuadre=False if configuracion[0][25] == 0 else True
-    settings.printer=configuracion[0][26]
-    impresora=configuracion[0][26]
-    settings.paper_width=configuracion[0][27]
-    papel=configuracion[0][27]
+    settings.valor_duplicado=configuracion[0][20]
+    valor_duplicado=configuracion[0][20]
+    settings.send_email_register=configuracion[0][21]
+    enviar_correo_electronico=False if configuracion[0][21] == 0 else True
+    settings.email_user=configuracion[0][22]
+    correo_usuario=configuracion[0][22]
+    settings.email_pass=configuracion[0][23]
+    correo_clave=configuracion[0][23]
+    settings.secret_key=configuracion[0][24]
+    secret_key=configuracion[0][24]
+    settings.preview_cash=configuracion[0][25]
+    vista_previa_cuadre=False if configuracion[0][25] == 0 else True
+    settings.print_cash_receipt=configuracion[0][26]
+    imprimir_cuadre=False if configuracion[0][26] == 0 else True
+    settings.printer=configuracion[0][27]
+    impresora=configuracion[0][27]
+    settings.paper_width=configuracion[0][28]
+    papel=configuracion[0][28]
 
 def Variables(page):
     variables=get_variables()

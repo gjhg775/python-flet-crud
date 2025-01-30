@@ -78,24 +78,26 @@ if configuracion != None:
     vista_previa_registro=False if configuracion[0][18] == 0 else True
     settings.print_register_receipt=configuracion[0][19]
     imprimir_registro=False if configuracion[0][19] == 0 else True
-    settings.send_email_register=configuracion[0][20]
-    enviar_correo_electronico=False if configuracion[0][20] == 0 else True
-    settings.email_user=configuracion[0][21]
-    correo_usuario=configuracion[0][21]
-    settings.email_pass=configuracion[0][22]
-    correo_clave=configuracion[0][22]
-    settings.secret_key=configuracion[0][23]
-    secret_key=configuracion[0][23]
-    settings.preview_cash=configuracion[0][24]
-    vista_previa_cuadre=False if configuracion[0][24] == 0 else True
-    settings.print_cash_receipt=configuracion[0][25]
-    imprimir_cuadre=False if configuracion[0][25] == 0 else True
-    settings.printer=configuracion[0][26]
-    impresora=configuracion[0][26]
-    settings.paper_width=configuracion[0][27]
-    papel=configuracion[0][27]
+    settings.valor_duplicado=configuracion[0][20]
+    valor_duplicado=configuracion[0][20]
+    settings.send_email_register=configuracion[0][21]
+    enviar_correo_electronico=False if configuracion[0][21] == 0 else True
+    settings.email_user=configuracion[0][22]
+    correo_usuario=configuracion[0][22]
+    settings.email_pass=configuracion[0][23]
+    correo_clave=configuracion[0][23]
+    settings.secret_key=configuracion[0][24]
+    secret_key=configuracion[0][24]
+    settings.preview_cash=configuracion[0][25]
+    vista_previa_cuadre=False if configuracion[0][25] == 0 else True
+    settings.print_cash_receipt=configuracion[0][26]
+    imprimir_cuadre=False if configuracion[0][26] == 0 else True
+    settings.printer=configuracion[0][27]
+    impresora=configuracion[0][27]
+    settings.paper_width=configuracion[0][28]
+    papel=configuracion[0][28]
 
-def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas):
+def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas, comentario4):
     nit="NIT " + nit
     # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -129,59 +131,68 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     nit_w=pdf.get_string_width(nit)
     pdf.set_x((doc_w - nit_w) / 2)
-    pdf.cell(nit_w, 45, nit, align="C")
+    pdf.cell(nit_w, 43, nit, align="C")
     regimen_w=pdf.get_string_width(regimen)
     pdf.set_x((doc_w - regimen_w) / 2)
-    pdf.cell(regimen_w, 59, regimen, align="C")
+    pdf.cell(regimen_w, 55, regimen, align="C")
     direccion_w=pdf.get_string_width(direccion)
     pdf.set_x((doc_w - direccion_w) / 2)
-    pdf.cell(direccion_w, 73, direccion, align="C")
+    pdf.cell(direccion_w, 68, direccion, align="C")
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
-    pdf.cell(telefono_w, 87, telefono, align="C")
+    pdf.cell(telefono_w, 81, telefono, align="C")
     pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
-    pdf.cell(servicio_w, 101, servicio, align="C")
+    pdf.cell(servicio_w, 93, servicio, align="C")
     pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
     consecutivo_w=pdf.get_string_width(consecutivo)
     pdf.set_x((doc_w - consecutivo_w) / 2)
-    pdf.cell(consecutivo_w, 117, consecutivo, align="C")
+    pdf.cell(consecutivo_w, 109, consecutivo, align="C")
     placas1=f"Placa {placas}"
     placas1=vehiculo + " " + placas1
     placas1_w=pdf.get_string_width(placas1)
     pdf.set_x((doc_w - placas1_w) / 2)
-    pdf.cell(placas1_w, 135, placas1, align="C")
+    pdf.cell(placas1_w, 125, placas1, align="C")
     pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     entrada_w=pdf.get_string_width(entrada)
     pdf.set_x((doc_w - entrada_w) / 2)
-    pdf.cell(entrada_w, 152, entrada, align="C")
+    pdf.cell(entrada_w, 141, entrada, align="C")
     pdf.set_font("helvetica", "", size=10 if settings.paper_width == 80 else 8)
     comentario1_w=pdf.get_string_width(comentario1)
     pdf.set_x((doc_w - comentario1_w) / 2)
-    pdf.cell(comentario1_w, 167, comentario1, align="C")
+    pdf.cell(comentario1_w, 156, comentario1, align="C")
     comentario2_w=pdf.get_string_width(comentario2)
     pdf.set_x((doc_w - comentario2_w) / 2)
-    pdf.cell(comentario2_w, 174, comentario2, align="C")
+    pdf.cell(comentario2_w, 163, comentario2, align="C")
     comentario3_w=pdf.get_string_width(comentario3)
     pdf.set_x((doc_w - comentario3_w) / 2)
-    pdf.cell(comentario3_w, 181, comentario3, align="C")
+    pdf.cell(comentario3_w, 170, comentario3, align="C")
     pdf.set_font("helvetica", "", size=10)
     atendido="Atendido por " + settings.login_nombre
     atendido_w=pdf.get_string_width(atendido)
     pdf.set_x((doc_w - atendido_w) / 2)
-    pdf.cell(atendido_w, 194, atendido, align="C")
+    pdf.cell(atendido_w, 185, atendido, align="C")
+    # duplicado="Duplicado por " + settings.login_nombre
+    # duplicado_w=pdf.get_string_width(duplicado)
+    # pdf.set_x((doc_w - duplicado_w) / 2)
+    # pdf.cell(duplicado_w, 192, duplicado, align="C")
+    # vlr_duplicado=locale.currency(settings.valor_duplicado, grouping=True)
+    # vlr_duplicado="Valor del Duplicado " + str(vlr_duplicado)
+    # vlr_duplicado_w=pdf.get_string_width(vlr_duplicado)
+    # pdf.set_x((doc_w - vlr_duplicado_w) / 2)
+    # pdf.cell(vlr_duplicado_w, 203, vlr_duplicado, align="C")
     pdf.set_font("helvetica", "", size=15)
     # img=qrcode.make(f"{placas}")
     # pdf.image(img.get_image(), x=25 if int(str(settings.paper_width)[0:2]) == 80 else 14, y=98, w=30, h=30)
     pdf.set_font("helvetica", "", size=15)
     # pdf.code39(f"*{placas}*", x=0, y=70, w=4, h=20)
     if len(placas) == 5:
-        pdf.code39(f"*{placas}*", x=12, y=112, w=1.5, h=5)
+        pdf.code39(f"*{placas}*", x=12, y=115, w=1.5, h=5)
     elif len(placas) == 6:
-        pdf.code39(f"*{placas}*", x=8, y=112, w=1.5, h=5)
+        pdf.code39(f"*{placas}*", x=8, y=115, w=1.5, h=5)
     else:
-        pdf.code39(f"*{placas}*", x=2, y=112, w=1.2, h=5)
+        pdf.code39(f"*{placas}*", x=2, y=115, w=1.2, h=5)
     # if vehiculo == "Moto":
     #     # pdf.code39(f"*{placas}*", x=2, y=130, w=2, h=15)
     #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
@@ -189,11 +200,17 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
     # if vehiculo == "Otro":
     #     pdf.code39(f"*{placas}*", x=12, y=100, w=1.5, h=5)
+    # pdf.set_font("helvetica", "", size=10 if settings.paper_width == 80 else 8)
     pdf.set_font("helvetica", "", size=8)
-    impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
+    comentario4_w=pdf.get_string_width(comentario4)
+    pdf.set_x((doc_w - comentario4_w) / 2)
+    pdf.cell(comentario4_w, 226, comentario4, align="C")
+    # pdf.set_font("helvetica", "", size=8)
+    # impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
+    impreso=os.getenv("FOOTER")
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
-    pdf.set_y(120)
+    pdf.set_y(127)
     pdf.write(0, impreso)
     pdf.output(f"{assets_path}\\receipt\\receipt.pdf")
 
@@ -227,7 +244,7 @@ def show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecu
     # minuto+=1
     # pywhatkit.sendwhatmsg("+57", path, hora, minuto, 15, True, 2)
 
-def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas):
+def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas, comentario4):
     nit="NIT " + nit
     # regimen="Régimen " + regimen
     telefono="Teléfono " + telefono
@@ -317,21 +334,21 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         TipoAmbie=settings.tipo_ambiente
         TipoAmbie2=f"{TipoAmbie}"
 
-        print(consecutivo)
-        print(fec_fac)
-        print(hor_fac)
-        print(val_fac2)
-        print(CodImp1)
-        print(ValImp11)
-        print(CodImp2)
-        print(ValImp22)
-        print(CodImp3)
-        print(ValImp33)
-        print(ValTot2)
-        print(NitOFE)
-        print(doc_adq)
-        print(ClTec)
-        print(TipoAmbie2)
+        # print(consecutivo)
+        # print(fec_fac)
+        # print(hor_fac)
+        # print(val_fac2)
+        # print(CodImp1)
+        # print(ValImp11)
+        # print(CodImp2)
+        # print(ValImp22)
+        # print(CodImp3)
+        # print(ValImp33)
+        # print(ValTot2)
+        # print(NitOFE)
+        # print(doc_adq)
+        # print(ClTec)
+        # print(TipoAmbie2)
 
         # cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
         # cufe=consecutivo + fec_fac + hor_fac + f"{val_fac2:.2f}" + CodImp1 + f"{ValImp11:.2f}" + CodImp2 + f"{ValImp22:.2f}" + CodImp3 + f"{ValImp33:.2f}" + f"{ValTot2:.2f}" + NitOFE + doc_adq + ClTec + TipoAmbie2
@@ -473,147 +490,158 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
     nit_w=pdf.get_string_width(nit)
     pdf.set_x((doc_w - nit_w) / 2)
-    pdf.cell(nit_w, 45, nit, align="C")
+    pdf.cell(nit_w, 43, nit, align="C")
     regimen_w=pdf.get_string_width(regimen)
     pdf.set_x((doc_w - regimen_w) / 2)
-    pdf.cell(regimen_w, 59, regimen, align="C")
+    pdf.cell(regimen_w, 55, regimen, align="C")
     direccion_w=pdf.get_string_width(direccion)
     pdf.set_x((doc_w - direccion_w) / 2)
-    pdf.cell(direccion_w, 73, direccion, align="C")
+    pdf.cell(direccion_w, 68, direccion, align="C")
     telefono_w=pdf.get_string_width(telefono)
     pdf.set_x((doc_w - telefono_w) / 2)
-    pdf.cell(telefono_w, 87, telefono, align="C")
+    pdf.cell(telefono_w, 81, telefono, align="C")
     pdf.set_font("helvetica", "", size=14)
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
-    pdf.cell(servicio_w, 101, servicio, align="C")
+    pdf.cell(servicio_w, 93, servicio, align="C")
     if settings.billing == 1:
         pdf.set_font("helvetica", "B", size=14 if settings.paper_width == 80 else 11)
         factura="Factura Electrónica de Venta"
         factura_w=pdf.get_string_width(factura)
         pdf.set_x((doc_w - factura_w) / 2)
-        pdf.cell(factura_w, 114, factura, align="C")
+        pdf.cell(factura_w, 106, factura, align="C")
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         consecutivo1_w=pdf.get_string_width(consecutivo)
         pdf.set_x((doc_w - consecutivo1_w) / 2)
-        pdf.cell(consecutivo1_w, 128, consecutivo, align="C")
+        pdf.cell(consecutivo1_w, 120, consecutivo, align="C")
         pdf.set_font("helvetica", "", size=12 if settings.paper_width == 80 else 10)
         fecha_autoriza1="Desde " + str(fecha_desde) + " Hasta " + str(fecha_hasta)
         fecha_autoriza1_w=pdf.get_string_width(fecha_autoriza1)
         pdf.set_x((doc_w - fecha_autoriza1_w) / 2)
-        pdf.cell(fecha_autoriza1_w, 141, fecha_autoriza1, align="C")
+        pdf.cell(fecha_autoriza1_w, 133, fecha_autoriza1, align="C")
         pdf.set_font("helvetica", "", size=13 if settings.paper_width == 80 else 11)
         autoriza1="Autoriza del " + str(autoriza_del) + " al " + str(autoriza_al)
         autoriza1_w=pdf.get_string_width(autoriza1)
         pdf.set_x((doc_w - autoriza1_w) / 2)
-        pdf.cell(autoriza1_w, 153, autoriza1, align="C")
+        pdf.cell(autoriza1_w, 145, autoriza1, align="C")
         resolucion1="Resolución " + str(resolucion)
         resolucion1_w=pdf.get_string_width(resolucion1)
         pdf.set_x((doc_w - resolucion1_w) / 2)
-        pdf.cell(resolucion1_w, 165, resolucion1, align="C")
+        pdf.cell(resolucion1_w, 157, resolucion1, align="C")
         forma_pago=f"Forma de Pago Contado"
         forma_pago_w=pdf.get_string_width(forma_pago)
         pdf.set_x((doc_w - forma_pago_w) / 2)
-        pdf.cell(forma_pago_w, 178, forma_pago, align="C")
+        pdf.cell(forma_pago_w, 169, forma_pago, align="C")
         pdf.set_font("helvetica", "", size=12 if settings.paper_width == 80 else 11)
         generacion=f"Fecha Generación " + generacion
         generacion_w=pdf.get_string_width(generacion)
         pdf.set_x((doc_w - generacion_w) / 2)
-        pdf.cell(generacion_w, 191, generacion, align="C")
+        pdf.cell(generacion_w, 182, generacion, align="C")
         expedicion=f"Fecha Expedición " + expedicion
         expedicion_w=pdf.get_string_width(expedicion)
         pdf.set_x((doc_w - expedicion_w) / 2)
-        pdf.cell(expedicion_w, 203, expedicion, align="C")
+        pdf.cell(expedicion_w, 193, expedicion, align="C")
         pdf.set_font("helvetica", "", size=13 if settings.paper_width == 80 else 11)
         cod_cliente=f"Cliente: {settings.cliente_final}"
         cod_cliente_w=pdf.get_string_width(cod_cliente)
         pdf.set_x((doc_w - cod_cliente_w) / 2)
-        pdf.cell(cod_cliente_w, 216, cod_cliente, align="C")
+        pdf.cell(cod_cliente_w, 206, cod_cliente, align="C")
         cliente=f"Consumidor Final"
         cliente_w=pdf.get_string_width(cliente)
         pdf.set_x((doc_w - cliente_w) / 2)
-        pdf.cell(cliente_w, 228, cliente, align="C")
+        pdf.cell(cliente_w, 217, cliente, align="C")
         pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
         placas1=f"Placa {placas}"
         placas1=vehiculo + " " + placas1
         placas1_w=pdf.get_string_width(placas1)
         pdf.set_x((doc_w - placas1_w) / 2)
-        pdf.cell(placas1_w, 243, placas1, align="C")
+        pdf.cell(placas1_w, 231, placas1, align="C")
         pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
         entrada_w=pdf.get_string_width(entrada)
         pdf.set_x((doc_w - entrada_w) / 2)
-        pdf.cell(entrada_w, 257, entrada, align="C")
+        pdf.cell(entrada_w, 246, entrada, align="C")
         salida_w=pdf.get_string_width(salida)
         pdf.set_x((doc_w - salida_w) / 2)
-        pdf.cell(salida_w, 270, salida, align="C")
+        pdf.cell(salida_w, 259, salida, align="C")
         duracion_w=pdf.get_string_width(duracion)
         pdf.set_x((doc_w - duracion_w) / 2)
-        pdf.cell(duracion_w, 285, duracion, align="C")
+        pdf.cell(duracion_w, 272, duracion, align="C")
         tarifa_w=pdf.get_string_width(tarifa)
         pdf.set_x((doc_w - tarifa_w) / 2)
-        pdf.cell(tarifa_w, 299, tarifa, align="C")
+        pdf.cell(tarifa_w, 284, tarifa, align="C")
         valor=locale.currency(valor, grouping=True)
         valor="Valor Unidad " + str(valor) 
         valor_w=pdf.get_string_width(valor)
         pdf.set_x((doc_w - valor_w) / 2)
-        pdf.cell(valor_w, 313, valor, align="C")
+        pdf.cell(valor_w, 296, valor, align="C")
+        vlr_total2=vlr_total
+        vlr_total2=locale.currency(vlr_total2, grouping=True)
+        vlr_total2="Total Efectivo " + str(vlr_total2) 
+        vlr_total2_w=pdf.get_string_width(vlr_total2)
+        pdf.set_x((doc_w - vlr_total2_w) / 2)
+        pdf.cell(vlr_total2_w, 308, vlr_total2, align="C")
+        pdf.set_font("helvetica", "", size=13)
+        title_cufe="CUFE:"
+        title_cufe_w=pdf.get_string_width(title_cufe)
+        pdf.set_x((doc_w - title_cufe_w) / 2)
+        pdf.cell(title_cufe_w, 321, title_cufe, align="C")
+        cufe_w=pdf.get_string_width(cufe)
+        pdf.set_x((doc_w - cufe_w) / 2)
+        pdf.set_y(175)
+        pdf.write(0, cufe)
+        img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
+        pdf.image(img.get_image(), x=28 if settings.paper_width == 80 else 14, y=205, w=25, h=25)
+    else:
+        pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
+        consecutivo_w=pdf.get_string_width(consecutivo)
+        pdf.set_x((doc_w - consecutivo_w) / 2)
+        pdf.cell(consecutivo_w, 109, consecutivo, align="C")
+        placas1=f"Placa {placas}"
+        placas1=vehiculo + " " + placas1
+        placas1_w=pdf.get_string_width(placas1)
+        pdf.set_x((doc_w - placas1_w) / 2)
+        pdf.cell(placas1_w, 125, placas1, align="C")
+        pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
+        entrada_w=pdf.get_string_width(entrada)
+        pdf.set_x((doc_w - entrada_w) / 2)
+        pdf.cell(entrada_w, 141, entrada, align="C")
+        salida_w=pdf.get_string_width(salida)
+        pdf.set_x((doc_w - salida_w) / 2)
+        pdf.cell(salida_w, 154, salida, align="C")
+        duracion_w=pdf.get_string_width(duracion)
+        pdf.set_x((doc_w - duracion_w) / 2)
+        pdf.cell(duracion_w, 169, duracion, align="C")
+        tarifa_w=pdf.get_string_width(tarifa)
+        pdf.set_x((doc_w - tarifa_w) / 2)
+        pdf.cell(tarifa_w, 183, tarifa, align="C")
+        valor=locale.currency(valor, grouping=True)
+        valor="Valor Unidad " + str(valor) 
+        valor_w=pdf.get_string_width(valor)
+        pdf.set_x((doc_w - valor_w) / 2)
+        pdf.cell(valor_w, 195, valor, align="C")
         vlr_total2=vlr_total
         vlr_total2=locale.currency(vlr_total2, grouping=True)
         vlr_total2="Total " + str(vlr_total2) 
         vlr_total2_w=pdf.get_string_width(vlr_total2)
         pdf.set_x((doc_w - vlr_total2_w) / 2)
-        pdf.cell(vlr_total2_w, 327, vlr_total2, align="C")
-        pdf.set_font("helvetica", "", size=13)
-        title_cufe="CUFE:"
-        title_cufe_w=pdf.get_string_width(title_cufe)
-        pdf.set_x((doc_w - title_cufe_w) / 2)
-        pdf.cell(title_cufe_w, 341, title_cufe, align="C")
-        cufe_w=pdf.get_string_width(cufe)
-        pdf.set_x((doc_w - cufe_w) / 2)
-        pdf.set_y(185)
-        pdf.write(0, cufe)
-        img=qrcode.make(f"NumFac: {num_fac}\nFecFac: {fec_fac}\nHorFac: {hor_fac}\nNitFac: {nit_fac}\nDocAdq: {doc_adq}\nValFac: {val_fac:.2f}\nValIva: {val_iva:.2f}\nValOtroim: {val_otro_im:.2f}\nValTolFac: {val_tol_fac:.2f}\nCUFE: {cufe}")
-        pdf.image(img.get_image(), x=26 if settings.paper_width == 80 else 14, y=206, w=25, h=25)
-    else:
-        pdf.set_font("helvetica", "B", size=20 if settings.paper_width == 80 else 16)
-        consecutivo_w=pdf.get_string_width(consecutivo)
-        pdf.set_x((doc_w - consecutivo_w) / 2)
-        pdf.cell(consecutivo_w, 117, consecutivo, align="C")
-        placas1=f"Placa {placas}"
-        placas1=vehiculo + " " + placas1
-        placas1_w=pdf.get_string_width(placas1)
-        pdf.set_x((doc_w - placas1_w) / 2)
-        pdf.cell(placas1_w, 135, placas1, align="C")
-        pdf.set_font("helvetica", "", size=15 if settings.paper_width == 80 else 11)
-        entrada_w=pdf.get_string_width(entrada)
-        pdf.set_x((doc_w - entrada_w) / 2)
-        pdf.cell(entrada_w, 152, entrada, align="C")
-        salida_w=pdf.get_string_width(salida)
-        pdf.set_x((doc_w - salida_w) / 2)
-        pdf.cell(salida_w, 166, salida, align="C")
-        duracion_w=pdf.get_string_width(duracion)
-        pdf.set_x((doc_w - duracion_w) / 2)
-        pdf.cell(duracion_w, 180, duracion, align="C")
-        tarifa_w=pdf.get_string_width(tarifa)
-        pdf.set_x((doc_w - tarifa_w) / 2)
-        pdf.cell(tarifa_w, 194, tarifa, align="C")
-        valor=locale.currency(valor, grouping=True)
-        valor="Valor Unidad " + str(valor) 
-        valor_w=pdf.get_string_width(valor)
-        pdf.set_x((doc_w - valor_w) / 2)
-        pdf.cell(valor_w, 208, valor, align="C")
-        vlr_total2=locale.currency(vlr_total, grouping=True)
-        vlr_total2="Total " + str(vlr_total2) 
-        vlr_total2_w=pdf.get_string_width(vlr_total2)
-        pdf.set_x((doc_w - vlr_total2_w) / 2)
-        pdf.cell(vlr_total2_w, 222, vlr_total2, align="C")
+        pdf.cell(vlr_total2_w, 207, vlr_total2, align="C")
     pdf.set_font("helvetica", "", size=10)
     atendido="Atendido por " + settings.login_nombre
     atendido_w=pdf.get_string_width(atendido)
     pdf.set_x((doc_w - atendido_w) / 2)
-    pdf.cell(atendido_w, 236, atendido, align="C")
+    # pdf.cell(atendido_w, 218, atendido, align="C")
+    pdf.cell(atendido_w, 12, atendido, align="C")
+    # duplicado="Duplicado por " + settings.login_nombre
+    # duplicado_w=pdf.get_string_width(duplicado)
+    # pdf.set_x((doc_w - duplicado_w) / 2)
+    # pdf.cell(duplicado_w, 237, duplicado, align="C")
     pdf.set_font("helvetica", "", size=8)
-    impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
+    comentario4_w=pdf.get_string_width(comentario4)
+    pdf.set_x((doc_w - comentario4_w) / 2)
+    pdf.cell(comentario4_w, 20, comentario4, align="C")
+    # pdf.set_font("helvetica", "", size=8)
+    # impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
+    impreso=os.getenv("FOOTER")
     impreso_w=pdf.get_string_width(impreso)
     pdf.set_x((doc_w - impreso_w) / 2)
     if settings.billing == 0:

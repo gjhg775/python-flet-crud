@@ -173,22 +173,24 @@ def Configuration(page):
         vista_previa_registro=False if configuracion[0][18] == 0 else True
         settings.print_register_receipt=configuracion[0][19]
         imprimir_registro=False if configuracion[0][19] == 0 else True
-        settings.send_email_register=configuracion[0][20]
-        enviar_correo_electronico=False if configuracion[0][20] == 0 else True
-        settings.email_user=configuracion[0][21]
-        correo_usuario=configuracion[0][21]
-        settings.email_pass=configuracion[0][22]
-        correo_clave=configuracion[0][22]
-        settings.secret_key=configuracion[0][23]
-        secret_key=configuracion[0][23]
-        settings.preview_cash=configuracion[0][24]
-        vista_previa_cuadre=False if configuracion[0][24] == 0 else True
-        settings.print_cash_receipt=configuracion[0][25]
-        imprimir_cuadre=False if configuracion[0][25] == 0 else True
-        settings.printer=configuracion[0][26]
-        impresora=configuracion[0][26]
-        settings.paper_width=configuracion[0][27]
-        papel=configuracion[0][27]
+        settings.valor_duplicado=configuracion[0][20]
+        valor_duplicado=configuracion[0][20]
+        settings.send_email_register=configuracion[0][21]
+        enviar_correo_electronico=False if configuracion[0][21] == 0 else True
+        settings.email_user=configuracion[0][22]
+        correo_usuario=configuracion[0][22]
+        settings.email_pass=configuracion[0][23]
+        correo_clave=configuracion[0][23]
+        settings.secret_key=configuracion[0][24]
+        secret_key=configuracion[0][24]
+        settings.preview_cash=configuracion[0][25]
+        vista_previa_cuadre=False if configuracion[0][25] == 0 else True
+        settings.print_cash_receipt=configuracion[0][26]
+        imprimir_cuadre=False if configuracion[0][26] == 0 else True
+        settings.printer=configuracion[0][27]
+        impresora=configuracion[0][27]
+        settings.paper_width=configuracion[0][28]
+        papel=configuracion[0][28]
 
     def validateConfiguration(e):
         parqueadero.error_text=""
@@ -207,6 +209,7 @@ def Configuration(page):
         environment.error_text=""
         client.error_text=""
         consecutivo.error_text=""
+        vlr_duplicado.error_text=""
         email_user.error_text=""
         email_pass.error_text=""
         printer.error_text=""
@@ -310,6 +313,12 @@ def Configuration(page):
             consecutivo.update()
         else:
             consecutivo.update()
+        if vlr_duplicado.value == "":
+            settings.errors=1
+            vlr_duplicado.error_text="Campo requerido"
+            vlr_duplicado.update()
+        else:
+            vlr_duplicado.update()
         if settings.send_email_register == 1:
             if email_user.value == "":
                 settings.errors=1
@@ -357,6 +366,7 @@ def Configuration(page):
                 environment.update()
                 client.update()
             consecutivo.update()
+            vlr_duplicado.update()
             email_user.update()
             email_pass.update()
             if len(email_pass.value) <= 16:
@@ -364,7 +374,7 @@ def Configuration(page):
                 email_pass_encrypted=encrypt(email_pass.value, settings.secret_key)
                 email_pass.value=email_pass_encrypted
                 email_pass.update()
-            update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, client.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, settings.send_email_register, email_user.value, email_pass.value, settings.secret_key, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
+            update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, client.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, vlr_duplicado.value, settings.send_email_register, email_user.value, email_pass.value, settings.secret_key, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
                 # if message != "":
                 #     bgcolor="green"
                 #     settings.message=message
@@ -701,6 +711,7 @@ def Configuration(page):
     preview_switch=ft.Switch(value=vista_previa_registro, on_change=preview_change)
     lbl_print=ft.Text("Imprimir recibo/factura" if settings.tipo_app == 1 else "Imprimir recibo", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     print_receipt_switch=ft.Switch(value=imprimir_registro, on_change=print_change)
+    vlr_duplicado=ft.TextField(label="Valor Duplicado", value=valor_duplicado)
     lbl_send_email=ft.Text("Enviar recibo/factura al correo electrónico" if settings.tipo_app == 1 else "Enviar recibo al correo electrónico", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
     send_receipt_switch=ft.Switch(value=enviar_correo_electronico, on_change=send_email)
     email_user=ft.TextField(label="Correo electrónico de Gmail", value=correo_usuario, disabled=True if send_receipt_switch.value == 0 else False)
@@ -881,6 +892,14 @@ def Configuration(page):
                         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
                         ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print]),
                         ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ]),
+                ),
+                ft.Container(
+                    padding=ft.padding.only(0, 0, 20, 0),
+                    content=ft.ResponsiveRow([
+                        ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                        ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_duplicado]),
                         ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
                     ]),
                 ),
@@ -1391,6 +1410,14 @@ def Configuration(page):
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
                     ft.Column(col={"xs":10, "sm":9, "md":9, "lg":9, "xl":9, "xxl":9}, controls=[lbl_print]),
                     ft.Column(col={"xs":2, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}, controls=[print_receipt_switch], horizontal_alignment=ft.CrossAxisAlignment.END),
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                ]),
+            ),
+            ft.Container(
+                padding=ft.padding.only(0, 0, 20, 0),
+                content=ft.ResponsiveRow([
+                    ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
+                    ft.Column(col={"xs":12, "sm":10, "md":10, "lg":10, "xl":10, "xxl":10}, controls=[vlr_duplicado]),
                     ft.Column(col={"xs":0, "sm":1, "md":1, "lg":1, "xl":1, "xxl":1}),
                 ]),
             ),
