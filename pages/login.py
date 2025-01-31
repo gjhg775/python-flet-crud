@@ -145,14 +145,18 @@ def Login(page):
                 settings.showMessage(bgcolor)
                 settings.page.update()
             except Exception as e:
-                user.value=""
-                password.value=""
-                settings.show_banner()
-                bgcolor="red"
-                message="No se puede abrir la base de datos"
-                settings.message=message
-                settings.showMessage(bgcolor)
-                # print(e)
+               user.value=""
+               password.value=""
+               settings.banner.content=ft.Text(
+                    value="Se presentaron algunos errores mientras se intentaba abrir la base de datos. Para soporte técnico por favor comuníquese con el Desarrollador de la aplicación.",
+                    color=ft.colors.BLACK
+               )
+               settings.show_banner()
+               bgcolor="red"
+               message="No se puede abrir la base de datos"
+               settings.message=message
+               settings.showMessage(bgcolor)
+               # print(e)
         else:
             if user.value == "":
                 user.error_text="Digite usuario ó correo electrónico"
