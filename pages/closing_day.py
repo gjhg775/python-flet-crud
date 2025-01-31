@@ -104,45 +104,45 @@ def Closing_day(page):
             else:
                 cuadre=0
                 total=0
+                # conn=get_connection()
+                # cursor=conn.cursor()
+                # sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = {dia} AND cuadre = {cuadre} AND total = {total}"""
+                # cursor.execute(sql)
+                # registros=cursor.fetchall()
+                # conn.close()
+
+                # if registros != []:
+                #     message=f"No se han registrado salidas"
+                #     bg_color="orange"
+                # else:
                 conn=get_connection()
                 cursor=conn.cursor()
-                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = {dia} AND cuadre = {cuadre} AND total = {total}"""
+                sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre} AND total > {total}"""
                 cursor.execute(sql)
                 registros=cursor.fetchall()
                 conn.close()
 
                 if registros != []:
-                    message=f"No se han registrado salidas"
-                    bg_color="orange"
-                else:
+                    cuadre=1
+                    # total=0
                     conn=get_connection()
                     cursor=conn.cursor()
-                    sql=f"""SELECT * FROM registro WHERE strftime('%d/%m/%Y', salida) = '{dia}' AND cuadre = {cuadre} AND total > {total}"""
+                    sql=f"""UPDATE registro SET cuadre = {cuadre} WHERE strftime('%d/%m/%Y', salida) <= '{dia}' AND total > {total}"""
+                    # values=({cuadre}, f'{dia}', {total})
                     cursor.execute(sql)
-                    registros=cursor.fetchall()
+                    conn.commit()
                     conn.close()
 
-                    if registros != []:
-                        cuadre=1
-                        # total=0
-                        conn=get_connection()
-                        cursor=conn.cursor()
-                        sql=f"""UPDATE registro SET cuadre = {cuadre} WHERE strftime('%d/%m/%Y', salida) <= '{dia}' AND total > {total}"""
-                        # values=({cuadre}, f'{dia}', {total})
-                        cursor.execute(sql)
-                        conn.commit()
-                        conn.close()
+                    # fecha.value=""
+                    # fecha.update()
 
-                        # fecha.value=""
-                        # fecha.update()
-
-                        message="Cierre de día realizado satisfactoriamente"
-                        bg_color="green"
-                        tblRegistro.height=60
-                        tblCuadre.height=60
-                    else:
-                        message="Día a cerrar no encontrado. Favor verificar"
-                        bg_color="red"
+                    message="Cierre de día realizado satisfactoriamente"
+                    bg_color="green"
+                    tblRegistro.height=60
+                    tblCuadre.height=60
+                else:
+                    message="Día a cerrar no encontrado ó no se han registrado salidas. Favor verificar"
+                    bg_color="red"
 
         date_picker.value=None
         date_picker.current_date=date_picker.value

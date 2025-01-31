@@ -1548,7 +1548,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     atendido_w=pdf.get_string_width(atendido)
     pdf.set_x((doc_w - atendido_w) / 2)
     # pdf.cell(atendido_w, 218, atendido, align="C")
-    pdf.cell(atendido_w, 12, atendido, align="C")
+    pdf.cell(atendido_w, 218 if settings.tipo_app == 0 else 12, atendido, align="C")
     # duplicado="Duplicado por " + settings.login_nombre
     # duplicado_w=pdf.get_string_width(duplicado)
     # pdf.set_x((doc_w - duplicado_w) / 2)
@@ -1556,7 +1556,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     pdf.set_font("helvetica", "", size=8)
     comentario4_w=pdf.get_string_width(comentario4)
     pdf.set_x((doc_w - comentario4_w) / 2)
-    pdf.cell(comentario4_w, 20, comentario4, align="C")
+    pdf.cell(comentario4_w, 226 if settings.tipo_app == 0 else 20, comentario4, align="C")
     # pdf.set_font("helvetica", "", size=8)
     # impreso=os.getenv("FOOTER") if settings.billing == 1 and consecutivo[0:6] != "Recibo" else ""
     impreso=os.getenv("FOOTER")
