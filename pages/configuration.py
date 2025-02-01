@@ -316,9 +316,14 @@ def Configuration(page):
         if vlr_duplicado.value == "":
             settings.errors=1
             vlr_duplicado.error_text="Campo requerido"
-            vlr_duplicado.update()
+            # vlr_duplicado.update()
         else:
-            vlr_duplicado.update()
+            for i in str(vlr_duplicado.value):
+                if i not in "0123456789":
+                    settings.errors=1
+                    vlr_duplicado.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    break
+        vlr_duplicado.update()
         if settings.send_email_register == 1:
             if email_user.value == "":
                 settings.errors=1
