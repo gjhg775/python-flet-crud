@@ -16,6 +16,7 @@ import win32print
 import random
 # from flet import *
 import flet as ft
+from time import gmtime, strftime
 from fpdf import FPDF
 from pathlib import Path
 from decouple import config
@@ -1222,7 +1223,12 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         ano=ano[0:4]
         fec_fac=ano+"-"+mes+"-"+dia
         hor_fac=str(salidas).split(" ")
-        hor_fac=hor_fac[1] # Hora de la factura incluyendo GMT
+        hor_fac=hor_fac[1]
+        gmt=strftime("%z", gmtime())
+        gmt1=str(gmt[0:3])
+        gmt2=str(gmt[3:])
+        gmt=gmt1 + ":" + gmt2
+        hor_fac=hor_fac + f"{gmt}" # Hora de la factura incluyendo GMT
         nit_fac=str(nit).split(" ")
         nit_fac=nit_fac[1]
         nit_fac=str(nit_fac).split("-")

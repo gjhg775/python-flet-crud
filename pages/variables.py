@@ -184,81 +184,76 @@ def Variables(page):
         vlr_turno_carro.error_text=""
         vlr_hora_otro.error_text=""
         vlr_turno_otro.error_text=""
+        message_required="Campo requerido"
+        message_caracter="Valor sin signo ni comas, puntos u otro caracter especial"
         sw=0
         if vlr_hora_moto.value == "":
-            vlr_hora_moto.error_text="Campo requerido"
-            # vlr_hora_moto.focus()
-            btn_save.focus()
-            # vlr_hora_moto.update()
+            vlr_hora_moto.error_text=message_required
+            sw=1
         else:
             for i in str(vlr_hora_moto.value):
                 if i not in "0123456789":
-                    vlr_hora_moto.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_hora_moto.error_text=message_caracter
                     sw=1
                     break
         vlr_hora_moto.update()
         if vlr_turno_moto.value == "":
-            vlr_turno_moto.error_text="Campo requerido"
-            # vlr_turno_moto.focus()
+            vlr_turno_moto.error_text=message_required
+            sw=1
         else:
             for i in str(vlr_turno_moto.value):
                 if i not in "0123456789":
-                    vlr_turno_moto.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_turno_moto.error_text=message_caracter
                     sw=1
                     break
         vlr_turno_moto.update()
         if vlr_hora_carro.value == "":
-            vlr_hora_carro.error_text="Campo requerido"
-            # vlr_hora_carro.focus()
-            btn_save.focus()
-            # vlr_hora_carro.update()
+            vlr_hora_carro.error_text=message_required
+            sw=1
         else:
             for i in str(vlr_hora_carro.value):
                 if i not in "0123456789":
-                    vlr_hora_carro.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_hora_carro.error_text=message_caracter
                     sw=1
                     break
         vlr_hora_carro.update()
         if vlr_turno_carro.value == "":
-            vlr_turno_carro.error_text="Campo requerido"
-            # vlr_turno_carro.focus()
+            vlr_turno_carro.error_text=message_required
+            sw=1
         else:
             for i in str(vlr_turno_carro.value):
                 if i not in "0123456789":
-                    vlr_turno_carro.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_turno_carro.error_text=message_caracter
                     sw=1
                     break
         vlr_turno_carro.update()
         if vlr_hora_otro.value == "":
-            vlr_hora_otro.error_text="Campo requerido"
-            # vlr_hora_otro.focus()
-            btn_save.focus()
-            # vlr_hora_otro.update()
+            vlr_hora_otro.error_text=message_required
+            sw=1
         else:
             for i in str(vlr_hora_otro.value):
                 if i not in "0123456789":
-                    vlr_hora_otro.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_hora_otro.error_text=message_caracter
                     sw=1
                     break
-        vlr_hora_otro.update()
         if vlr_turno_otro.value == "":
-            vlr_turno_otro.error_text="Campo requerido"
-            # vlr_turno_otro.focus()
+            vlr_turno_otro.error_text=message_required
+            sw=1
         else:
             for i in str(vlr_turno_otro.value):
                 if i not in "0123456789":
-                    vlr_turno_otro.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_turno_otro.error_text=message_caracter
                     sw=1
                     break
+        vlr_hora_moto.update()
+        vlr_turno_moto.update()
+        vlr_hora_carro.update()
+        vlr_turno_carro.update()
+        vlr_hora_otro.update()
         vlr_turno_otro.update()
         btn_save.focus()
-        if sw == 0 and vlr_hora_moto.value != "" and vlr_turno_moto.value != "" and vlr_hora_carro.value != "" and vlr_turno_carro.value != "" and vlr_hora_otro.value != "" and vlr_turno_otro.value != "":
-            vlr_hora_moto.update()
-            vlr_turno_moto.update()
-            vlr_hora_carro.update()
-            vlr_turno_carro.update()
-            vlr_hora_otro.update()
-            vlr_turno_otro.update()
+        # if sw == 0 and vlr_hora_moto.value != "" and vlr_turno_moto.value != "" and vlr_hora_carro.value != "" and vlr_turno_carro.value != "" and vlr_hora_otro.value != "" and vlr_turno_otro.value != "":
+        if sw == 0:
             message=update_variables(vlr_hora_moto.value, vlr_turno_moto.value, vlr_hora_carro.value, vlr_turno_carro.value, vlr_hora_otro.value, vlr_turno_otro.value, variable_id)
             if message != "":
                 bgcolor="green"
@@ -374,6 +369,7 @@ def Variables(page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 ),
             ),
+            ft.Container(height=20),
         ]
     )
     # else:

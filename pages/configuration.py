@@ -214,171 +214,113 @@ def Configuration(page):
         email_pass.error_text=""
         printer.error_text=""
         paper_width.error_text=""
+        message_required="Campo requerido"
+        message_caracter="Valor sin signo ni comas, puntos u otro caracter especial"
         settings.errors=0
         if parqueadero.value == "":
             settings.errors=1
-            parqueadero.error_text="Campo requerido"
-            btn_save.focus()
-            parqueadero.update()
-        else:
-            parqueadero.update()
+            parqueadero.error_text=message_required
         if nit.value == "":
             settings.errors=1
-            nit.error_text="Campo requerido"
-            nit.update()
-        else:
-            nit.update()
+            nit.error_text=message_required
         if regimen.value == "":
             settings.errors=1
-            regimen.error_text="Campo requerido"
-            regimen.update()
-        else:
-            regimen.update()
+            regimen.error_text=message_required
         if direccion.value == "":
             settings.errors=1
-            direccion.error_text="Campo requerido"
-            direccion.update()
-        else:
-            direccion.update()
+            direccion.error_text=message_required
         if telefono.value == "":
             settings.errors=1
-            telefono.error_text="Campo requerido"
-            telefono.update()
-        else:
-            telefono.update()
+            telefono.error_text=message_required
         if servicio.value == "":
             settings.errors=1
-            servicio.error_text="Campo requerido"
-            servicio.update()
-        else:
-            servicio.update()
+            servicio.error_text=message_required
         if settings.billing == 1 and settings.tipo_app == 1:
             if resolucion.value == "":
                 settings.errors=1
-                resolucion.error_text="Campo requerido"
-                resolucion.update()
-            else:
-                resolucion.update()
+                resolucion.error_text=message_required
             if prefijo.value == "":
                 settings.errors=1
-                prefijo.error_text="Campo requerido"
-                prefijo.update()
-            else:
-                prefijo.update()
+                prefijo.error_text=message_required
             if fecha_desde.value == "":
                 settings.errors=1
-                fecha_desde.error_text="Campo requerido"
-                fecha_desde.update()
-            else:
-                fecha_desde.update()
+                fecha_desde.error_text=message_required
             if fecha_hasta.value == "":
                 settings.errors=1
-                fecha_hasta.error_text="Campo requerido"
-                fecha_hasta.update()
-            else:
-                fecha_hasta.update()
+                fecha_hasta.error_text=message_required
             if autoriza_del.value == "":
                 settings.errors=1
-                autoriza_del.error_text="Campo requerido"
-                autoriza_del.update()
-            else:
-                autoriza_del.update()
+                autoriza_del.error_text=message_required
             if autoriza_al.value == "":
                 settings.errors=1
-                autoriza_al.error_text="Campo requerido"
-                autoriza_al.update()
-            else:
-                autoriza_al.update()
+                autoriza_al.error_text=message_required
             if clave_tecnica.value == "":
                 settings.errors=1
-                clave_tecnica.error_text="Campo requerido"
-                clave_tecnica.update()
-            else:
-                clave_tecnica.update()
+                clave_tecnica.error_text=message_required
             if environment.value == 0:
                 settings.errors=1
-                environment.error_text="Campo requerido"
-                environment.update()
-            else:
-                environment.update()
+                environment.error_text=message_required
             if client.value == 0:
                 settings.errors=1
-                client.error_text="Campo requerido"
-                client.update()
-            else:
-                client.update()
+                client.error_text=message_required
         if consecutivo.value == "":
             settings.errors=1
-            consecutivo.error_text="Campo requerido"
-            consecutivo.update()
-        else:
-            consecutivo.update()
+            consecutivo.error_text=message_required
         if vlr_duplicado.value == "":
             settings.errors=1
-            vlr_duplicado.error_text="Campo requerido"
+            vlr_duplicado.error_text=message_required
             # vlr_duplicado.update()
         else:
             for i in str(vlr_duplicado.value):
                 if i not in "0123456789":
                     settings.errors=1
-                    vlr_duplicado.error_text="Valor sin signo ni comas ni puntos ni otro caracter especial"
+                    vlr_duplicado.error_text=message_caracter
                     break
-        vlr_duplicado.update()
         if settings.send_email_register == 1:
             if email_user.value == "":
                 settings.errors=1
-                email_user.error_text="Campo requerido"
-                email_user.update()
-            else:
-                email_user.update()
+                email_user.error_text=message_required
             if email_pass.value == "":
                 settings.errors=1
-                email_pass.error_text="Campo requerido"
-                email_pass.update()
-            else:
-                email_pass.update()
+                email_pass.error_text=message_required
         if settings.print_register_receipt == 1 or settings.print_cash_receipt == 1:
             if printer.value == "":
                 settings.errors=1
-                printer.error_text="Campo requerido"
-                printer.update()
-            else:
-                printer.update()
+                printer.error_text=message_required
             if paper_width.value == 0:
                 settings.errors=1
-                paper_width.error_text="Campo requerido"
-                paper_width.update()
-            else:
-                paper_width.update()
+                paper_width.error_text=message_required
+        parqueadero.update()
+        nit.update()
+        regimen.update()
+        direccion.update()
+        telefono.update()
+        servicio.update()
+        if settings.tipo_app == 1:
+            resolucion.update()
+            prefijo.update()
+            fecha_desde.update()
+            fecha_hasta.update()
+            autoriza_del.update()
+            autoriza_al.update()
+            clave_tecnica.update()
+            environment.update()
+            client.update()
+        consecutivo.update()
+        vlr_duplicado.update()
+        email_user.update()
+        email_pass.update()
+        if len(email_pass.value) <= 16:
+            settings.secret_key=secrets.token_hex(16)
+            email_pass_encrypted=encrypt(email_pass.value, settings.secret_key)
+            email_pass.value=email_pass_encrypted
+            email_pass.update()
+        printer.update()
+        paper_width.update()
         btn_save.focus()
         # if settings.billing == 1:
             # if parqueadero.value != "" and nit.value != "" and regimen.value != "" and direccion.value != "" and telefono.value != "" and servicio.value != "" and resolucion.value != "" and prefijo.value != "" and fecha_desde.value != "" and fecha_hasta.value != "" and autoriza_del.value != "" and autoriza_al.value != "" and clave_tecnica.value != "" and environment.value != "" and client.value != "" and consecutivo.value != "":
         if settings.errors == 0:
-            parqueadero.update()
-            nit.update()
-            regimen.update()
-            direccion.update()
-            telefono.update()
-            servicio.update()
-            if settings.tipo_app == 1:
-                resolucion.update()
-                prefijo.update()
-                fecha_desde.update()
-                fecha_hasta.update()
-                autoriza_del.update()
-                autoriza_al.update()
-                clave_tecnica.update()
-                environment.update()
-                client.update()
-            consecutivo.update()
-            vlr_duplicado.update()
-            email_user.update()
-            email_pass.update()
-            if len(email_pass.value) <= 16:
-                settings.secret_key=secrets.token_hex(16)
-                email_pass_encrypted=encrypt(email_pass.value, settings.secret_key)
-                email_pass.value=email_pass_encrypted
-                email_pass.update()
             update_configuration(parqueadero.value, nit.value, regimen.value, direccion.value, telefono.value, servicio.value, settings.billing, resolucion.value, fecha_desde.value, fecha_hasta.value, prefijo.value, autoriza_del.value, autoriza_al.value, clave_tecnica.value, environment.value, client.value, consecutivo.value, settings.preview_register, settings.print_register_receipt, vlr_duplicado.value, settings.send_email_register, email_user.value, email_pass.value, settings.secret_key, settings.preview_cash, settings.print_cash_receipt, printer.value, paper_width.value, configuracion_id)
                 # if message != "":
                 #     bgcolor="green"

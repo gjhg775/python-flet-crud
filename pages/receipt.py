@@ -12,6 +12,7 @@ import pywhatkit
 import hashlib
 import win32api
 import win32print
+from time import gmtime, strftime
 from fpdf import FPDF
 # from datatable import valor_hora_moto, valor_turno_moto, valor_hora_carro, valor_turno_carro, valor_hora_otro, valor_turno_otro
 from datatable import get_configuration, get_variables
@@ -304,7 +305,12 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         ano=ano[0:4]
         fec_fac=ano+"-"+mes+"-"+dia
         hor_fac=str(salidas).split(" ")
-        hor_fac=hor_fac[1] # Hora de la factura incluyendo GMT
+        hor_fac=hor_fac[1]
+        gmt=strftime("%z", gmtime())
+        gmt1=str(gmt[0:3])
+        gmt2=str(gmt[3:])
+        gmt=gmt1 + ":" + gmt2
+        hor_fac=hor_fac + f"{gmt}" # Hora de la factura incluyendo GMT
         nit_fac=str(nit).split(" ")
         nit_fac=nit_fac[1]
         nit_fac=str(nit_fac).split("-")
