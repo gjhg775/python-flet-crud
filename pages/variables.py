@@ -185,7 +185,7 @@ def Variables(page):
         vlr_hora_otro.error_text=""
         vlr_turno_otro.error_text=""
         message_required="Campo requerido"
-        message_caracter="Valor sin signo ni comas, puntos u otro caracter especial"
+        message_caracter="Valor sin puntos, comas u otro caracter especial"
         sw=0
         if vlr_hora_moto.value == "":
             vlr_hora_moto.error_text=message_required

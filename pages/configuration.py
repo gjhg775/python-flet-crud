@@ -215,7 +215,7 @@ def Configuration(page):
         printer.error_text=""
         paper_width.error_text=""
         message_required="Campo requerido"
-        message_caracter="Valor sin signo ni comas, puntos u otro caracter especial"
+        message_caracter="Valor sin puntos, comas u otro caracter especial"
         settings.errors=0
         if parqueadero.value == "":
             settings.errors=1
