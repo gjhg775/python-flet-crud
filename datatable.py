@@ -1227,8 +1227,8 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
         gmt=strftime("%z", gmtime())
         gmt1=str(gmt[0:3])
         gmt2=str(gmt[3:])
-        gmt=gmt1 + ":" + gmt2
-        hor_fac=hor_fac + f"{gmt}" # Hora de la factura incluyendo GMT
+        gmt=gmt1+":"+gmt2
+        hor_fac=f"{hor_fac}" + f"{gmt}" # Hora de la factura incluyendo GMT
         nit_fac=str(nit).split(" ")
         nit_fac=nit_fac[1]
         nit_fac=str(nit_fac).split("-")
