@@ -355,7 +355,7 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     settings.billing=configuracion[0][7]
-    facturacion=False if configuracion[0][7] == 0 else True
+    sw_facturacion=False if configuracion[0][7] == 0 else True
     settings.resolucion=configuracion[0][8]
     resolucion=configuracion[0][8]
     settings.fecha_desde=configuracion[0][9]
@@ -426,7 +426,7 @@ def update_configuration(parqueadero, nit, regimen, direccion, telefono, servici
             telefono=configuracion[0][5]
             servicio=configuracion[0][6]
             settings.billing=configuracion[0][7]
-            facturacion=False if configuracion[0][7] == 0 else True
+            sw_facturacion=False if configuracion[0][7] == 0 else True
             settings.resolucion=configuracion[0][8]
             resolucion=configuracion[0][8]
             settings.fecha_desde=configuracion[0][9]
@@ -917,7 +917,7 @@ def showedit(e):
             telefono=configuracion[0][5]
             servicio=configuracion[0][6]
             settings.billing=configuracion[0][7]
-            facturacion=False if configuracion[0][7] == 0 else True
+            sw_facturacion=False if configuracion[0][7] == 0 else True
             settings.resolucion=configuracion[0][8]
             resolucion=configuracion[0][8]
             settings.fecha_desde=configuracion[0][9]
@@ -1211,7 +1211,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
 
-    if settings.billing == 1:
+    if settings.tipo_app == 1 and settings.billing == 1:
         num_fac=consecutivo.split(settings.prefijo)
         num_fac=int(num_fac[1])
         # num_fac=consecutivo.split("-")
@@ -1428,7 +1428,7 @@ def showOutput(parqueadero, nit, regimen, direccion, telefono, servicio, resoluc
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 93, servicio, align="C")
-    if settings.billing == 1:
+    if settings.tipo_app == 1 and settings.billing == 1:
         pdf.set_font("helvetica", "B", size=14 if settings.paper_width == 80 else 11)
         factura="Factura Electrónica de Venta"
         factura_w=pdf.get_string_width(factura)

@@ -54,7 +54,7 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     settings.billing=configuracion[0][7]
-    facturacion=False if configuracion[0][7] == 0 else True
+    sw_facturacion=False if configuracion[0][7] == 0 else True
     settings.resolucion=configuracion[0][8]
     resolucion=configuracion[0][8]
     settings.fecha_desde=configuracion[0][9]
@@ -293,7 +293,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
 
-    if settings.billing == 1:
+    if settings.tipo_app == 1 and settings.billing == 1:
         num_fac=consecutivo.split(settings.prefijo)
         num_fac=int(num_fac[1])
         # num_fac=consecutivo.split("-")
@@ -510,7 +510,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     servicio_w=pdf.get_string_width(servicio)
     pdf.set_x((doc_w - servicio_w) / 2)
     pdf.cell(servicio_w, 93, servicio, align="C")
-    if settings.billing == 1:
+    if settings.tipo_app == 1 and settings.billing == 1:
         pdf.set_font("helvetica", "B", size=14 if settings.paper_width == 80 else 11)
         factura="Factura Electrónica de Venta"
         factura_w=pdf.get_string_width(factura)
@@ -769,7 +769,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         # entrada=str(entrada[1])
         # salida=salida.split(" ")
         # salida=str(salida[1])
-        facturacion="Horas" if registro[5] == 0 else "Turnos"
+        facturar="Horas" if registro[5] == 0 else "Turnos"
         valor=locale.currency(registro[6], grouping=True)
         total=locale.currency(registro[8], grouping=True)
         pdf.set_font("helvetica", "", size=9 if settings.billing == 0 else 8)
@@ -779,7 +779,7 @@ def show_cash_register(parqueadero, nit, regimen, direccion, telefono, servicio,
         pdf.cell(row_w, pos, row, align="C")
         pos+=10
         pdf.set_font("helvetica", "", size=9)
-        row=placa + "  " + vehiculo + "  " + facturacion + "  " + str(valor) + "  " + str(total)
+        row=placa + "  " + vehiculo + "  " + facturar + "  " + str(valor) + "  " + str(total)
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
@@ -905,9 +905,9 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         vehiculo=registro[4]
         # entrada=entrada.split(" ")
         # entrada=str(entrada[1])
-        facturacion="Horas" if registro[5] == 0 else "Turnos"
+        facturar="Horas" if registro[5] == 0 else "Turnos"
         valor=locale.currency(registro[6], grouping=True)
-        # row=consecutivo + "  " + placa + "  " + entrada + "  " + vehiculo + "  " + facturacion + "  " + valor
+        # row=consecutivo + "  " + placa + "  " + entrada + "  " + vehiculo + "  " + facturar + "  " + valor
         # row_w=pdf.get_string_width(row)
         # pdf.set_x((doc_w - row_w) / 2)
         # pdf.cell(row_w, pos, row, align="C")
@@ -916,7 +916,7 @@ def show_cash_register2(parqueadero, nit, regimen, direccion, telefono, servicio
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")
         pos+=10
-        row=placa + "  " + vehiculo + "  " + facturacion + "  " + str(valor)
+        row=placa + "  " + vehiculo + "  " + facturar + "  " + str(valor)
         row_w=pdf.get_string_width(row)
         pdf.set_x((doc_w - row_w) / 2)
         pdf.cell(row_w, pos, row, align="C")

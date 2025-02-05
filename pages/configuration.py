@@ -148,7 +148,7 @@ def Configuration(page):
         telefono=configuracion[0][5]
         servicio=configuracion[0][6]
         settings.billing=configuracion[0][7]
-        facturacion=False if configuracion[0][7] == 0 else True
+        sw_facturacion=False if configuracion[0][7] == 0 else True
         settings.resolucion=configuracion[0][8]
         resolucion=configuracion[0][8]
         settings.fecha_desde=configuracion[0][9]
@@ -650,7 +650,7 @@ def Configuration(page):
     # btn_cuadre=ft.ElevatedButton(text="Hacer cuadre", icon=ft.icons.APP_REGISTRATION, width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=cash_register)
     lblFacturacion=ft.Text("Facturación", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     lbl_billing=ft.Text("Facturación", theme_style=ft.TextThemeStyle.TITLE_MEDIUM)
-    billing_switch=ft.Switch(value=facturacion, on_change=billing_change)
+    billing_switch=ft.Switch(value=sw_facturacion, on_change=billing_change)
     lblRegistro=ft.Text("Registro", theme_style=ft.TextThemeStyle.HEADLINE_SMALL, text_align="left", color=ft.colors.PRIMARY)
     # preview_switch=ft.Switch(label="Vista previa", label_position=ft.LabelPosition.LEFT, value=vista_previa, on_change=preview_change)
     # print_receipt_switch=ft.Switch(label="Imprimir", label_position=ft.LabelPosition.LEFT, value=imprimir, on_change=print_change)

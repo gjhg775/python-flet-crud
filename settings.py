@@ -40,7 +40,7 @@ acceso=1
 textsize=30
 fieldwith=800
 tipo_app=0 # 0=Escritorio 1=Web
-billing=1
+billing=0
 tipo_ambiente=0
 paper_width=0
 preview_register=1

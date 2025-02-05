@@ -121,7 +121,7 @@ if configuracion != None:
     telefono=configuracion[0][5]
     servicio=configuracion[0][6]
     settings.billing=configuracion[0][7]
-    facturacion=False if configuracion[0][7] == 0 else True
+    sw_facturacion=False if configuracion[0][7] == 0 else True
     settings.resolucion=configuracion[0][8]
     resolucion=configuracion[0][8]
     settings.fecha_desde=configuracion[0][9]
