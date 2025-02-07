@@ -5,6 +5,7 @@ import qrcode
 import bcrypt
 import datetime
 import time
+import flet as ft
 import settings
 import subprocess
 import webbrowser
@@ -254,8 +255,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     # consecutivo=str(settings.consecutivo2).zfill(6) if str(settings.consecutivo2[0:1]) == str(settings.prefijo[0:1]) else str(settings.consecutivo2)
     consecutivo=str(consecutivo).zfill(6)
 
-    if settings.tipo_app == 0:
-        settings.billing = 0
+    # if settings.tipo_app == 0:
+    #     settings.billing = 0
         
     if settings.billing == 0:
         consecutivo="Recibo " + consecutivo
@@ -293,7 +294,7 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
     entrada=f"Entrada " + str(entradas)
     salida=f"Salida   " + str(salidas)
 
-    if settings.tipo_app == 1 and settings.billing == 1:
+    if settings.billing == 1:
         num_fac=consecutivo.split(settings.prefijo)
         num_fac=int(num_fac[1])
         # num_fac=consecutivo.split("-")
@@ -359,14 +360,15 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         # cufe=f"{consecutivo}" + f"{fec_fac}" + f"{hor_fac}" + f"{val_fac:.2f}" + f"{CodImp1}" + f"{ValImp1:.2f}" + f"{CodImp2}" + f"{ValImp2:.2f}" + f"{CodImp3}" + f"{ValImp3:.2f}" + f"{ValTot:.2f}" + f"{NitOFE}" + f"{doc_adq}" + f"{ClTec}" + f"{TipoAmbie}"
         # cufe=consecutivo + fec_fac + hor_fac + f"{val_fac2:.2f}" + CodImp1 + f"{ValImp11:.2f}" + CodImp2 + f"{ValImp22:.2f}" + CodImp3 + f"{ValImp33:.2f}" + f"{ValTot2:.2f}" + NitOFE + doc_adq + ClTec + TipoAmbie2
         # cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
-        cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
+        settings.cufe=consecutivo + fec_fac + hor_fac + val_fac2 + CodImp1 + ValImp11 + CodImp2 + ValImp22 + CodImp3 + ValImp33 + ValTot2 + NitOFE + doc_adq + ClTec + TipoAmbie2
         # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
         # cufe=cufe.encode("utf-8")
         # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
         # hash=hashlib.sha384(cufe).hexdigest()
-        bytes=cufe.encode("utf-8")
-        hash=hashlib.sha384(bytes).hexdigest()
-        cufe=hash
+        settings.cufe = str(settings.cufe)
+        bytes = settings.cufe.encode("utf-8")
+        hash = hashlib.sha384(bytes).hexdigest()
+        settings.cufe = hash
 
     variables=get_variables()
 
@@ -591,6 +593,8 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         title_cufe_w=pdf.get_string_width(title_cufe)
         pdf.set_x((doc_w - title_cufe_w) / 2)
         pdf.cell(title_cufe_w, 321, title_cufe, align="C")
+        cufe=f"{settings.cufe}"
+        cufe=str(cufe)
         cufe_w=pdf.get_string_width(cufe)
         pdf.set_x((doc_w - cufe_w) / 2)
         pdf.set_y(175)

@@ -544,7 +544,8 @@ def Register(page):
                 consecutivo=str(consecutivo).zfill(6)
                 settings.consecutivo2=consecutivo
                 
-                if comentario1 != "":
+                # if comentario1 != "":
+                if vlr_total == 0:
                     show_input(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, comentario1, comentario2, comentario3, entradas, comentario4)
                 else:
                     show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consecutivo, vehiculo, placas, entrada, salida, tiempo, vlr_total, entradas, salidas, comentario4)
@@ -611,7 +612,7 @@ def Register(page):
         except Exception as e:
             bgcolor="red"
             message=f"Error {e}"
-            settings.banner.content=content=ft.Text(
+            settings.banner.content=ft.Text(
                 value=message,
                 color=ft.colors.BLACK
             )
