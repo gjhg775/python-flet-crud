@@ -365,10 +365,9 @@ def show_output(parqueadero, nit, regimen, direccion, telefono, servicio, consec
         # cufe=cufe.encode("utf-8")
         # cufe=f"{consecutivo}{fec_fac}{hor_fac}{val_fac2}{CodImp1}{ValImp11}{CodImp2}{ValImp22}{CodImp3}{ValImp33}{ValTot2}{NitOFE}{doc_adq}{ClTec}{TipoAmbie2}"
         # hash=hashlib.sha384(cufe).hexdigest()
-        settings.cufe = str(settings.cufe)
-        bytes = settings.cufe.encode("utf-8")
-        hash = hashlib.sha384(bytes).hexdigest()
-        settings.cufe = hash
+        bytes=str(settings.cufe).encode("utf-8")
+        hash=hashlib.sha384(bytes).hexdigest()
+        settings.cufe=hash
 
     variables=get_variables()
 

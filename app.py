@@ -1567,6 +1567,7 @@ else:
 
             self.frame=ft.Container(
                 expand=True,
+                padding=61,
                 content=ft.Stack(
                     controls=[
                         self.container_0,
@@ -1607,8 +1608,10 @@ else:
                 ]
             ))
 
-            self.btn_home.visible=False
-            self.frame_title.visible=False
+            self.btn_home.disabled=True
+
+            # self.btn_home.visible=False
+            # self.frame_title.visible=False
             self.navigation.visible=False
             self.page.route="/login"
             self.page.go(self.page.route)
@@ -1730,11 +1733,13 @@ else:
 
         def change_page(self, e, n):
             if n == 9:
-                self.btn_home.visible=False
-                self.frame_title.visible=False
-                self.navigation.visible=False
+                self.btn_home.disabled=True
+                # self.btn_home.visible=False
+                # self.frame_title.visible=False
+                # self.navigation.visible=False
             else:
-                self.btn_home.visible=True
+                self.btn_home.disabled=False
+                # self.btn_home.visible=True
                 self.frame_title.visible=True
                 # self.navigation.visible=True
 

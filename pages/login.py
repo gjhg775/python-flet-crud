@@ -475,8 +475,8 @@ def Login(page):
                                             ),
                                             border_radius=20,
                                             width=320,
-                                            # height=500,
-                                            height=page.height-70 if settings.tipo_app == 0 else None,
+                                            height=500,
+                                            # height=page.height-70 if settings.tipo_app == 0 else None,
                                             # gradient=ft.LinearGradient([
                                             #     ft.colors.PURPLE,
                                             #     ft.colors.PINK,
