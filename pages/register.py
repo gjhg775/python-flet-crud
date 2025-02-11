@@ -1120,7 +1120,7 @@ def Register(page):
     # if settings.tipo_app == 0:
     return ft.Column(
         controls=[
-            settings.progressBar,
+            # settings.progressBar,
             ft.Container(height=20),
             ft.Container(
                 alignment=ft.alignment.center,

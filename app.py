@@ -388,7 +388,7 @@ if settings.tipo_app == 0:
             email.visible=True
             confirm_password.visible=True
             name.visible=True
-            lbl_cuenta.value="Ya tiene una cuenta"
+            lbl_cuenta.value="¿Ya tiene una cuenta?"
             btn_cuenta.visible=False
             btn_loginme.visible=True
             btn_reset_password.visible=False
@@ -897,7 +897,8 @@ if settings.tipo_app == 0:
         confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=False)
         name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
         btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
-        btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", visible=True if settings.tipo_app == 1 else False, on_click=resetPassword)
+        # btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", visible=True if settings.tipo_app == 1 else False, on_click=resetPassword)
+        btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", width=280, on_click=resetPassword)
         lbl_cuenta=ft.Text("¿No tiene una cuenta?")
         btn_cuenta=ft.TextButton("Crear cuenta", on_click=sign_up)
         btn_loginme=ft.TextButton("Iniciar sesión", visible=False, on_click=loginMe)
@@ -1092,6 +1093,28 @@ else:
 
             self.container_0=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="green",
+                height=900,
+                offset=ft.transform.Offset(0, 0),
+                # animate_offset=self.animation_style,
+                border_radius=10,
+                padding=10,
+                content=ft.Column(
+                    scroll="auto",
+                    controls=[
+                        # ft.Text("Perfil"),
+                        # ft.Container(
+                        #     border_radius=20,
+                        # )
+                    ],
+                    horizontal_alignment="center"
+                )
+            )
+
+            self.container_1=ft.Container(
+                # bgcolor=self.color_container,
+                # bgcolor="green",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
@@ -1103,29 +1126,14 @@ else:
                         # ft.Container(
                         #     border_radius=20,
                         # )
-                    ],
-                    horizontal_alignment="center"
-                )
-            )
-
-            self.container_1=ft.Container(
-                # bgcolor=self.color_container,
-                offset=ft.transform.Offset(0, 0),
-                # animate_offset=self.animation_style,
-                border_radius=10,
-                padding=10,
-                content=ft.Column(
-                    controls=[
-                        # ft.Text("Usuarios"),
-                        # ft.Container(
-                        #     border_radius=20,
-                        # )
                     ]
                 )
             )
 
             self.container_2=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="blue",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
@@ -1143,6 +1151,8 @@ else:
 
             self.container_3=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="orange",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
@@ -1160,11 +1170,14 @@ else:
 
             self.container_4=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="pink",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Variables"),
                         # ft.Container(
@@ -1176,6 +1189,8 @@ else:
 
             self.container_5=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="yellow",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
@@ -1193,11 +1208,14 @@ else:
 
             self.container_6=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="purple",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Cuadre de caja"),
                         # ft.Container(
@@ -1209,11 +1227,14 @@ else:
 
             self.container_7=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="blue",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Cierre de día"),
                         # ft.Container(
@@ -1225,11 +1246,14 @@ else:
 
             self.container_8=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="blue",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Desarrollador"),
                         # ft.Container(
@@ -1241,11 +1265,14 @@ else:
 
             self.container_9=ft.Container(
                 # bgcolor=self.color_container,
+                # bgcolor="blue",
+                height=900,
                 offset=ft.transform.Offset(0, 0),
                 # animate_offset=self.animation_style,
                 border_radius=10,
                 padding=10,
                 content=ft.Column(
+                    scroll="auto",
                     controls=[
                         # ft.Text("Cerrar sesión"),
                         # ft.Container(
@@ -1516,7 +1543,7 @@ else:
             self.navigation=ft.Container(
                 bgcolor=self.color_container,
                 animate_size=self.animation_style,
-                width=200,
+                width=250,
                 # border_radius=10,
                 padding=10,
                 content=ft.Column(
@@ -1567,7 +1594,8 @@ else:
 
             self.frame=ft.Container(
                 expand=True,
-                padding=61,
+                # padding=ft.padding.only(top=61, bottom=61),
+                padding=10,
                 content=ft.Stack(
                     controls=[
                         self.container_0,
@@ -1597,6 +1625,7 @@ else:
                             self.frame_title,
                         ]
                     ),
+                    settings.progressBar,
                     ft.Row(
                         spacing=0,
                         expand=True,
@@ -1609,7 +1638,6 @@ else:
             ))
 
             self.btn_home.disabled=True
-
             # self.btn_home.visible=False
             # self.frame_title.visible=False
             self.navigation.visible=False

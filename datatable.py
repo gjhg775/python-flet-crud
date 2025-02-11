@@ -38,14 +38,14 @@ def get_connection():
     except Exception as e:
         print(e)
 
-valor=0
-
 title="Parqueadero"
 
 comentario1="Sin éste recibo, no se entrega el automotor."
 comentario2="Después de retirado el automotor, no se"
 comentario3="aceptan reclamos."
 comentario4="Cuidemos el planeta. No me imprimas, si no es necesario."
+
+valor=0
 
 locale.setlocale(locale.LC_ALL, "")
 
@@ -747,7 +747,7 @@ def update_register(vehiculo, consecutivo, id, valor_hora_moto, valor_turno_moto
     except Exception as e:
         print(e)
 
-def add_register(vehiculo, placa):
+def add_register(vehiculo, placa, valor_hora_moto, valor_hora_carro, valor_hora_otro):
     entrada=datetime.datetime.now()
     formato=f"%Y-%m-%d %H:%M:%S"
     entrada=str(entrada)
@@ -859,19 +859,19 @@ def selectRegister(vehiculo, placa):
         registros=cursor.fetchall()
         conn.close()
 
+        variables = get_variables()
+
+        if variables != None:
+            valor_hora_moto=variables[0][1]
+            valor_turno_moto=variables[0][2]
+            valor_hora_carro=variables[0][3]
+            valor_turno_carro=variables[0][4]
+            valor_hora_otro=variables[0][5]
+            valor_turno_otro=variables[0][6]
+
         if registros == []:
-            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas, comentario4=add_register(vehiculo, placa)
-        else:            
-            variables = get_variables()
-
-            if variables != None:
-                valor_hora_moto=variables[0][1]
-                valor_turno_moto=variables[0][2]
-                valor_hora_carro=variables[0][3]
-                valor_turno_carro=variables[0][4]
-                valor_hora_otro=variables[0][5]
-                valor_turno_otro=variables[0][6]
-
+            consecutivo, vehiculos, placa, entrada, salida, tiempo, comentario1, comentario2, comentario3, total, correo_electronico, entradas, salidas, comentario4=add_register(vehiculo, placa, valor_hora_moto, valor_hora_carro, valor_hora_otro)
+        else:
             id=registros[0][0]
             consecutivo=registros[0][1]
             settings.consecutivo=registros[0][1]

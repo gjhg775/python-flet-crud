@@ -237,7 +237,7 @@ def Login(page):
         email.visible=True
         confirm_password.visible=True
         name.visible=True
-        lbl_cuenta.value="Ya tiene una cuenta"
+        lbl_cuenta.value="¿Ya tiene una cuenta?"
         btn_cuenta.visible=False
         btn_loginme.visible=True
         btn_reset_password.visible=False
@@ -401,7 +401,7 @@ def Login(page):
     confirm_password=ft.TextField(width=280, height=60, hint_text="Confirmar contraseña", border="underline", prefix_icon=ft.icons.LOCK, password=True, can_reveal_password=True, visible=False)
     name=ft.TextField(width=280, height=60, hint_text="Nombre", border="underline", prefix_icon=ft.icons.PERSON_SHARP, visible=False)
     btn_login=ft.ElevatedButton(text="Iniciar sesión", width=280, bgcolor=ft.colors.BLUE_900, color="white", on_click=login)
-    btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", visible=True if settings.tipo_app == 1 else False, on_click=resetPassword)
+    btn_reset_password=ft.TextButton("¿Olvidó su contraseña?", width=280, visible=True if settings.tipo_app == 1 else False, on_click=resetPassword)
     lbl_cuenta=ft.Text("¿No tiene una cuenta?")
     btn_cuenta=ft.TextButton("Crear cuenta", on_click=sign_up)
     btn_loginme=ft.TextButton("Iniciar sesión", visible=False, on_click=loginMe)
@@ -475,7 +475,7 @@ def Login(page):
                                             ),
                                             border_radius=20,
                                             width=320,
-                                            height=500,
+                                            height=600,
                                             # height=page.height-70 if settings.tipo_app == 0 else None,
                                             # gradient=ft.LinearGradient([
                                             #     ft.colors.PURPLE,
